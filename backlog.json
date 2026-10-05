@@ -2544,7 +2544,7 @@
       "description": "실기기 확인(2026-10-05)에서 사용자가 서재·토론 화면에 들어간 뒤 카메라로 돌아가는 방법을 찾지 못했다. 현재는 시스템 뒤로가기로만 홈(카메라)에 갈 수 있고 하단 탭은 서재·분석·추천·설정 세 개뿐이다. 하단 탭 맨 앞에 '카메라' 항목을 추가해 어느 화면에서든 한 번에 홈으로 가게 한다. 홈이 카메라라는 원칙과 2초 시작은 그대로. 탭 순서·아이콘은 사용자 확인.",
       "doc": "docs/tasks/T-806.md",
       "phase": 8,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P3",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -2561,7 +2561,7 @@
       "tags": [],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
