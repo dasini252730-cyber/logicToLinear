@@ -27,15 +27,51 @@
     "human": "사용자가 직접 수행하거나 판단"
   },
   "phases": [
-    { "id": 0, "name": "준비", "goal": "키 발급, 환경 확인, 기술 결정" },
-    { "id": 1, "name": "프로젝트·DB·서재", "goal": "Room 4테이블, 서재 화면, 직접 입력 등록과 상태 변경" },
-    { "id": 2, "name": "카메라·OCR (MVP)", "goal": "촬영 → OCR → 문장 선택 → 저장. 첫 화면을 카메라로" },
-    { "id": 3, "name": "알라딘 검색", "goal": "제목 검색 등록, 표지 캐시, 중복 체크" },
-    { "id": 4, "name": "완독 처리", "goal": "별점·한 줄·완독일, 책 상세 글귀 목록" },
-    { "id": 5, "name": "설정·백업", "goal": "API 키 저장, JSON 내보내기/가져오기" },
-    { "id": 6, "name": "분석·추천", "goal": "Anthropic 호출, JSON 파싱, 알라딘 후처리, 결과 화면" },
-    { "id": 7, "name": "완독 후 토론", "goal": "캐싱, 20턴 제한, 저장과 재진입" },
-    { "id": 8, "name": "예외·오프라인 점검", "goal": "예외 처리 표 전체 점검, 오프라인 동작 확인" }
+    {
+      "id": 0,
+      "name": "준비",
+      "goal": "키 발급, 환경 확인, 기술 결정"
+    },
+    {
+      "id": 1,
+      "name": "프로젝트·DB·서재",
+      "goal": "Room 4테이블, 서재 화면, 직접 입력 등록과 상태 변경"
+    },
+    {
+      "id": 2,
+      "name": "카메라·OCR (MVP)",
+      "goal": "촬영 → OCR → 문장 선택 → 저장. 첫 화면을 카메라로"
+    },
+    {
+      "id": 3,
+      "name": "알라딘 검색",
+      "goal": "제목 검색 등록, 표지 캐시, 중복 체크"
+    },
+    {
+      "id": 4,
+      "name": "완독 처리",
+      "goal": "별점·한 줄·완독일, 책 상세 글귀 목록"
+    },
+    {
+      "id": 5,
+      "name": "설정·백업",
+      "goal": "API 키 저장, JSON 내보내기/가져오기"
+    },
+    {
+      "id": 6,
+      "name": "분석·추천",
+      "goal": "Anthropic 호출, JSON 파싱, 알라딘 후처리, 결과 화면"
+    },
+    {
+      "id": 7,
+      "name": "완독 후 토론",
+      "goal": "캐싱, 20턴 제한, 저장과 재진입"
+    },
+    {
+      "id": 8,
+      "name": "예외·오프라인 점검",
+      "goal": "예외 처리 표 전체 점검, 오프라인 동작 확인"
+    }
   ],
   "tasks": [
     {
@@ -49,12 +85,18 @@
       "assignee": "human",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["기술 스택", "클로드 코드 작업 순서"],
+      "specRefs": [
+        "기술 스택",
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "TTB 키를 확보했다",
         "일 호출 한도를 확인해 docs/tasks/T-001.md에 적었다"
       ],
-      "tags": ["setup", "external"],
+      "tags": [
+        "setup",
+        "external"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -73,12 +115,18 @@
       "assignee": "human",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["기술 스택", "AI 기능"],
+      "specRefs": [
+        "기술 스택",
+        "AI 기능"
+      ],
       "acceptanceCriteria": [
         "API 키를 확보했다",
         "월 지출 한도를 콘솔에서 설정했다"
       ],
-      "tags": ["setup", "external"],
+      "tags": [
+        "setup",
+        "external"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -92,20 +140,26 @@
       "description": "공식 문서에서 Haiku·Sonnet 계열의 현재 모델 ID, 입력/출력 단가, 프롬프트 캐싱 단가를 확인해 기록한다. 앱의 기본 모델 ID 상수에 쓸 값을 정한다.",
       "doc": "docs/tasks/T-003.md",
       "phase": 0,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["기술 스택", "AI 기능 > 비용 통제"],
+      "specRefs": [
+        "기술 스택",
+        "AI 기능 > 비용 통제"
+      ],
       "acceptanceCriteria": [
         "Haiku·Sonnet 모델 ID와 단가를 docs/tasks/T-003.md에 출처 링크와 함께 적었다",
         "토론 1턴·분석 1회의 예상 비용을 계산했다"
       ],
-      "tags": ["research", "ai"],
+      "tags": [
+        "research",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
@@ -116,20 +170,26 @@
       "description": "ML Kit Text Recognition v2 Korean이 앱에 번들되는지, Google Play Services로 다운로드되는지 확인한다. 의존성 아티팩트명과 APK 크기 영향을 기록한다.",
       "doc": "docs/tasks/T-004.md",
       "phase": 0,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["기술 스택", "클로드 코드 작업 순서"],
+      "specRefs": [
+        "기술 스택",
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "사용할 Gradle 아티팩트와 버전을 정했다",
         "오프라인 첫 실행에서도 OCR이 동작하는지 여부를 기록했다"
       ],
-      "tags": ["research", "ocr"],
+      "tags": [
+        "research",
+        "ocr"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
@@ -145,12 +205,16 @@
       "assignee": "human",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["클로드 코드 작업 순서"],
+      "specRefs": [
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "adb devices에 실기기가 표시된다",
         "폰의 Android 버전(API 레벨)을 기록했다"
       ],
-      "tags": ["setup"],
+      "tags": [
+        "setup"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -169,12 +233,16 @@
       "assignee": "human",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["기술 스택"],
+      "specRefs": [
+        "기술 스택"
+      ],
       "acceptanceCriteria": [
         "선택과 이유가 docs/tasks/T-006.md에 적혀 있다",
         "CLAUDE.md 기술 스택 표의 HTTP 행을 확정값으로 갱신했다"
       ],
-      "tags": ["decision"],
+      "tags": [
+        "decision"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -182,28 +250,32 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-101",
       "title": "Android 프로젝트 생성",
       "description": "Kotlin + Jetpack Compose 단일 모듈 프로젝트를 만든다. minSdk 26, 패키지 구조 초안, Gradle 버전 카탈로그 설정. assembleDebug가 통과해야 한다.",
       "doc": "docs/tasks/T-101.md",
       "phase": 1,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
       "dependsOn": [],
-      "specRefs": ["기술 스택"],
+      "specRefs": [
+        "기술 스택"
+      ],
       "acceptanceCriteria": [
         "./gradlew assembleDebug 성공",
         "빈 Compose 화면이 실기기에서 뜬다",
         ".gitignore에 build, local.properties, *.keystore 포함"
       ],
-      "tags": ["setup", "gradle"],
+      "tags": [
+        "setup",
+        "gradle"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
@@ -218,13 +290,20 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-101"],
-      "specRefs": ["기술 스택"],
+      "dependsOn": [
+        "T-101"
+      ],
+      "specRefs": [
+        "기술 스택"
+      ],
       "acceptanceCriteria": [
         "libs.versions.toml에 의존성이 정리되어 있다",
         "assembleDebug 성공"
       ],
-      "tags": ["setup", "gradle"],
+      "tags": [
+        "setup",
+        "gradle"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -242,13 +321,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-102"],
-      "specRefs": ["데이터 모델 > Book", "책 상태 전이"],
+      "dependsOn": [
+        "T-102"
+      ],
+      "specRefs": [
+        "데이터 모델 > Book",
+        "책 상태 전이"
+      ],
       "acceptanceCriteria": [
         "Book 엔티티 필드가 요구사항 표와 1:1로 일치한다",
         "BookDao에 insert, update, delete, observeByStatus, latestReadingByQuote가 있다"
       ],
-      "tags": ["db", "room"],
+      "tags": [
+        "db",
+        "room"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -266,13 +353,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-103"],
-      "specRefs": ["데이터 모델 > Quote", "삭제"],
+      "dependsOn": [
+        "T-103"
+      ],
+      "specRefs": [
+        "데이터 모델 > Quote",
+        "삭제"
+      ],
       "acceptanceCriteria": [
         "Book 삭제 시 Quote가 함께 삭제되는 Room 테스트가 통과한다",
         "QuoteDao에 observeByBook, countAll, insert, delete가 있다"
       ],
-      "tags": ["db", "room"],
+      "tags": [
+        "db",
+        "room"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -290,13 +385,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-103"],
-      "specRefs": ["데이터 모델 > Discussion", "데이터 모델 > Analysis"],
+      "dependsOn": [
+        "T-103"
+      ],
+      "specRefs": [
+        "데이터 모델 > Discussion",
+        "데이터 모델 > Analysis"
+      ],
       "acceptanceCriteria": [
         "두 엔티티 필드가 요구사항 표와 일치한다",
         "DiscussionDao에 observeByBook, upsert가 있고 AnalysisDao에 observeAllDesc, insert가 있다"
       ],
-      "tags": ["db", "room"],
+      "tags": [
+        "db",
+        "room"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -314,14 +417,23 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-104", "T-105"],
-      "specRefs": ["데이터 모델", "백업"],
+      "dependsOn": [
+        "T-104",
+        "T-105"
+      ],
+      "specRefs": [
+        "데이터 모델",
+        "백업"
+      ],
       "acceptanceCriteria": [
         "앱 실행 시 DB가 생성된다",
         "schemas/1.json이 커밋되어 있다",
         "Converter 단위 테스트 통과"
       ],
-      "tags": ["db", "room"],
+      "tags": [
+        "db",
+        "room"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -339,13 +451,19 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-106"],
-      "specRefs": ["기술 스택"],
+      "dependsOn": [
+        "T-106"
+      ],
+      "specRefs": [
+        "기술 스택"
+      ],
       "acceptanceCriteria": [
         "ViewModel이 Repository를 생성자 주입으로 받는다",
         "DI 프레임워크 없이 빌드·실행된다"
       ],
-      "tags": ["architecture"],
+      "tags": [
+        "architecture"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -363,13 +481,20 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-107"],
-      "specRefs": ["화면과 사용자 흐름"],
+      "dependsOn": [
+        "T-107"
+      ],
+      "specRefs": [
+        "화면과 사용자 흐름"
+      ],
       "acceptanceCriteria": [
         "하단 탭 3개로 이동이 된다",
         "라우트 상수가 한 파일에 모여 있다"
       ],
-      "tags": ["ui", "navigation"],
+      "tags": [
+        "ui",
+        "navigation"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -387,13 +512,19 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-108"],
-      "specRefs": ["화면과 사용자 흐름 > 서재"],
+      "dependsOn": [
+        "T-108"
+      ],
+      "specRefs": [
+        "화면과 사용자 흐름 > 서재"
+      ],
       "acceptanceCriteria": [
         "탭 전환 시 해당 상태 책만 보인다",
         "책을 탭하면 상세로 이동한다(상세는 T-111)"
       ],
-      "tags": ["ui"],
+      "tags": [
+        "ui"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -411,14 +542,22 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-109"],
-      "specRefs": ["흐름 2: 책 등록", "책 검색"],
+      "dependsOn": [
+        "T-109"
+      ],
+      "specRefs": [
+        "흐름 2: 책 등록",
+        "책 검색"
+      ],
       "acceptanceCriteria": [
         "제목 없이 저장 불가",
         "중복 제목+저자 시 경고 표시 후 저장 가능",
         "저장 후 서재 목록에 즉시 반영"
       ],
-      "tags": ["ui", "book"],
+      "tags": [
+        "ui",
+        "book"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -436,13 +575,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-110"],
-      "specRefs": ["화면과 사용자 흐름 > 책 상세", "책 상태 전이"],
+      "dependsOn": [
+        "T-110"
+      ],
+      "specRefs": [
+        "화면과 사용자 흐름 > 책 상세",
+        "책 상태 전이"
+      ],
       "acceptanceCriteria": [
         "상태에 따라 알맞은 전이 버튼만 보인다",
         "다시 읽기 시 rating·oneLiner·finishedAt가 유지된다"
       ],
-      "tags": ["ui", "book"],
+      "tags": [
+        "ui",
+        "book"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -460,13 +607,20 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-111"],
-      "specRefs": ["삭제"],
+      "dependsOn": [
+        "T-111"
+      ],
+      "specRefs": [
+        "삭제"
+      ],
       "acceptanceCriteria": [
         "확인 없이 삭제되지 않는다",
         "삭제 후 해당 책의 Quote·Discussion이 DB에 남지 않는다"
       ],
-      "tags": ["ui", "book"],
+      "tags": [
+        "ui",
+        "book"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -484,13 +638,21 @@
       "priority": "P0",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-112", "T-005"],
-      "specRefs": ["클로드 코드 작업 순서"],
+      "dependsOn": [
+        "T-112",
+        "T-005"
+      ],
+      "specRefs": [
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "책 3권을 직접 입력으로 등록하고 상태를 바꿔봤다",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device"],
+      "tags": [
+        "verify",
+        "device"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -498,7 +660,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-201",
       "title": "CameraX 의존성·권한·프리뷰 화면",
@@ -509,13 +670,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-108"],
-      "specRefs": ["기술 스택 > 카메라", "화면과 사용자 흐름 > 카메라(홈)"],
+      "dependsOn": [
+        "T-108"
+      ],
+      "specRefs": [
+        "기술 스택 > 카메라",
+        "화면과 사용자 흐름 > 카메라(홈)"
+      ],
       "acceptanceCriteria": [
         "권한 허용 후 프리뷰가 뜬다",
         "권한 거부 시 앱이 죽지 않고 안내가 보인다"
       ],
-      "tags": ["camera", "ui"],
+      "tags": [
+        "camera",
+        "ui"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -533,13 +702,20 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-201"],
-      "specRefs": ["확정된 결정 > 사진 원본", "흐름 1: 글귀 저장"],
+      "dependsOn": [
+        "T-201"
+      ],
+      "specRefs": [
+        "확정된 결정 > 사진 원본",
+        "흐름 1: 글귀 저장"
+      ],
       "acceptanceCriteria": [
         "촬영 후 기기 저장소·갤러리에 파일이 생기지 않는다",
         "세로·가로 촬영 모두 올바른 방향의 Bitmap이 나온다"
       ],
-      "tags": ["camera"],
+      "tags": [
+        "camera"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -557,13 +733,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-202", "T-004"],
-      "specRefs": ["글귀 OCR과 문장 선택", "기술 스택 > OCR"],
+      "dependsOn": [
+        "T-202",
+        "T-004"
+      ],
+      "specRefs": [
+        "글귀 OCR과 문장 선택",
+        "기술 스택 > OCR"
+      ],
       "acceptanceCriteria": [
         "한국어 책 페이지 촬영 시 줄 단위 텍스트가 나온다",
         "인식 시간이 로그에 기록된다(목표 1초 내외)"
       ],
-      "tags": ["ocr"],
+      "tags": [
+        "ocr"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -581,13 +765,22 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-203"],
-      "specRefs": ["흐름 1: 글귀 저장", "글귀 OCR과 문장 선택", "예외 처리"],
+      "dependsOn": [
+        "T-203"
+      ],
+      "specRefs": [
+        "흐름 1: 글귀 저장",
+        "글귀 OCR과 문장 선택",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "줄을 탭하면 선택 상태가 토글된다",
         "세로쓰기·표가 섞여도 줄이 그대로 나열된다"
       ],
-      "tags": ["ui", "ocr"],
+      "tags": [
+        "ui",
+        "ocr"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -605,13 +798,20 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-204"],
-      "specRefs": ["글귀 OCR과 문장 선택"],
+      "dependsOn": [
+        "T-204"
+      ],
+      "specRefs": [
+        "글귀 OCR과 문장 선택"
+      ],
       "acceptanceCriteria": [
         "joinLines() 단위 테스트 5개 이상 통과(음절 중간, 마침표, 쉼표, 따옴표, 단일 줄)",
         "UI에서 선택 결과 미리보기가 규칙대로 보인다"
       ],
-      "tags": ["logic", "test"],
+      "tags": [
+        "logic",
+        "test"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -629,14 +829,22 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-205"],
-      "specRefs": ["흐름 1: 글귀 저장", "글귀 OCR과 문장 선택"],
+      "dependsOn": [
+        "T-205"
+      ],
+      "specRefs": [
+        "흐름 1: 글귀 저장",
+        "글귀 OCR과 문장 선택"
+      ],
       "acceptanceCriteria": [
         "저장 후 DB에 Quote 1건, Book.lastQuoteAt 갱신",
         "카메라 화면으로 돌아오고 토스트가 보인다",
         "Bitmap이 메모리에서 해제된다"
       ],
-      "tags": ["ui", "quote"],
+      "tags": [
+        "ui",
+        "quote"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -654,13 +862,20 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-203"],
-      "specRefs": ["페이지 번호 자동 인식"],
+      "dependsOn": [
+        "T-203"
+      ],
+      "specRefs": [
+        "페이지 번호 자동 인식"
+      ],
       "acceptanceCriteria": [
         "extractPageCandidates() 테스트: 후보 0개·1개·2개, 중앙 숫자 제외, 5자리 제외",
         "본문 중간의 숫자는 후보가 되지 않는다"
       ],
-      "tags": ["logic", "test"],
+      "tags": [
+        "logic",
+        "test"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -678,14 +893,23 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-207", "T-206"],
-      "specRefs": ["페이지 번호 자동 인식", "흐름 1: 글귀 저장"],
+      "dependsOn": [
+        "T-207",
+        "T-206"
+      ],
+      "specRefs": [
+        "페이지 번호 자동 인식",
+        "흐름 1: 글귀 저장"
+      ],
       "acceptanceCriteria": [
         "후보 수에 따라 자동 채움·칩이 규칙대로 동작한다",
         "키패드 입력이 후보보다 우선한다",
         "page가 null인 Quote 저장이 가능하다"
       ],
-      "tags": ["ui", "quote"],
+      "tags": [
+        "ui",
+        "quote"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -703,13 +927,22 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-206"],
-      "specRefs": ["확정된 결정 > 첫 화면", "책 상태 전이", "흐름 1: 글귀 저장"],
+      "dependsOn": [
+        "T-206"
+      ],
+      "specRefs": [
+        "확정된 결정 > 첫 화면",
+        "책 상태 전이",
+        "흐름 1: 글귀 저장"
+      ],
       "acceptanceCriteria": [
         "목록에 READING 책만 보인다",
         "글귀 저장 후 다음 실행 시 그 책이 기본 선택된다"
       ],
-      "tags": ["ui", "camera"],
+      "tags": [
+        "ui",
+        "camera"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -727,14 +960,21 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-209"],
-      "specRefs": ["예외 처리"],
+      "dependsOn": [
+        "T-209"
+      ],
+      "specRefs": [
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "책이 없을 때 셔터가 눌리지 않는다",
         "빈 OCR 결과에서 문장 선택 화면으로 넘어가지 않는다",
         "문구가 요구사항 원문과 일치한다"
       ],
-      "tags": ["ui", "error"],
+      "tags": [
+        "ui",
+        "error"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -752,13 +992,19 @@
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-210"],
-      "specRefs": ["개요 > 설계 원칙"],
+      "dependsOn": [
+        "T-210"
+      ],
+      "specRefs": [
+        "개요 > 설계 원칙"
+      ],
       "acceptanceCriteria": [
         "콜드 스타트 측정값 3회가 docs/tasks/T-211.md에 기록되어 있다",
         "중앙값이 2초 이하"
       ],
-      "tags": ["performance"],
+      "tags": [
+        "performance"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -776,14 +1022,24 @@
       "priority": "P0",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-211", "T-208"],
-      "specRefs": ["흐름 1: 글귀 저장", "클로드 코드 작업 순서"],
+      "dependsOn": [
+        "T-211",
+        "T-208"
+      ],
+      "specRefs": [
+        "흐름 1: 글귀 저장",
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "10회 중 8회 이상 10초 이내 저장",
         "페이지 자동 인식 성공률을 기록했다",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device", "mvp"],
+      "tags": [
+        "verify",
+        "device",
+        "mvp"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -791,7 +1047,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-301",
       "title": "HTTP 클라이언트 설정과 알라딘 ItemSearch API",
@@ -802,13 +1057,22 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-006", "T-107"],
-      "specRefs": ["책 검색", "기술 스택 > 도서 검색"],
+      "dependsOn": [
+        "T-006",
+        "T-107"
+      ],
+      "specRefs": [
+        "책 검색",
+        "기술 스택 > 도서 검색"
+      ],
       "acceptanceCriteria": [
         "검색어로 호출해 title, author, publisher, isbn13, cover, categoryName, description이 파싱된다",
         "DTO 파싱 단위 테스트 통과(샘플 응답 JSON 고정)"
       ],
-      "tags": ["network", "aladin"],
+      "tags": [
+        "network",
+        "aladin"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -826,14 +1090,21 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-107"],
-      "specRefs": ["기술 스택"],
+      "dependsOn": [
+        "T-107"
+      ],
+      "specRefs": [
+        "기술 스택"
+      ],
       "acceptanceCriteria": [
         "키가 평문 SharedPreferences에 남지 않는다",
         "앱 재시작 후에도 키가 유지된다",
         "키가 코드·리소스에 하드코딩되어 있지 않다"
       ],
-      "tags": ["security", "settings"],
+      "tags": [
+        "security",
+        "settings"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -851,13 +1122,22 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-301", "T-302", "T-110"],
-      "specRefs": ["흐름 2: 책 등록"],
+      "dependsOn": [
+        "T-301",
+        "T-302",
+        "T-110"
+      ],
+      "specRefs": [
+        "흐름 2: 책 등록"
+      ],
       "acceptanceCriteria": [
         "검색 결과 10개가 표지와 함께 보인다",
         "직접 입력 버튼으로 T-110 화면에 진입한다"
       ],
-      "tags": ["ui", "aladin"],
+      "tags": [
+        "ui",
+        "aladin"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -875,13 +1155,21 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-303"],
-      "specRefs": ["책 검색", "흐름 2: 책 등록"],
+      "dependsOn": [
+        "T-303"
+      ],
+      "specRefs": [
+        "책 검색",
+        "흐름 2: 책 등록"
+      ],
       "acceptanceCriteria": [
         "등록된 Book에 isbn13, coverUrl, category, description이 채워져 있다",
         "중복 isbn13 등록 시 차단 메시지가 뜨고 저장되지 않는다"
       ],
-      "tags": ["book", "aladin"],
+      "tags": [
+        "book",
+        "aladin"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -899,13 +1187,20 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-304"],
-      "specRefs": ["예외 처리"],
+      "dependsOn": [
+        "T-304"
+      ],
+      "specRefs": [
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "비행기 모드에서 검색 시 직접 입력 폼으로 넘어간다",
         "직접 입력 폼의 제목에 검색어가 들어가 있다"
       ],
-      "tags": ["error", "aladin"],
+      "tags": [
+        "error",
+        "aladin"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -923,13 +1218,20 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-304"],
-      "specRefs": ["데이터 모델 > Book > coverUrl"],
+      "dependsOn": [
+        "T-304"
+      ],
+      "specRefs": [
+        "데이터 모델 > Book > coverUrl"
+      ],
       "acceptanceCriteria": [
         "한 번 본 표지는 비행기 모드에서도 보인다",
         "표지가 없는 책은 플레이스홀더가 보인다"
       ],
-      "tags": ["ui", "cache"],
+      "tags": [
+        "ui",
+        "cache"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -947,14 +1249,23 @@
       "priority": "P1",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-305", "T-306", "T-001"],
-      "specRefs": ["클로드 코드 작업 순서"],
+      "dependsOn": [
+        "T-305",
+        "T-306",
+        "T-001"
+      ],
+      "specRefs": [
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "검색 등록 5권 성공",
         "같은 책 재등록 시 차단 확인",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device"],
+      "tags": [
+        "verify",
+        "device"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -962,7 +1273,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-401",
       "title": "완독 처리 화면",
@@ -973,14 +1283,22 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-111"],
-      "specRefs": ["흐름 3: 완독 처리", "소감"],
+      "dependsOn": [
+        "T-111"
+      ],
+      "specRefs": [
+        "흐름 3: 완독 처리",
+        "소감"
+      ],
       "acceptanceCriteria": [
         "한 줄 소감이 100자를 넘지 않는다",
         "완독일 기본값이 오늘이고 DatePicker로 변경된다",
         "비운 채 저장할 때 안내 문구가 보인다"
       ],
-      "tags": ["ui", "book"],
+      "tags": [
+        "ui",
+        "book"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -998,13 +1316,20 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-401"],
-      "specRefs": ["책 상태 전이"],
+      "dependsOn": [
+        "T-401"
+      ],
+      "specRefs": [
+        "책 상태 전이"
+      ],
       "acceptanceCriteria": [
         "finishBook(), restartBook() 단위 테스트 통과",
         "다시 읽기 후 상세에 이전 별점이 그대로 보인다"
       ],
-      "tags": ["logic", "test"],
+      "tags": [
+        "logic",
+        "test"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1022,13 +1347,21 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-402", "T-206"],
-      "specRefs": ["화면과 사용자 흐름 > 책 상세"],
+      "dependsOn": [
+        "T-402",
+        "T-206"
+      ],
+      "specRefs": [
+        "화면과 사용자 흐름 > 책 상세"
+      ],
       "acceptanceCriteria": [
         "글귀가 저장 직후 상세에 반영된다",
         "page가 null인 글귀는 번호 없이 표시된다"
       ],
-      "tags": ["ui", "quote"],
+      "tags": [
+        "ui",
+        "quote"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1046,13 +1379,20 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-403"],
-      "specRefs": ["삭제"],
+      "dependsOn": [
+        "T-403"
+      ],
+      "specRefs": [
+        "삭제"
+      ],
       "acceptanceCriteria": [
         "되돌리기 탭 시 글귀가 원래 자리로 돌아온다",
         "5초 후에는 DB에서 완전히 삭제된다"
       ],
-      "tags": ["ui", "quote"],
+      "tags": [
+        "ui",
+        "quote"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1070,13 +1410,19 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-402"],
-      "specRefs": ["흐름 3: 완독 처리"],
+      "dependsOn": [
+        "T-402"
+      ],
+      "specRefs": [
+        "흐름 3: 완독 처리"
+      ],
       "acceptanceCriteria": [
         "완독 저장 후 제안 화면이 뜬다",
         "'나중에' 선택 시 상세로 돌아간다"
       ],
-      "tags": ["ui"],
+      "tags": [
+        "ui"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1094,13 +1440,21 @@
       "priority": "P1",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-404", "T-405"],
-      "specRefs": ["클로드 코드 작업 순서"],
+      "dependsOn": [
+        "T-404",
+        "T-405"
+      ],
+      "specRefs": [
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "완독·다시 읽기·재완독 흐름 확인",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device"],
+      "tags": [
+        "verify",
+        "device"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1108,7 +1462,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-501",
       "title": "설정 화면: API 키 입력과 모델 선택",
@@ -1119,13 +1472,22 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-302", "T-108"],
-      "specRefs": ["화면과 사용자 흐름 > 설정", "AI 기능 > 비용 통제"],
+      "dependsOn": [
+        "T-302",
+        "T-108"
+      ],
+      "specRefs": [
+        "화면과 사용자 흐름 > 설정",
+        "AI 기능 > 비용 통제"
+      ],
       "acceptanceCriteria": [
         "키 저장 후 재시작해도 유지된다",
         "모델 선택값이 저장되고 기본값은 Haiku다"
       ],
-      "tags": ["ui", "settings"],
+      "tags": [
+        "ui",
+        "settings"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1143,13 +1505,20 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-106"],
-      "specRefs": ["백업"],
+      "dependsOn": [
+        "T-106"
+      ],
+      "specRefs": [
+        "백업"
+      ],
       "acceptanceCriteria": [
         "직렬화→역직렬화 라운드트립 단위 테스트 통과",
         "schemaVersion이 Room 버전과 같은 상수에서 나온다"
       ],
-      "tags": ["backup", "test"],
+      "tags": [
+        "backup",
+        "test"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1167,13 +1536,21 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-502", "T-501"],
-      "specRefs": ["백업"],
+      "dependsOn": [
+        "T-502",
+        "T-501"
+      ],
+      "specRefs": [
+        "백업"
+      ],
       "acceptanceCriteria": [
         "파일명이 규칙대로 생성된다",
         "저장된 파일에 apiKey 문자열이 없다"
       ],
-      "tags": ["backup", "ui"],
+      "tags": [
+        "backup",
+        "ui"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1191,13 +1568,21 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-503"],
-      "specRefs": ["백업", "예외 처리"],
+      "dependsOn": [
+        "T-503"
+      ],
+      "specRefs": [
+        "백업",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "높은 schemaVersion 파일은 거부 메시지가 뜬다",
         "손상된 JSON은 앱이 죽지 않고 오류를 보여준다"
       ],
-      "tags": ["backup", "error"],
+      "tags": [
+        "backup",
+        "error"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1215,13 +1600,19 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-504"],
-      "specRefs": ["백업"],
+      "dependsOn": [
+        "T-504"
+      ],
+      "specRefs": [
+        "백업"
+      ],
       "acceptanceCriteria": [
         "덮어쓰기 후 책·글귀 수가 백업 파일과 같다",
         "FK 관계(bookId)가 올바르게 재연결된다"
       ],
-      "tags": ["backup"],
+      "tags": [
+        "backup"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1239,13 +1630,21 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-505"],
-      "specRefs": ["백업"],
+      "dependsOn": [
+        "T-505"
+      ],
+      "specRefs": [
+        "백업"
+      ],
       "acceptanceCriteria": [
         "isSameBook() 단위 테스트: isbn 일치, isbn 불일치, isbn 없음+제목저자 일치, 공백·대소문자 차이",
         "같은 백업을 두 번 합쳐도 책이 중복되지 않는다"
       ],
-      "tags": ["backup", "logic", "test"],
+      "tags": [
+        "backup",
+        "logic",
+        "test"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1263,13 +1662,20 @@
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-501"],
-      "specRefs": ["AI 기능 > 비용 통제"],
+      "dependsOn": [
+        "T-501"
+      ],
+      "specRefs": [
+        "AI 기능 > 비용 통제"
+      ],
       "acceptanceCriteria": [
         "카운터 증가·월 전환 단위 테스트 통과",
         "설정 화면에 숫자가 보인다"
       ],
-      "tags": ["settings", "ai"],
+      "tags": [
+        "settings",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1287,13 +1693,21 @@
       "priority": "P1",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-506", "T-507"],
-      "specRefs": ["클로드 코드 작업 순서"],
+      "dependsOn": [
+        "T-506",
+        "T-507"
+      ],
+      "specRefs": [
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "복구 후 책·글귀·별점이 모두 그대로다",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device"],
+      "tags": [
+        "verify",
+        "device"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1301,7 +1715,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-601",
       "title": "Anthropic Messages API 클라이언트",
@@ -1312,14 +1725,24 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-301", "T-302", "T-003"],
-      "specRefs": ["AI 기능", "기술 스택 > AI"],
+      "dependsOn": [
+        "T-301",
+        "T-302",
+        "T-003"
+      ],
+      "specRefs": [
+        "AI 기능",
+        "기술 스택 > AI"
+      ],
       "acceptanceCriteria": [
         "요청 JSON 직렬화 단위 테스트(cache_control 블록 포함)",
         "오류 종류별 사용자 메시지가 매핑되어 있다",
         "재시도가 1회를 넘지 않는다"
       ],
-      "tags": ["network", "ai"],
+      "tags": [
+        "network",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1337,13 +1760,22 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-105", "T-403"],
-      "specRefs": ["AI 기능 > 취향 분석·추천", "확정된 결정 > 토큰 절약"],
+      "dependsOn": [
+        "T-105",
+        "T-403"
+      ],
+      "specRefs": [
+        "AI 기능 > 취향 분석·추천",
+        "확정된 결정 > 토큰 절약"
+      ],
       "acceptanceCriteria": [
         "buildAnalysisInput() 단위 테스트 통과",
         "책 수·글귀 수가 Analysis.inputBookCount/inputQuoteCount에 쓸 값으로 함께 반환된다"
       ],
-      "tags": ["ai", "logic"],
+      "tags": [
+        "ai",
+        "logic"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1361,13 +1793,20 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-602"],
-      "specRefs": ["AI 기능 > 취향 분석·추천"],
+      "dependsOn": [
+        "T-602"
+      ],
+      "specRefs": [
+        "AI 기능 > 취향 분석·추천"
+      ],
       "acceptanceCriteria": [
         "프롬프트가 코드가 아닌 별도 파일에 있다",
         "서재 전체 제목 목록(WANT 포함)이 제외 목록으로 들어간다"
       ],
-      "tags": ["ai", "prompt"],
+      "tags": [
+        "ai",
+        "prompt"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1385,13 +1824,22 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-601"],
-      "specRefs": ["AI 기능 > 취향 분석·추천", "예외 처리"],
+      "dependsOn": [
+        "T-601"
+      ],
+      "specRefs": [
+        "AI 기능 > 취향 분석·추천",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "parseAnalysis() 테스트: 정상, 펜스 포함, 앞뒤 설명문 포함, 완전 실패",
         "완전 실패 시 taste에 원문이 들어간다"
       ],
-      "tags": ["ai", "logic", "test"],
+      "tags": [
+        "ai",
+        "logic",
+        "test"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1409,14 +1857,22 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-604", "T-301"],
-      "specRefs": ["AI 기능 > 취향 분석·추천 > 후처리"],
+      "dependsOn": [
+        "T-604",
+        "T-301"
+      ],
+      "specRefs": [
+        "AI 기능 > 취향 분석·추천 > 후처리"
+      ],
       "acceptanceCriteria": [
         "알라딘에 있는 책은 표지가 붙는다",
         "없는 책도 제목·저자·이유가 유지된다",
         "알라딘 오류가 분석 전체를 실패시키지 않는다"
       ],
-      "tags": ["ai", "aladin"],
+      "tags": [
+        "ai",
+        "aladin"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1434,13 +1890,23 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-605", "T-603", "T-507"],
-      "specRefs": ["흐름 4: 분석·추천", "예외 처리"],
+      "dependsOn": [
+        "T-605",
+        "T-603",
+        "T-507"
+      ],
+      "specRefs": [
+        "흐름 4: 분석·추천",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "조건 미달 시 남은 수가 정확히 표시된다",
         "실행 후 Analysis 행이 생기고 호출 카운터가 1 오른다"
       ],
-      "tags": ["ui", "ai"],
+      "tags": [
+        "ui",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1458,13 +1924,21 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-606"],
-      "specRefs": ["AI 기능 > 취향 분석·추천 > 후처리", "화면과 사용자 흐름 > 분석·추천"],
+      "dependsOn": [
+        "T-606"
+      ],
+      "specRefs": [
+        "AI 기능 > 취향 분석·추천 > 후처리",
+        "화면과 사용자 흐름 > 분석·추천"
+      ],
       "acceptanceCriteria": [
         "최신 결과가 상단에, 이전 기록이 접힌 상태로 보인다",
         "추천이 비어 있으면 taste만 보이고 카드 영역은 숨긴다"
       ],
-      "tags": ["ui", "ai"],
+      "tags": [
+        "ui",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1482,13 +1956,21 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-607"],
-      "specRefs": ["흐름 4: 분석·추천", "예외 처리"],
+      "dependsOn": [
+        "T-607"
+      ],
+      "specRefs": [
+        "흐름 4: 분석·추천",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "담은 책이 서재 '읽고 싶음' 탭에 보인다",
         "같은 책을 두 번 담을 수 없다"
       ],
-      "tags": ["ui", "book"],
+      "tags": [
+        "ui",
+        "book"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1506,14 +1988,23 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-606"],
-      "specRefs": ["AI 기능 > 비용 통제", "예외 처리"],
+      "dependsOn": [
+        "T-606"
+      ],
+      "specRefs": [
+        "AI 기능 > 비용 통제",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "비행기 모드에서 실행 시 오류와 재시도 버튼이 보인다",
         "잘못된 키로 실행 시 설정으로 안내한다",
         "로딩 중 버튼이 비활성화된다"
       ],
-      "tags": ["ui", "error", "ai"],
+      "tags": [
+        "ui",
+        "error",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1531,14 +2022,24 @@
       "priority": "P2",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-608", "T-609", "T-002"],
-      "specRefs": ["클로드 코드 작업 순서"],
+      "dependsOn": [
+        "T-608",
+        "T-609",
+        "T-002"
+      ],
+      "specRefs": [
+        "클로드 코드 작업 순서"
+      ],
       "acceptanceCriteria": [
         "분석 결과가 글귀를 근거로 삼고 있다",
         "1회 비용이 docs/tasks/T-610.md에 기록되어 있다",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device", "ai"],
+      "tags": [
+        "verify",
+        "device",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1546,7 +2047,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-701",
       "title": "토론 시스템 프롬프트와 cache_control 구성",
@@ -1557,13 +2057,20 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-601"],
-      "specRefs": ["AI 기능 > 완독 후 토론"],
+      "dependsOn": [
+        "T-601"
+      ],
+      "specRefs": [
+        "AI 기능 > 완독 후 토론"
+      ],
       "acceptanceCriteria": [
         "system 블록 두 개(역할, 책 컨텍스트) 중 컨텍스트에 cache_control이 붙는다",
         "buildDiscussionSystem() 단위 테스트 통과"
       ],
-      "tags": ["ai", "prompt"],
+      "tags": [
+        "ai",
+        "prompt"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1581,13 +2088,22 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-701", "T-105"],
-      "specRefs": ["AI 기능 > 완독 후 토론", "흐름 5: 완독 후 토론"],
+      "dependsOn": [
+        "T-701",
+        "T-105"
+      ],
+      "specRefs": [
+        "AI 기능 > 완독 후 토론",
+        "흐름 5: 완독 후 토론"
+      ],
       "acceptanceCriteria": [
         "시작 직후 AI 질문 1개가 저장되어 있다",
         "실패 시 Discussion은 남고 재시도 버튼이 보인다"
       ],
-      "tags": ["ai", "discussion"],
+      "tags": [
+        "ai",
+        "discussion"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1605,13 +2121,21 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-702", "T-609"],
-      "specRefs": ["흐름 5: 완독 후 토론"],
+      "dependsOn": [
+        "T-702",
+        "T-609"
+      ],
+      "specRefs": [
+        "흐름 5: 완독 후 토론"
+      ],
       "acceptanceCriteria": [
         "메시지가 역할별로 구분되어 보인다",
         "응답 대기 중 전송 버튼이 비활성화된다"
       ],
-      "tags": ["ui", "discussion"],
+      "tags": [
+        "ui",
+        "discussion"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1629,13 +2153,21 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-703"],
-      "specRefs": ["AI 기능 > 완독 후 토론", "예외 처리"],
+      "dependsOn": [
+        "T-703"
+      ],
+      "specRefs": [
+        "AI 기능 > 완독 후 토론",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "앱 강제 종료 후 재진입 시 마지막 메시지까지 보인다",
         "endedAt이 null인 토론은 입력창이 열려 있다"
       ],
-      "tags": ["discussion", "persistence"],
+      "tags": [
+        "discussion",
+        "persistence"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1653,13 +2185,21 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-704"],
-      "specRefs": ["AI 기능 > 완독 후 토론", "데이터 모델 > Discussion"],
+      "dependsOn": [
+        "T-704"
+      ],
+      "specRefs": [
+        "AI 기능 > 완독 후 토론",
+        "데이터 모델 > Discussion"
+      ],
       "acceptanceCriteria": [
         "20번째 사용자 메시지 후 AI 마무리 멘트가 오고 입력이 닫힌다",
         "턴 계산 단위 테스트 통과"
       ],
-      "tags": ["discussion", "logic"],
+      "tags": [
+        "discussion",
+        "logic"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1677,13 +2217,20 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-705"],
-      "specRefs": ["예외 처리"],
+      "dependsOn": [
+        "T-705"
+      ],
+      "specRefs": [
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "비행기 모드에서 전송 시 메시지가 사라지지 않는다",
         "재전송 후 AI 응답이 이어진다"
       ],
-      "tags": ["discussion", "error"],
+      "tags": [
+        "discussion",
+        "error"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1701,13 +2248,22 @@
       "priority": "P2",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-706", "T-405"],
-      "specRefs": ["흐름 3: 완독 처리", "흐름 5: 완독 후 토론"],
+      "dependsOn": [
+        "T-706",
+        "T-405"
+      ],
+      "specRefs": [
+        "흐름 3: 완독 처리",
+        "흐름 5: 완독 후 토론"
+      ],
       "acceptanceCriteria": [
         "한 책에 토론을 여러 개 만들 수 있다",
         "완독 저장 직후 버튼으로 토론이 바로 시작된다"
       ],
-      "tags": ["ui", "discussion"],
+      "tags": [
+        "ui",
+        "discussion"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1725,14 +2281,23 @@
       "priority": "P2",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-707"],
-      "specRefs": ["클로드 코드 작업 순서", "AI 기능 > 완독 후 토론"],
+      "dependsOn": [
+        "T-707"
+      ],
+      "specRefs": [
+        "클로드 코드 작업 순서",
+        "AI 기능 > 완독 후 토론"
+      ],
       "acceptanceCriteria": [
         "20턴 마무리까지 완료",
         "캐시 적중이 로그에 기록되어 있다",
         "발견한 문제가 backlog.json에 등록되어 있다"
       ],
-      "tags": ["verify", "device", "ai"],
+      "tags": [
+        "verify",
+        "device",
+        "ai"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1740,7 +2305,6 @@
       "blockedReason": null,
       "notes": ""
     },
-
     {
       "id": "T-801",
       "title": "예외 처리 표 11개 항목 코드 대조",
@@ -1751,13 +2315,22 @@
       "priority": "P3",
       "assignee": "claude",
       "estimateMinutes": 30,
-      "dependsOn": ["T-708", "T-610", "T-508"],
-      "specRefs": ["예외 처리"],
+      "dependsOn": [
+        "T-708",
+        "T-610",
+        "T-508"
+      ],
+      "specRefs": [
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "11개 항목 각각에 구현 파일·함수가 적혀 있다",
         "사용자 노출 문구가 원문과 일치한다"
       ],
-      "tags": ["qa", "error"],
+      "tags": [
+        "qa",
+        "error"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1775,13 +2348,22 @@
       "priority": "P3",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-801"],
-      "specRefs": ["기술 스택 > OCR", "예외 처리"],
+      "dependsOn": [
+        "T-801"
+      ],
+      "specRefs": [
+        "기술 스택 > OCR",
+        "예외 처리"
+      ],
       "acceptanceCriteria": [
         "오프라인에서 글귀 저장이 된다",
         "오프라인에서 크래시가 없다"
       ],
-      "tags": ["verify", "device", "offline"],
+      "tags": [
+        "verify",
+        "device",
+        "offline"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1799,13 +2381,22 @@
       "priority": "P3",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-802"],
-      "specRefs": ["예외 처리", "페이지 번호 자동 인식"],
+      "dependsOn": [
+        "T-802"
+      ],
+      "specRefs": [
+        "예외 처리",
+        "페이지 번호 자동 인식"
+      ],
       "acceptanceCriteria": [
         "책 5종 결과가 docs/tasks/T-803.md에 기록되어 있다",
         "개선이 필요한 항목이 새 task로 등록되어 있다"
       ],
-      "tags": ["verify", "device", "ocr"],
+      "tags": [
+        "verify",
+        "device",
+        "ocr"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
@@ -1823,13 +2414,20 @@
       "priority": "P3",
       "assignee": "human",
       "estimateMinutes": 30,
-      "dependsOn": ["T-803"],
-      "specRefs": ["범위 밖"],
+      "dependsOn": [
+        "T-803"
+      ],
+      "specRefs": [
+        "범위 밖"
+      ],
       "acceptanceCriteria": [
         "backlog.json에 in_progress·review 상태 task가 없다",
         "다음 버전 후보가 docs/tasks/T-804.md에 적혀 있다"
       ],
-      "tags": ["qa", "release"],
+      "tags": [
+        "qa",
+        "release"
+      ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
