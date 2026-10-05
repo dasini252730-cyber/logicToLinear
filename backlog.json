@@ -76,7 +76,7 @@
   "tasks": [
     {
       "id": "T-001",
-      "title": "카카오 책 검색 REST API 키 발급",
+      "title": "국립중앙도서관 소장자료 Open API 인증키 승인",
       "description": "알라딘 OpenAPI 종료(신규 키 2026-09-04 종료, 기존 키 2026-10-30 종료)로 도서 검색을 카카오 책 검색 API로 교체했다. Kakao Developers에서 앱을 만들고 REST API 키를 발급받아 설정 화면에 입력한다. 코드나 저장소에 넣지 않는다.",
       "doc": "docs/tasks/T-001.md",
       "phase": 0,
