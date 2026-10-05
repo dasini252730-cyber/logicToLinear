@@ -90,7 +90,8 @@
         "클로드 코드 작업 순서"
       ],
       "acceptanceCriteria": [
-        "일 호출 한도를 확인해 docs/tasks/T-001.md에 적었다"
+        "일 호출 한도를 확인해 docs/tasks/T-001.md에 적었다",
+        "국립중앙도서관 소장자료 Open API 인증키가 승인됐다(키 값은 기록하지 않고 앱 설정 화면에 입력)"
       ],
       "tags": [
         "setup",
