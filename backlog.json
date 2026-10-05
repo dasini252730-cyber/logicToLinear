@@ -132,7 +132,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-05 2026-10-05 사용자가 Anthropic API 키를 발급받아 전달함. 키 자체는 원칙 6에 따라 저장소·문서·로그 어디에도 기록하지 않고, 실기기 설정 화면(Anthropic 키 칸)에 사용자가 직접 입력한다. 상태 전환은 사용자가 한다(assignee human)."
     },
     {
       "id": "T-003",
