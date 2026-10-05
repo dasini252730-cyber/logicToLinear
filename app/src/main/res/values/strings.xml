@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">독서 기록</string>
-    <string name="placeholder_home">독서 기록</string>
+
+    <!-- 하단 탭 -->
+    <string name="tab_camera">카메라</string>
+    <string name="tab_library">서재</string>
+    <string name="tab_analysis">분석·추천</string>
+    <string name="tab_settings">설정</string>
+
+    <!-- 자리 표시 화면 (각 단계에서 교체) -->
+    <string name="home_camera_placeholder">카메라 화면은 2단계에서 들어옵니다</string>
+    <string name="analysis_placeholder">분석·추천은 6단계에서 들어옵니다</string>
+    <string name="settings_placeholder">설정은 5단계에서 들어옵니다</string>
+
+    <!-- 서재 -->
+    <string name="library_tab_reading">읽는 중</string>
+    <string name="library_tab_want">읽고 싶음</string>
+    <string name="library_tab_done">다 읽음</string>
+    <string name="library_empty_reading">읽는 중인 책이 없어요. + 버튼으로 등록하세요</string>
+    <string name="library_empty_want">읽고 싶은 책이 없어요</string>
+    <string name="library_empty_done">다 읽은 책이 없어요</string>
+    <string name="library_add_book">책 등록</string>
+    <string name="library_author_unknown">저자 미상</string>
 </resources>

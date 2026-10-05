@@ -45,6 +45,13 @@ class ConvertersTest {
         assertNull(converters.stringToBookStatus(null))
     }
 
+    @Test
+    fun localDate_손상된_문자열은_null() {
+        assertNull(converters.stringToLocalDate("2026-13-45"))
+        assertNull(converters.stringToLocalDate("어제"))
+        assertNull(converters.stringToLocalDate(""))
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun bookStatus_모르는_문자열은_예외() {
         converters.stringToBookStatus("ARCHIVED")

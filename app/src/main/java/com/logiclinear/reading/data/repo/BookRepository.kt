@@ -17,7 +17,7 @@ class BookRepository(private val bookDao: BookDao) {
     suspend fun getById(id: Long): Book? = bookDao.getById(id)
 
     /** 카메라 홈 기본 선택 책. READING 책이 없으면 null. */
-    fun observeDefaultReadingBook(): Flow<Book?> = bookDao.observeLatestReadingByQuote()
+    fun observeDefaultReadingBook(): Flow<Book?> = bookDao.observeLatestByQuote(BookStatus.READING)
 
     /** 새 책을 저장하고 id를 돌려준다. */
     suspend fun add(book: Book): Long = bookDao.insert(book)

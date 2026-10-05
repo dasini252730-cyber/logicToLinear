@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.compose.ui) // Compose 런타임·Modifier 등 UI 기반
     implementation(libs.androidx.compose.ui.tooling.preview) // @Preview 어노테이션
     implementation(libs.androidx.compose.material3) // MaterialTheme, Surface, Text
+    implementation(libs.androidx.compose.material.icons.core) // 하단 탭·FAB 아이콘(Home, Menu, Star, Settings, Add). material3는 아이콘을 포함하지 않고 BOM 관리도 끝나 버전 명시
     debugImplementation(libs.androidx.compose.ui.tooling) // Android Studio 미리보기 렌더링
     implementation(libs.androidx.lifecycle.viewmodel.compose) // viewModel() 주입 (Compose BOM 미포함, 버전 명시)
     implementation(libs.androidx.lifecycle.runtime.compose) // collectAsStateWithLifecycle

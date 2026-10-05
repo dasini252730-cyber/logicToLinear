@@ -14,7 +14,4 @@ interface DiscussionDao {
     /** 책 상세의 토론 목록. 최신 시작 순. */
     @Query("SELECT * FROM discussion WHERE bookId = :bookId ORDER BY startedAt DESC")
     fun observeByBook(bookId: Long): Flow<List<Discussion>>
-
-    @Query("SELECT * FROM discussion WHERE id = :id")
-    suspend fun getById(id: Long): Discussion?
 }
