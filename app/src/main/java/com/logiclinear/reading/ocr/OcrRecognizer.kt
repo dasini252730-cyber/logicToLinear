@@ -19,12 +19,12 @@ import kotlin.coroutines.resumeWithException
  */
 class OcrRecognizer(
     private val recognizer: TextRecognizer = TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build()),
-) {
+) : OcrEngine {
     /**
      * @param rotationDegrees 촬영 시 센서 회전(0/90/180/270). ML Kit이 이 값으로 이미지를 세워서 읽고,
      *   경계 상자도 세운 좌표로 돌려준다. 그래서 90·270이면 가로세로를 바꿔 이미지 크기를 기록한다.
      */
-    suspend fun recognize(bitmap: Bitmap, rotationDegrees: Int): OcrResult {
+    override suspend fun recognize(bitmap: Bitmap, rotationDegrees: Int): OcrResult {
         val started = SystemClock.elapsedRealtime()
         val text = recognizer.process(InputImage.fromBitmap(bitmap, rotationDegrees)).awaitResult()
         val upright = rotationDegrees % 180 != 0
@@ -35,8 +35,6 @@ class OcrRecognizer(
         Log.d(TAG, "ocr: ${lines.size} lines in ${durationMs}ms (${width}x$height)")
         return OcrResult(lines, width, height, durationMs)
     }
-
-    fun close() = recognizer.close()
 
     private companion object {
         const val TAG = "OcrRecognizer"

@@ -95,6 +95,23 @@ class SelectViewModelTest {
 
         vm.toggleLine(1)
         assertEquals("나는 그날 처음으로 바", vm.uiState.value.text)
+
+        vm.toggleLine(2)
+        assertEquals("나는 그날 처음으로 바\n딴 줄", vm.uiState.value.text)
+    }
+
+    @Test
+    fun 사용자가_고친_글은_선택을_바꿔도_덮어쓰지_않는다() {
+        store.put(1, result(line("바", 0.3f), line("다", 0.35f)))
+        val vm = SelectViewModel(repo, store)
+        vm.toggleLine(0)
+        vm.onTextChange("바(수정)")
+
+        vm.toggleLine(1)
+
+        assertEquals("바(수정)", vm.uiState.value.text)
+        assertEquals("바다", vm.uiState.value.autoText)
+        assertTrue(vm.uiState.value.userEdited)
     }
 
     @Test
@@ -140,6 +157,24 @@ class SelectViewModelTest {
         vm.save()
         advanceUntilIdle()
         assertNull(vm.uiState.value.saved)
+    }
+
+    @Test
+    fun 없는_책에_저장하면_오류_상태가_되고_다시_시도할_수_있다() = runTest(mainDispatcherRule.dispatcher) {
+        store.put(999, result(line("문장", 0.3f)))
+        val vm = SelectViewModel(repo, store)
+        vm.toggleLine(0)
+
+        vm.save()
+        advanceUntilIdle()
+
+        assertTrue(vm.uiState.value.saveError)
+        assertFalse(vm.uiState.value.saving)
+        assertNull(vm.uiState.value.saved)
+        assertNotNull(store.current.value)
+        vm.dismissSaveError()
+        assertFalse(vm.uiState.value.saveError)
+        assertTrue(vm.uiState.value.canSave)
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.logiclinear.reading.data.db.AppDatabase
 import com.logiclinear.reading.data.repo.BookRepository
 import com.logiclinear.reading.data.repo.QuoteRepository
 import com.logiclinear.reading.ocr.CaptureStore
+import com.logiclinear.reading.ocr.OcrEngine
 import com.logiclinear.reading.ocr.OcrRecognizer
 
 /**
@@ -22,8 +23,8 @@ class AppContainer(context: Context) {
 
     val quoteRepository: QuoteRepository by lazy { QuoteRepository(database.quoteDao(), database.bookDao()) }
 
-    /** ML Kit 인식기. 모델 로딩이 있어 한 번만 만든다. */
-    val ocrRecognizer: OcrRecognizer by lazy { OcrRecognizer() }
+    /** ML Kit 인식기. 모델 로딩이 있어 한 번만 만들고 앱 프로세스와 함께 산다(ViewModel이 닫지 않는다). */
+    val ocrRecognizer: OcrEngine by lazy { OcrRecognizer() }
 
     /** 촬영 → 문장 선택 화면 사이의 OCR 결과 보관소. */
     val captureStore: CaptureStore by lazy { CaptureStore() }

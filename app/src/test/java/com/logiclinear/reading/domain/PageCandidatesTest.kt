@@ -28,9 +28,11 @@ class PageCandidatesTest {
     }
 
     @Test
-    fun 다섯_자리_이상과_숫자_섞인_글은_제외() {
-        val lines = listOf(line("12345", 0.96f), line("p.12", 0.96f), line("12쪽", 0.96f))
-        assertEquals(emptyList<Int>(), extractPageCandidates(lines))
+    fun 네_자리는_후보_다섯_자리_이상과_숫자_섞인_글은_제외() {
+        val lines = listOf(line("1234", 0.03f), line("12345", 0.96f), line("p.12", 0.96f), line("12쪽", 0.96f))
+        assertEquals(listOf(1234), extractPageCandidates(lines))
+        assertEquals(9999, parsePageNumber("9999"))
+        assertNull(parsePageNumber("10000"))
     }
 
     @Test

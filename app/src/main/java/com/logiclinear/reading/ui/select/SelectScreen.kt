@@ -1,6 +1,7 @@
 package com.logiclinear.reading.ui.select
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,12 +13,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,13 +55,22 @@ fun SelectEntry(
             onDone()
         }
     }
+    val leave = {
+        if (!state.saving) {
+            viewModel.discard()
+            onDone()
+        }
+    }
+    // 시스템 뒤로가기·제스처도 상단 뒤로와 같은 경로. 저장 중에는 막아 글귀가 유실되지 않게 한다.
+    BackHandler(onBack = leave)
     SelectScreen(
         state = state,
         onToggleLine = viewModel::toggleLine,
         onTextChange = viewModel::onTextChange,
         onPageChange = viewModel::onPageChange,
         onSave = viewModel::save,
-        onBack = { viewModel.discard(); onDone() },
+        onBack = leave,
+        onDismissError = viewModel::dismissSaveError,
     )
 }
 
@@ -71,13 +83,14 @@ fun SelectScreen(
     onPageChange: (String) -> Unit,
     onSave: () -> Unit,
     onBack: () -> Unit,
+    onDismissError: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.select_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = onBack, enabled = !state.saving) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
@@ -88,6 +101,13 @@ fun SelectScreen(
             LineList(state.lines, state.selected, onToggleLine, modifier = Modifier.weight(1f))
             QuoteEditor(state, onTextChange, onPageChange, onSave)
         }
+    }
+    if (state.saveError) {
+        AlertDialog(
+            onDismissRequest = onDismissError,
+            text = { Text(stringResource(R.string.select_save_error)) },
+            confirmButton = { TextButton(onClick = onDismissError) { Text(stringResource(R.string.action_ok)) } },
+        )
     }
 }
 
@@ -123,7 +143,7 @@ private fun SelectScreenPreview() {
     ReadingLogTheme {
         SelectScreen(
             state = SelectUiState(lines = lines, selected = setOf(0, 1), text = "나는 그날 처음으로 바다를 보았다.", pageCandidates = listOf(123), pageInput = "123", pageAutoFilled = true),
-            onToggleLine = {}, onTextChange = {}, onPageChange = {}, onSave = {}, onBack = {},
+            onToggleLine = {}, onTextChange = {}, onPageChange = {}, onSave = {}, onBack = {}, onDismissError = {},
         )
     }
 }

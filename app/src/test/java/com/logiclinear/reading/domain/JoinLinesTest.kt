@@ -21,8 +21,19 @@ class JoinLinesTest {
     }
 
     @Test
-    fun 영문은_단어_사이에_공백을_넣고_하이픈_분철은_붙인다() {
-        assertEquals("the quick brown fox", joinLines(listOf("the quick", "brown fox")))
+    fun 숫자나_라틴_문자로_끝나도_문장_부호가_아니면_붙인다() {
+        assertEquals("1945년 8월 15일에", joinLines(listOf("1945년 8월 15", "일에")))
+        assertEquals("미토콘드리아는 ATP를 만든다", joinLines(listOf("미토콘드리아는 ATP", "를 만든다")))
+        assertEquals("1984년의 봄", joinLines(listOf("1984", "년의 봄")))
+    }
+
+    @Test
+    fun 직선_따옴표는_여는지_닫는지_몰라_붙인다() {
+        assertEquals("그는 \"괜찮아", joinLines(listOf("그는 \"", "괜찮아")))
+    }
+
+    @Test
+    fun 하이픈_분철은_하이픈을_떼고_붙인다() {
         assertEquals("understanding", joinLines(listOf("under-", "standing")))
     }
 
@@ -39,7 +50,10 @@ class JoinLinesTest {
     }
 
     @Test
-    fun 숫자로_끝나면_공백으로_잇는다() {
-        assertEquals("1984 년의 봄", joinLines(listOf("1984", "년의 봄")))
+    fun 연속_선택은_한_문장으로_떨어진_선택은_줄바꿈으로_나눈다() {
+        val lines = listOf("첫 문장의 앞", "부분이다.", "건너뛴 줄", "다른 문장")
+        assertEquals("첫 문장의 앞부분이다.\n다른 문장", joinSelectedLines(lines, setOf(0, 1, 3)))
+        assertEquals("", joinSelectedLines(lines, emptySet()))
+        assertEquals("다른 문장", joinSelectedLines(lines, setOf(3, 99)))
     }
 }

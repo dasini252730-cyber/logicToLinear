@@ -37,32 +37,47 @@ class CameraController {
         .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
         .build()
 
+    /** 마지막으로 바인딩한 호출을 가리킨다. 이전 호출의 해제가 새 바인딩을 풀지 않게 한다. */
+    private var bindingToken: Any? = null
+
     /** 호출한 코루틴이 취소될 때까지 카메라를 바인딩한다. 화면이 사라지면 자동으로 해제된다. */
     suspend fun bind(context: Context, lifecycleOwner: LifecycleOwner) {
+        val token = Any()
+        bindingToken = token
         val provider = ProcessCameraProvider.awaitInstance(context.applicationContext)
         provider.unbindAll()
         provider.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
         try {
             awaitCancellation()
         } finally {
-            provider.unbindAll()
+            if (bindingToken === token) {
+                provider.unbindAll()
+                _surfaceRequest.value = null
+            }
         }
     }
 
-    suspend fun capture(context: Context): CapturedImage = suspendCancellableCoroutine { cont ->
-        imageCapture.takePicture(
-            ContextCompat.getMainExecutor(context),
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    val rotation = image.imageInfo.rotationDegrees
-                    val bitmap = image.use { it.toBitmap() }
-                    cont.resume(CapturedImage(bitmap, rotation))
-                }
+    /**
+     * 촬영. 호출 시점의 화면 회전을 [ImageCapture.setTargetRotation]에 넣어 기기를 가로로 돌려 찍어도
+     * `rotationDegrees`가 올바르게 나온다(ViewModel에 보존된 유스케이스는 회전을 스스로 알지 못한다).
+     */
+    suspend fun capture(context: Context): CapturedImage {
+        imageCapture.targetRotation = ContextCompat.getDisplayOrDefault(context).rotation
+        return suspendCancellableCoroutine { cont ->
+            imageCapture.takePicture(
+                ContextCompat.getMainExecutor(context),
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(image: ImageProxy) {
+                        val rotation = image.imageInfo.rotationDegrees
+                        val bitmap = image.use { it.toBitmap() }
+                        if (cont.isActive) cont.resume(CapturedImage(bitmap, rotation)) else bitmap.recycle()
+                    }
 
-                override fun onError(exception: ImageCaptureException) {
-                    cont.resumeWithException(exception)
-                }
-            },
-        )
+                    override fun onError(exception: ImageCaptureException) {
+                        if (cont.isActive) cont.resumeWithException(exception)
+                    }
+                },
+            )
+        }
     }
 }

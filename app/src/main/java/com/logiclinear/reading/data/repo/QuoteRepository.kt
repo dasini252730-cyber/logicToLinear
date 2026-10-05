@@ -17,12 +17,8 @@ class QuoteRepository(
     /** 분석 활성 조건(10개 이상)과 설정 표시용 전체 글귀 수. */
     fun observeCount(): Flow<Int> = quoteDao.countAll()
 
-    /** 글귀를 저장하고 책의 lastQuoteAt을 글귀 시각으로 맞춘다. 새 글귀 id를 돌려준다. */
-    suspend fun add(quote: Quote): Long {
-        val id = quoteDao.insert(quote)
-        bookDao.updateLastQuoteAt(quote.bookId, quote.createdAt)
-        return id
-    }
+    /** 글귀를 저장하고 책의 lastQuoteAt을 글귀 시각으로 맞춘다(한 트랜잭션). 새 글귀 id를 돌려준다. */
+    suspend fun add(quote: Quote): Long = quoteDao.insertAndTouchBook(quote)
 
     suspend fun delete(quote: Quote) = quoteDao.delete(quote)
 

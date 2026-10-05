@@ -52,7 +52,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             startDestination = HomeRoute,
             modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
         ) {
-            composable<HomeRoute> { HomeEntry(onRecognized = { navController.navigate(SelectRoute) }) }
+            composable<HomeRoute> {
+                HomeEntry(
+                    onRecognized = { navController.navigate(SelectRoute) },
+                    onGoToLibrary = { navController.navigateTopLevel(TopLevelRoute.LIBRARY) },
+                )
+            }
             composable<SelectRoute> { SelectEntry(onDone = { navController.popBackStack<HomeRoute>(inclusive = false) }) }
             composable<LibraryRoute> {
                 LibraryEntry(

@@ -43,6 +43,8 @@ next → task-briefer(haiku) 브리핑 → status in_progress → 구현·테스
 - JDK는 Android Studio JBR(21). Git Bash에서는 `java`가 PATH에 없으므로 gradlew 전에 `export JAVA_HOME="C:\\Program Files\\Android\\Android Studio\\jbr"`를 붙인다. PowerShell은 시스템 JAVA_HOME이 이미 JBR이다.
 - Android SDK는 `local.properties`의 `sdk.dir`(gitignore 대상). platforms 34·36·37.0 설치됨.
 - 빌드 스택: AGP 9.4.1(Kotlin 내장, `kotlin-android` 플러그인 적용 금지), Gradle 9.8.0 래퍼, Kotlin 2.4.20, compileSdk·targetSdk 37, minSdk 26. 세부는 `docs/tasks/T-101.md`.
+- HTTP 클라이언트: Retrofit + OkHttp + kotlinx-serialization 컨버터(T-006 결정). 알라딘·Anthropic 호출 모두 이 조합.
+- 테스트: Robolectric(sdk=34 고정) + `MainDispatcherRule` + Room `setQueryCoroutineContext(테스트 디스패처)`. 기기 없이 `./gradlew testDebugUnitTest`로 Room·ViewModel까지 돈다.
 
 ## 자주 쓰는 명령
 

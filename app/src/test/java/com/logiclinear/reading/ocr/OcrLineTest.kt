@@ -10,13 +10,13 @@ class OcrLineTest {
         val raw = listOf(
             RawLine("셋째", 0, 300, 100, 330),
             RawLine("첫째 오른쪽", 200, 100, 300, 130),
-            RawLine("첫째 왼콽", 0, 100, 100, 130),
+            RawLine("첫째 왼쪽", 0, 100, 100, 130),
             RawLine("둘째", 0, 200, 100, 230),
         )
 
         val lines = toOcrLines(raw, imageHeight = 1000)
 
-        assertEquals(listOf("첫째 왼콽", "첫째 오른쪽", "둘째", "셋째"), lines.map { it.text })
+        assertEquals(listOf("첫째 왼쪽", "첫째 오른쪽", "둘째", "셋째"), lines.map { it.text })
     }
 
     @Test
