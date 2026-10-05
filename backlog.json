@@ -1279,7 +1279,7 @@
       "description": "알라딘 OpenAPI 종료 공지(신규 키 2026-09-04 종료, 기존 키 2026-10-30 종료)와 네이버 책 검색 종료(2026-07-31)로 카카오 책 검색 API(GET v3/search/book, Authorization: KakaoAK)로 교체한다. AladinSearch/AladinResult/AladinItem을 공급자 중립 BookSearch/BookSearchResult/BookSearchItem으로 바꾸고, 설정의 TTB 키 칸을 카카오 REST API 키로, 추천 후처리 링크를 카카오 상세 URL로 바꾼다. 카카오는 분류(장르)를 주지 않아 Book.category는 비워 둔다.",
       "doc": "docs/tasks/T-308.md",
       "phase": 3,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -1305,7 +1305,7 @@
       ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
