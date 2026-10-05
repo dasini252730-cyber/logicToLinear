@@ -1398,7 +1398,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-05 T-103~T-106 리뷰 인계: 되돌리기 스낵바 5초 동안 책이 삭제되면 QuoteDao.insert(saved)가 SQLiteConstraintException(FK)을 던진다. restore 전에 책 존재를 확인하고 없으면 스낵바를 조용히 닫을 것. 테스트에 '책 삭제 후 되돌리기' 케이스 추가."
     },
     {
       "id": "T-405",
