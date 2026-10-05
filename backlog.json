@@ -1311,6 +1311,38 @@
       "notes": ""
     },
     {
+      "id": "T-309",
+      "title": "도서 검색 공급자를 국립중앙도서관 소장자료 Open API로 교체",
+      "description": "사용자 결정(2026-10-05): 카카오 대신 국립중앙도서관 소장자료 검색 Open API(GET https://www.nl.go.kr/NL/search/openApi/search.do?key=&kwd=&srchTarget=title&apiType=json&pageNum=1&pageSize=10&category=도서)를 쓴다. 인증키는 관리자 승인(업무일 1~2일) 대기 중. 조사 결과: 오류는 HTTP 200에 {errorCode,errorMsg}로 온다(010 키 없음, 011 유효하지 않은 키, 000·101 서버 오류, 012~015 파라미터 오류). Content-Type은 text/json;charset=UTF-8이라 Retrofit 컨버터 미디어 타입을 맞춰야 한다. 응답 필드는 공식 표상 total·result[]·title_info·author_info·pub_info·pub_year_info·isbn·call_no·type_name·detail_link·kdc_code_1s·kdc_name_1s(실제 JSON 키 표기는 키 승인 후 실호출로 확인). 표지·소개글은 없고 KDC 대분류로 Book.category를 채울 수 있다. KakaoBookApi/KakaoBookClient를 NlBookApi/NlBookClient로 바꾸고 SecretKey.KAKAO_REST→NL_OPENAPI, 설정 문구·추천 링크(detail_link)를 바꾼다.",
+      "doc": "docs/tasks/T-309.md",
+      "phase": 3,
+      "status": "todo",
+      "priority": "P1",
+      "assignee": "claude",
+      "estimateMinutes": 30,
+      "dependsOn": [
+        "T-308",
+        "T-001"
+      ],
+      "specRefs": [
+        "책 검색",
+        "기술 스택 > 도서 검색"
+      ],
+      "acceptanceCriteria": [
+        "키 승인 후 실호출로 JSON 필드 이름을 확인하고 NlBookApi 데이터 클래스에 반영",
+        "NlBookClient MockWebServer 테스트: 파라미터·text/json 파싱·errorCode 010/011→InvalidKey·000/101→Network·결과 0건→Empty",
+        "카카오 코드와 문구가 앱에 남지 않는다(grep 0건)",
+        "기존 테스트 전체 통과"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-05",
+      "updatedAt": "2026-10-05",
+      "startedAt": null,
+      "completedAt": null,
+      "blockedReason": null,
+      "notes": ""
+    },
+    {
       "id": "T-401",
       "title": "완독 처리 화면",
       "description": "'다 읽었어요' 버튼 → 한 화면에서 별점(1~5 별 탭), 한 줄 소감(100자 제한), 완독일(기본 오늘, 변경 가능) 입력. 둘 다 비워도 저장 가능하지만 분석 품질 안내 한 줄을 둔다.",
