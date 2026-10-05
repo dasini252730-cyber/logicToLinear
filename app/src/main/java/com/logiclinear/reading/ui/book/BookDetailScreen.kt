@@ -7,29 +7,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,18 +37,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.logiclinear.reading.R
 import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.BookStatus
+import com.logiclinear.reading.data.db.Quote
 import com.logiclinear.reading.ui.components.BookCover
 import com.logiclinear.reading.ui.components.labelRes
 import com.logiclinear.reading.ui.theme.ReadingLogTheme
+import kotlinx.coroutines.withTimeoutOrNull
 
-/** 상세 화면 이벤트. 완독 처리는 T-401, 글귀 목록은 T-403에서 추가된다. */
+/** 상세 화면 이벤트. 글귀 삭제는 T-404에서 추가된다. */
 data class BookDetailActions(
     val onBack: () -> Unit,
     val onStartReading: () -> Unit,
     val onRestartReading: () -> Unit,
+    val onOpenFinish: () -> Unit,
     val onRequestDelete: () -> Unit,
     val onCancelDelete: () -> Unit,
     val onConfirmDelete: () -> Unit,
+    val onDismissProposal: () -> Unit,
+    val onDeleteQuote: (Quote) -> Unit,
+    val onUndoDelete: () -> Unit,
+    val onUndoExpired: () -> Unit,
+    val finish: FinishActions,
 )
 
 @Composable
@@ -68,9 +73,21 @@ fun BookDetailEntry(
             onBack = onBack,
             onStartReading = viewModel::startReading,
             onRestartReading = viewModel::restartReading,
+            onOpenFinish = viewModel::openFinish,
             onRequestDelete = viewModel::requestDelete,
             onCancelDelete = viewModel::cancelDelete,
             onConfirmDelete = viewModel::confirmDelete,
+            onDismissProposal = viewModel::dismissProposal,
+            onDeleteQuote = viewModel::deleteQuote,
+            onUndoDelete = viewModel::undoDelete,
+            onUndoExpired = viewModel::clearUndo,
+            finish = FinishActions(
+                onRating = viewModel::setRating,
+                onOneLiner = viewModel::setOneLiner,
+                onFinishedAt = viewModel::setFinishedAt,
+                onSave = viewModel::confirmFinish,
+                onDismiss = viewModel::closeFinish,
+            ),
         ),
     )
 }
@@ -78,7 +95,20 @@ fun BookDetailEntry(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(state: BookDetailUiState, actions: BookDetailActions) {
+    val snackbar = remember { SnackbarHostState() }
+    val undoLabel = stringResource(R.string.quote_undo)
+    val deletedMessage = stringResource(R.string.quote_deleted)
+    // 요구사항 "삭제": 되돌리기 스낵바 5초. 탭하면 복구, 5초가 지나면 후보를 비운다(DB에서는 이미 지워져 있다).
+    LaunchedEffect(state.undoCandidate) {
+        val quote = state.undoCandidate ?: return@LaunchedEffect
+        val result = withTimeoutOrNull(UNDO_WINDOW_MS) {
+            snackbar.showSnackbar(deletedMessage, actionLabel = undoLabel, duration = SnackbarDuration.Indefinite)
+        }
+        snackbar.currentSnackbarData?.dismiss()
+        if (result == SnackbarResult.ActionPerformed) actions.onUndoDelete() else if (state.undoCandidate == quote) actions.onUndoExpired()
+    }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
                 title = { Text(state.book?.title ?: "") },
@@ -93,17 +123,19 @@ fun BookDetailScreen(state: BookDetailUiState, actions: BookDetailActions) {
     ) { innerPadding ->
         val book = state.book
         if (book != null) {
-            BookInfo(book, actions, modifier = Modifier.padding(innerPadding))
+            BookBody(book, state, actions, modifier = Modifier.padding(innerPadding))
         } else if (state.loaded && !state.deleted) {
             Text(stringResource(R.string.book_detail_not_found), modifier = Modifier.padding(innerPadding).padding(16.dp))
         }
     }
     if (state.confirmDelete) DeleteDialog(onConfirm = actions.onConfirmDelete, onDismiss = actions.onCancelDelete)
+    if (state.finishOpen) FinishBookSheet(state.finishDraft, actions.finish)
+    if (state.proposalOpen) DiscussionProposalDialog(onDismiss = actions.onDismissProposal)
 }
 
 @Composable
-private fun BookInfo(book: Book, actions: BookDetailActions, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+private fun BookBody(book: Book, state: BookDetailUiState, actions: BookDetailActions, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Row(verticalAlignment = Alignment.Top) {
             BookCover(title = book.title, coverUrl = book.coverUrl, width = 96.dp, height = 132.dp)
             Column(modifier = Modifier.padding(start = 16.dp)) {
@@ -115,61 +147,27 @@ private fun BookInfo(book: Book, actions: BookDetailActions, modifier: Modifier 
         }
         Spacer(Modifier.height(12.dp))
         AssistChip(onClick = {}, enabled = false, label = { Text(stringResource(book.status.labelRes())) })
-        Spacer(Modifier.height(24.dp))
+        if (book.status == BookStatus.DONE) {
+            Spacer(Modifier.height(12.dp))
+            ReviewSection(book)
+        }
+        Spacer(Modifier.height(20.dp))
         StatusActions(book.status, actions)
+        Spacer(Modifier.height(24.dp))
+        QuotesSection(state.quotes, onLongPress = actions.onDeleteQuote)
     }
 }
 
-/** 상태별 전이 버튼(요구사항 "책 상태 전이"). READING의 완독 버튼은 T-401 전까지 비활성 자리만 둔다. */
-@Composable
-private fun StatusActions(status: BookStatus, actions: BookDetailActions) {
-    when (status) {
-        BookStatus.WANT -> Button(onClick = actions.onStartReading, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.book_action_start_reading))
-        }
-        BookStatus.READING -> Button(onClick = {}, enabled = false, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.book_action_finish))
-        }
-        BookStatus.DONE -> OutlinedButton(onClick = actions.onRestartReading, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.book_action_restart_reading))
-        }
-    }
-}
-
-@Composable
-private fun OverflowMenu(onDelete: () -> Unit) {
-    var open by remember { mutableStateOf(false) }
-    IconButton(onClick = { open = true }) {
-        Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.action_more))
-    }
-    DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.book_action_delete)) },
-            onClick = { open = false; onDelete() },
-        )
-    }
-}
-
-/** 요구사항 "삭제": 확인 다이얼로그 후 삭제, 글귀·토론도 함께 삭제됨을 알린다. */
-@Composable
-private fun DeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.book_delete_title)) },
-        text = { Text(stringResource(R.string.book_delete_message)) },
-        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.book_action_delete)) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
-    )
-}
+private const val UNDO_WINDOW_MS = 5_000L
 
 @Preview(showBackground = true)
 @Composable
 private fun BookDetailScreenPreview() {
-    val noop = BookDetailActions({}, {}, {}, {}, {}, {})
+    val noop = BookDetailActions({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, FinishActions({}, {}, {}, {}, {}))
     ReadingLogTheme {
         BookDetailScreen(
             state = BookDetailUiState(
-                book = Book(id = 1, title = "채식주의자", author = "한강", publisher = "창비", category = "국내도서>소설", status = BookStatus.DONE),
+                book = Book(id = 1, title = "채식주의자", author = "한강", publisher = "창비", category = "국내도서>소설", status = BookStatus.DONE, rating = 4, oneLiner = "서늘했다"),
                 loaded = true,
             ),
             actions = noop,

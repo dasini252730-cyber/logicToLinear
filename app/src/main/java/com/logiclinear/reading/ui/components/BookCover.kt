@@ -2,6 +2,7 @@ package com.logiclinear.reading.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -10,14 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.logiclinear.reading.R
 import com.logiclinear.reading.data.db.BookStatus
 
 /**
- * 책 표지 자리. 지금은 제목 첫 글자 플레이스홀더만 그린다. T-306에서 [coverUrl]이 있으면 캐시된 이미지를 넣는다.
- * 서재 목록(44×60)과 책 상세(96×132)가 같은 컴포저블을 쓴다.
+ * 책 표지. [coverUrl]이 있으면 Coil로 받아 보여 주고(디스크 캐시로 오프라인에서도 한 번 본 표지는 보인다, T-306),
+ * 없거나 로딩 중·실패면 제목 첫 글자 플레이스홀더. 서재 목록(44×60)과 책 상세(96×132)가 같은 컴포저블을 쓴다.
  */
 @Composable
 fun BookCover(
@@ -27,14 +31,29 @@ fun BookCover(
     width: Dp = 44.dp,
     height: Dp = 60.dp,
 ) {
+    val shape = RoundedCornerShape(6.dp)
+    Box(modifier = modifier.size(width = width, height = height).clip(shape)) {
+        if (coverUrl.isNullOrBlank() || LocalInspectionMode.current) {
+            LetterPlaceholder(title, height)
+        } else {
+            SubcomposeAsyncImage(
+                model = coverUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                loading = { LetterPlaceholder(title, height) },
+                error = { LetterPlaceholder(title, height) },
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun LetterPlaceholder(title: String, height: Dp) {
     Box(
-        modifier = modifier
-            .size(width = width, height = height)
-            .clip(RoundedCornerShape(6.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center,
     ) {
-        // coverUrl은 T-306에서 이미지 로딩에 쓴다. 그 전까지는 글자 플레이스홀더.
         Text(
             text = firstGlyph(title),
             style = if (height > 100.dp) MaterialTheme.typography.displaySmall else MaterialTheme.typography.titleLarge,

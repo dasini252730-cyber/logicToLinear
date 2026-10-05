@@ -41,6 +41,10 @@ interface BookDao {
     )
     fun observeLatestByQuote(status: BookStatus): Flow<Book?>
 
+    /** 알라딘 등록 중복 차단용(요구사항 "책 검색": 같은 isbn13이 있으면 막는다). */
+    @Query("SELECT * FROM book WHERE isbn13 = :isbn13 LIMIT 1")
+    suspend fun findByIsbn13(isbn13: String): Book?
+
     /** 직접 입력 중복 경고용. 제목+저자가 같은 책. author가 null이면 null끼리 비교한다. */
     @Query(
         "SELECT * FROM book WHERE title = :title " +

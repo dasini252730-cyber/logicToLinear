@@ -31,6 +31,7 @@ import com.logiclinear.reading.ui.book.BookDetailEntry
 import com.logiclinear.reading.ui.book.BookFormEntry
 import com.logiclinear.reading.ui.home.HomeEntry
 import com.logiclinear.reading.ui.library.LibraryEntry
+import com.logiclinear.reading.ui.search.BookSearchEntry
 import com.logiclinear.reading.ui.select.SelectEntry
 import com.logiclinear.reading.ui.settings.SettingsScreen
 
@@ -62,7 +63,20 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             composable<LibraryRoute> {
                 LibraryEntry(
                     onBookClick = { navController.navigate(BookDetailRoute(it)) },
-                    onAddClick = { navController.navigate(BookFormRoute()) },
+                    onAddClick = { navController.navigate(BookSearchRoute) },
+                )
+            }
+            composable<BookSearchRoute> {
+                BookSearchEntry(
+                    onBack = { navController.popBackStack() },
+                    onRegistered = { navController.popBackStack<LibraryRoute>(inclusive = false) },
+                    // 검색 실패·오프라인·직접 입력: 검색 화면을 폼으로 바꾼다(요구사항 "예외 처리": 직접 입력 폼으로 전환).
+                    onManualEntry = { query ->
+                        navController.navigate(BookFormRoute(initialTitle = query.ifBlank { null })) {
+                            popUpTo<BookSearchRoute> { inclusive = true }
+                        }
+                    },
+                    onOpenSettings = { navController.navigateTopLevel(TopLevelRoute.SETTINGS) },
                 )
             }
             composable<AnalysisRoute> { AnalysisScreen() }

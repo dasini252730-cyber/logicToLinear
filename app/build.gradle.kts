@@ -67,6 +67,12 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle) // ProcessCameraProvider.awaitInstance, bindToLifecycle
     implementation(libs.androidx.camera.compose) // CameraXViewfinder 컴포저블
     implementation(libs.mlkit.text.recognition.korean) // 온디바이스 한국어 OCR, 번들 방식(T-004 결정). 오프라인 첫 실행 가능
+    implementation(libs.androidx.security.crypto) // API 키를 EncryptedSharedPreferences에 저장(요구사항 기술 스택, T-302)
+    implementation(libs.retrofit) // 알라딘·Anthropic HTTP 호출(T-006 결정)
+    implementation(libs.retrofit.converter.kotlinx.serialization) // 응답 JSON → kotlinx.serialization DTO
+    implementation(libs.okhttp) // Retrofit 백엔드, 타임아웃·인터셉터
+    implementation(libs.coil.compose) // 알라딘 표지 이미지 로딩 + 디스크 캐시(오프라인 표시, T-306)
+    implementation(libs.coil.network.okhttp) // Coil이 OkHttp로 이미지를 받는다
 
     testImplementation(libs.junit) // 순수 로직 단위 테스트 (T-205부터)
     testImplementation(libs.kotlinx.coroutines.test) // suspend 함수·Flow 테스트
@@ -74,5 +80,6 @@ dependencies {
     testImplementation(libs.androidx.test.core.ktx) // ApplicationProvider.getApplicationContext()
     androidTestImplementation(libs.androidx.junit) // AndroidJUnit4 러너 어노테이션
     testImplementation(libs.androidx.room.testing) // Migration 테스트(MigrationTestHelper). Room 테스트는 Robolectric 한 경로로 통일
+    testImplementation(libs.okhttp.mockwebserver) // 알라딘·Anthropic 클라이언트를 가짜 서버로 테스트
     androidTestImplementation(libs.androidx.test.runner) // testInstrumentationRunner가 가리키는 AndroidJUnitRunner 본체
 }

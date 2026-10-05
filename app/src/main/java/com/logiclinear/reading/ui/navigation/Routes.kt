@@ -27,6 +27,10 @@ object SelectRoute
 @Serializable
 data class BookDetailRoute(val bookId: Long)
 
+/** 알라딘 제목 검색으로 책 등록(T-303). 서재 +에서 들어온다. */
+@Serializable
+object BookSearchRoute
+
 /**
  * 직접 입력 책 등록(T-110). 알라딘 검색(T-303)이 생기면 그 화면이 먼저 뜨고, 검색 실패·오프라인이면
  * 여기로 넘어온다(요구사항 "예외 처리": 직접 입력 폼으로 전환). [initialTitle]은 그때 검색어를 미리 채우기 위한

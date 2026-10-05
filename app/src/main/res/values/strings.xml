@@ -52,6 +52,15 @@
     <string name="status_want">읽고 싶음</string>
     <string name="status_done">다 읽음</string>
 
+    <!-- 책 검색 (흐름 2, 책 검색, 예외 처리) -->
+    <string name="search_title">책 등록</string>
+    <string name="search_query_label">책 제목으로 검색</string>
+    <string name="search_action">검색</string>
+    <string name="search_manual_entry">직접 입력</string>
+    <string name="search_duplicate">이미 서재에 있어요</string>
+    <string name="search_needs_key">알라딘 검색을 쓰려면 설정에서 TTB 키를 입력하세요</string>
+    <string name="search_open_settings">설정으로</string>
+
     <!-- 직접 입력 등록 (흐름 2) -->
     <string name="book_form_title">직접 입력</string>
     <string name="book_form_label_title">제목</string>
@@ -69,4 +78,26 @@
     <string name="book_action_delete">삭제</string>
     <string name="book_delete_title">이 책을 삭제할까요?</string>
     <string name="book_delete_message">글귀와 토론도 함께 삭제됩니다.</string>
+
+    <!-- 완독 처리 (흐름 3, 소감) -->
+    <string name="finish_title">다 읽었어요</string>
+    <string name="finish_rating_star">별점 %1$d</string>
+    <string name="finish_one_liner_label">한 줄 소감</string>
+    <string name="finish_one_liner_counter">%1$d/%2$d</string>
+    <string name="finish_date_label">완독일 %1$s</string>
+    <string name="finish_empty_hint">별점과 한 줄을 비우면 분석 품질이 떨어져요</string>
+    <string name="finish_save">저장</string>
+    <string name="proposal_title">이 책에 대해 AI와 이야기해볼까요?</string>
+    <string name="proposal_not_ready">토론 기능을 준비하고 있어요</string>
+    <string name="proposal_start">이야기 시작</string>
+    <string name="proposal_later">나중에</string>
+
+    <!-- 책 상세: 소감·글귀 -->
+    <string name="review_no_rating">별점 없음</string>
+    <string name="review_finished_at">%1$s 완독</string>
+    <string name="quotes_header">글귀 %1$d</string>
+    <string name="quotes_empty">아직 글귀가 없어요. 카메라로 밑줄 친 문장을 찍어 보세요</string>
+    <string name="quote_page">p.%1$d</string>
+    <string name="quote_deleted">글귀를 삭제했어요</string>
+    <string name="quote_undo">되돌리기</string>
 </resources>
