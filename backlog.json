@@ -2565,6 +2565,35 @@
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
+    },
+    {
+      "id": "T-807",
+      "title": "OCR 정확도 개선: 촬영 품질 모드·초점 고정·저조도 대응",
+      "description": "실기기 확인(2026-10-05)에서 사용자가 'OCR이 너무 부정확하다'고 보고. 저장된 글귀 예: '대전은 바로 밈요섭고ㅓ'(p.123). 당시 프리뷰가 매우 어두웠음(저조도). 코드 점검 결과 후보: (1) CameraController의 ImageCapture가 CAPTURE_MODE_MINIMIZE_LATENCY라 노이즈·블러가 큼 → CAPTURE_MODE_MAXIMIZE_QUALITY로 바꾼다. (2) 촬영 직전 초점·노출 고정이 없음 → 화면 중앙 FocusMeteringAction(AF+AE)을 걸고 완료를 기다린 뒤 takePicture. (3) 저조도 대응 → 플래시 자동(FLASH_MODE_AUTO) 또는 밝기 안내 문구('글자를 찾지 못했어요. 더 밝은 곳에서 다시 찍어 주세요'는 이미 있음, 인식은 됐지만 틀린 경우에는 안내가 없음). (4) 해상도: ResolutionSelector 미지정(기본 최대)이라 유지. KoreanTextRecognizerOptions는 이미 사용 중. 각 변경 뒤 같은 페이지를 같은 조건에서 5회 찍어 전후를 비교해 기록한다.",
+      "doc": "docs/tasks/T-807.md",
+      "phase": 8,
+      "status": "todo",
+      "priority": "P3",
+      "assignee": "claude",
+      "estimateMinutes": 30,
+      "dependsOn": [],
+      "specRefs": [
+        "흐름 1",
+        "예외 처리"
+      ],
+      "acceptanceCriteria": [
+        "CAPTURE_MODE_MAXIMIZE_QUALITY + 중앙 AF/AE 고정 후 촬영이 적용되고 기존 HomeViewModelTest가 통과한다",
+        "같은 페이지 5회 촬영 전/후 비교(틀린 글자 수)를 docs/tasks 문서에 기록했다",
+        "촬영→문장 선택 화면까지 체감 지연이 3초를 넘지 않는다(실기기)",
+        "사용자가 실기기에서 개선을 확인했다"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-05",
+      "updatedAt": "2026-10-05",
+      "startedAt": null,
+      "completedAt": null,
+      "blockedReason": null,
+      "notes": ""
     }
   ]
 }
