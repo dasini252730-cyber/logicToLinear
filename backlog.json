@@ -658,7 +658,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-05 2026-10-05 Claude가 adb(uiautomator 좌표 탭 + input text)로 실기기(SM-S942N, Android 16)에서 대신 수행: 직접 입력으로 Dune(읽는 중)·Sapiens(읽고 싶음)·1984(다 읽음) 등록 → 각 탭에 표시됨. Sapiens 상세에서 '읽기 시작' → 읽는 중으로 바뀜. 더보기 > 삭제 > 확인 다이얼로그('글귀와 토론도 함께 삭제됩니다') → 삭제 후 서재에서 사라짐. 발견한 문제 없음. adb는 한글 입력이 안 돼 영문 제목으로 했음. 상태 전환은 사용자(assignee human)."
     },
     {
       "id": "T-201",
