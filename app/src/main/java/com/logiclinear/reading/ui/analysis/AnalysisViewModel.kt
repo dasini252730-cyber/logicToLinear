@@ -50,6 +50,7 @@ data class AnalysisUiState(
 
 private data class LocalState(
     val running: Boolean = false,
+    val adding: Boolean = false,
     val error: AiResult.Failure? = null,
     val expandedId: Long? = null,
     val message: AnalysisMessage? = null,
@@ -96,12 +97,14 @@ class AnalysisViewModel(
 
     /** 추천 카드 "읽고 싶음에 담기". 같은 책이 이미 있으면 "이미 서재에 있어요". */
     fun addToWant(rec: Recommendation) {
+        if (local.value.adding) return // 연타로 같은 책이 두 번 들어가지 않게
+        local.update { it.copy(adding = true) }
         viewModelScope.launch {
             val message = when (bookRepository.addRecommendation(rec)) {
                 is AddResult.Added -> AnalysisMessage.ADDED
                 is AddResult.Duplicate -> AnalysisMessage.ALREADY_IN_LIBRARY
             }
-            local.update { it.copy(message = message) }
+            local.update { it.copy(adding = false, message = message) }
         }
     }
 

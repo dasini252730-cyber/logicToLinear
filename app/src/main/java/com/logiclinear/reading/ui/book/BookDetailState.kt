@@ -42,6 +42,7 @@ internal data class BookDetailLocalState(
     val proposalOpen: Boolean = false,
     val undoCandidate: Quote? = null,
     val startedDiscussionId: Long? = null,
+    val startingDiscussion: Boolean = false,
 ) {
     fun toUiState(book: Book?, quotes: List<Quote>, discussions: List<Discussion>) = BookDetailUiState(
         book = book,

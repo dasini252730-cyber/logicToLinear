@@ -41,7 +41,6 @@ import java.time.format.DateTimeFormatter
 
 /** 책 상세·완독 시트가 같은 날짜 표기를 쓴다. */
 internal val BOOK_DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-private val DATE_FORMAT: DateTimeFormatter get() = BOOK_DATE_FORMAT
 
 /** 별점·한 줄·완독일(T-403). 값이 없으면 그 줄은 비운다. 다시 읽기 뒤에도 보인다. */
 @Composable
@@ -60,7 +59,7 @@ fun ReviewSection(book: Book) {
         book.oneLiner?.let { Text(it, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(top = 4.dp)) }
         book.finishedAt?.let {
             Text(
-                text = stringResource(R.string.review_finished_at, it.format(DATE_FORMAT)),
+                text = stringResource(R.string.review_finished_at, it.format(BOOK_DATE_FORMAT)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp),
@@ -97,7 +96,7 @@ private fun QuoteItem(quote: Quote, modifier: Modifier = Modifier) {
         Text(quote.text, style = MaterialTheme.typography.bodyLarge)
         val meta = buildList {
             quote.page?.let { add(stringResource(R.string.quote_page, it)) }
-            add(quote.createdAt.atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMAT))
+            add(quote.createdAt.atZone(ZoneId.systemDefault()).toLocalDate().format(BOOK_DATE_FORMAT))
         }.joinToString(" · ")
         Text(meta, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp))
     }
@@ -147,7 +146,7 @@ fun DeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
 
 /**
  * 완독 저장 직후 "이 책에 대해 AI와 이야기해볼까요?"(요구사항 "흐름 3" 3단계, T-405).
- * 토론 기능(T-707) 전까지 시작 버튼은 비활성 자리다.
+ * "이야기 시작"은 토론 행을 만들고 토론 화면으로 간다(T-707).
  */
 @Composable
 fun DiscussionProposalDialog(onStart: () -> Unit, onDismiss: () -> Unit) {

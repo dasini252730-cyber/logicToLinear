@@ -39,8 +39,9 @@ class RecommendationEnricher(private val aladin: AladinSearch) {
 }
 
 /**
- * 검색 결과에서 추천과 맞는 항목을 고른다. 저자가 있으면 저자 이름이 포함된 첫 항목, 없으면 제목이 같은 첫 항목,
- * 그것도 없으면 첫 항목. 알라딘 저자 표기("한강 (지은이)")와 제목 표기("채식주의자 - 개정판")의 차이를 느슨하게 본다.
+ * 검색 결과에서 추천과 맞는 항목을 고른다. 저자가 있으면 저자 이름이 포함된 첫 항목, 없으면 제목이 같은 첫 항목.
+ * 둘 다 안 맞으면 null — 남의 책 isbn13·표지가 붙어 서재에 저장되는 일을 막는다(요구사항 "못 찾으면 표지 없이").
+ * 알라딘 저자 표기("한강 (지은이)")와 제목 표기("채식주의자 - 개정판")의 차이는 느슨하게 본다.
  */
 internal fun pickMatch(items: List<AladinItem>, rec: Recommendation): AladinItem? {
     if (items.isEmpty()) return null
@@ -49,6 +50,6 @@ internal fun pickMatch(items: List<AladinItem>, rec: Recommendation): AladinItem
         items.firstOrNull { normalizeText(it.author).contains(author) }?.let { return it }
     }
     val title = normalizeText(rec.title)
-    items.firstOrNull { normalizeText(it.title).startsWith(title) }?.let { return it }
-    return items.first()
+    if (title.isEmpty()) return null
+    return items.firstOrNull { normalizeText(it.title).startsWith(title) }
 }

@@ -132,9 +132,16 @@ class AnthropicClientTest {
         assertTrue(client().complete(request) is AiResult.Network)
         assertEquals(2, server.requestCount)
 
-        server.enqueue(MockResponse(code = 429))
+        val before = server.requestCount
         server.enqueue(MockResponse(code = 429))
         assertEquals(AiResult.RateLimited, client().complete(request))
+        assertEquals(before + 1, server.requestCount) // 429는 자동 재시도하지 않는다
+    }
+
+    @Test
+    fun 텍스트가_빈_200_응답은_Incomplete로_끝난다() = runTest {
+        server.enqueue(MockResponse(body = """{"id":"m","content":[],"stop_reason":"end_turn"}"""))
+        assertEquals(AiResult.Incomplete("end_turn"), client().complete(request))
     }
 
     @Test

@@ -46,6 +46,13 @@ sealed interface AiResult {
 
     /** 그 밖의 4xx(잘못된 요청 등). 재시도해도 같으므로 메시지만 보여준다. */
     data class Rejected(val code: Int, val message: String?) : Failure
+
+    /** 200인데 텍스트가 비었거나(빈 content) max_tokens로 끊겼다. 저장하지 않고 재시도 버튼. */
+    data class Incomplete(val stopReason: String?) : Failure
+
+    companion object {
+        const val STOP_MAX_TOKENS = "max_tokens"
+    }
 }
 
 /** 호출 추상화. ViewModel·Repository 테스트는 가짜 구현을 넣는다. */
@@ -55,7 +62,8 @@ interface AiChat {
 
 /**
  * Messages API 클라이언트. 키는 호출 직전 [SecretStore]에서 읽고, 모델은 [modelProvider]에서 고른다.
- * 자동 재시도는 네트워크·5xx·429에 한해 1회만(요구사항 "비용 통제"). 호출마다 [onCall]로 월별 카운터를 올린다.
+ * 자동 재시도는 네트워크·5xx에 한해 1회만(요구사항 "비용 통제"). 429는 바로 다시 보내도 또 429라 사용자 버튼에 맡긴다.
+ * 호출마다 [onCall]로 월별 카운터를 올린다.
  */
 class AnthropicClient(
     private val api: AnthropicApi,
@@ -83,7 +91,8 @@ class AnthropicClient(
 
     private suspend fun attempt(key: String, body: MessagesRequest): AiResult = try {
         val response = api.createMessage(key, body)
-        AiResult.Success(response.text(), response.usage, response.stopReason)
+        val text = response.text()
+        if (text.isBlank()) AiResult.Incomplete(response.stopReason) else AiResult.Success(text, response.usage, response.stopReason)
     } catch (e: CancellationException) {
         throw e
     } catch (e: HttpException) {
@@ -108,7 +117,7 @@ class AnthropicClient(
         }
     }
 
-    private fun AiResult.isRetryable() = this is AiResult.Network || this is AiResult.ServerError || this is AiResult.RateLimited
+    private fun AiResult.isRetryable() = this is AiResult.Network || this is AiResult.ServerError
 
     companion object {
         const val RETRY_DELAY_MS = 1_500L

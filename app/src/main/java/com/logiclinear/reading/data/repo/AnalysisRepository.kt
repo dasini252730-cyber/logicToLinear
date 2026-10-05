@@ -16,8 +16,12 @@ import com.logiclinear.reading.domain.buildAnalysisInput
 import com.logiclinear.reading.domain.encodeRecommendations
 import com.logiclinear.reading.domain.extractLastUserMessages
 import com.logiclinear.reading.domain.parseAnalysis
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.withContext
 
 /** 분석 실행 결과. 실패 종류별 문구는 ui/ai/AiErrorMessage.kt. */
 sealed interface AnalysisRunResult {
@@ -35,6 +39,8 @@ class AnalysisRepository(
     private val enricher: RecommendationEnricher,
     /** res/raw/prompt_analysis_system.txt 를 읽는다. 호출 시점에 읽어 테스트에서 바꿀 수 있다. */
     private val systemPrompt: () -> String,
+    /** 수집·파싱용. 테스트는 테스트 디스패처를 넣는다. */
+    private val workDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     fun observeAll(): Flow<List<Analysis>> = db.analysisDao().observeAllDesc()
 
@@ -44,8 +50,12 @@ class AnalysisRepository(
             AnalysisReadiness(doneBooks = done.size, quotes = quotes)
         }
 
-    /** 1회 호출. 전체 데이터를 보낸다(증분·샘플링 없음). 실패하면 아무것도 저장하지 않는다. */
-    suspend fun run(): AnalysisRunResult {
+    /**
+     * 1회 호출. 전체 데이터를 보낸다(증분·샘플링 없음). 실패하면 아무것도 저장하지 않는다.
+     * 호출이 시작되면 화면을 떠나도 끝까지 가서 저장한다(NonCancellable): 이미 과금된 호출을 버리지 않는다.
+     * 수집·파싱은 Default 디스패처에서(글귀 전체 문자열 조립).
+     */
+    suspend fun run(): AnalysisRunResult = withContext(NonCancellable + workDispatcher) {
         val allBooks = db.bookDao().getAll()
         val quotes = db.quoteDao().getAll()
         val titleById = allBooks.associate { it.id to it.title }
@@ -64,10 +74,12 @@ class AnalysisRepository(
         )
         val success = when (result) {
             is AiResult.Success -> result
-            is AiResult.Failure -> return AnalysisRunResult.Failed(result)
+            is AiResult.Failure -> return@withContext AnalysisRunResult.Failed(result)
         }
+        // max_tokens로 끊긴 JSON을 원문 폴백으로 저장하면 반쪽 JSON이 취향 글이 된다. 저장하지 않고 재시도로 돌린다.
+        if (success.stopReason == AiResult.STOP_MAX_TOKENS) return@withContext AnalysisRunResult.Failed(AiResult.Incomplete(success.stopReason))
         val parsed = parseAnalysis(success.text)
-        val recommendations = enricher.enrich(parsed.recommendations)
+        val recommendations = enricher.enrich(parsed.recommendations.take(MAX_RECOMMENDATIONS))
         val analysis = Analysis(
             runAt = nowMillis(),
             tasteText = parsed.taste,
@@ -76,7 +88,7 @@ class AnalysisRepository(
             inputQuoteCount = input.quoteCount,
         )
         val id = db.analysisDao().insert(analysis)
-        return AnalysisRunResult.Saved(analysis.copy(id = id))
+        AnalysisRunResult.Saved(analysis.copy(id = id))
     }
 
     companion object {
@@ -85,5 +97,8 @@ class AnalysisRepository(
 
         /** "최근 토론"의 범위. 각 토론에서 마지막 사용자 발언 3개를 쓴다. */
         const val RECENT_DISCUSSIONS = 5
+
+        /** 요구사항 "5권 추천". 모델이 더 돌려줘도 알라딘 병렬 조회를 이 수로 묶는다. */
+        const val MAX_RECOMMENDATIONS = 5
     }
 }

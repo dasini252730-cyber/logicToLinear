@@ -23,9 +23,11 @@ class AnalysisParseTest {
 
     @Test
     fun 앞뒤_설명문이_있어도_객체만_잘라_파싱한다() {
-        val out = parseAnalysis("다음은 분석 결과입니다.\n$valid\n도움이 되길 바랍니다. {끝}")
-        // 마지막 '}'가 설명문 안에 있어 첫 시도는 실패하지만, 펜스 제거 → 바깥 객체 추출 순서로 폴백한다.
-        assertTrue(out.taste.isNotBlank())
+        // 마지막 '}'가 설명문 안에 있으면 바깥 객체 추출도 실패해 원문 폴백으로 떨어진다(taste = 원문).
+        val raw = "다음은 분석 결과입니다.\n$valid\n도움이 되길 바랍니다. {끝}"
+        assertEquals(raw.trim(), parseAnalysis(raw).taste)
+        // 바깥 객체 추출 경로: 펜스 없이 앞뒤에 설명문만 있을 때
+        assertEquals("""{"a":1}""", outermostObject("앞 {\"a\":1} 뒤"))
         val clean = parseAnalysis("결과:\n$valid\n이상입니다.")
         assertEquals("문장에 오래 머무는 편", clean.taste)
         assertEquals("흰", clean.recommendations.single().title)

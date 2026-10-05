@@ -1,5 +1,6 @@
 package com.logiclinear.reading.ui.discussion
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
@@ -56,6 +57,8 @@ class DiscussionViewModel(
     private val discussionId: Long,
     /** 방금 만든 토론이면 첫 질문을 자동 요청한다. 다시 열 때는 false. */
     autoFirstQuestion: Boolean,
+    /** 프로세스 재시작으로 라우트가 복원돼도 자동 요청이 다시 나가지 않게 "이미 요청했음"을 기억한다. */
+    private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
     private val local = MutableStateFlow(LocalState())
 
@@ -76,7 +79,11 @@ class DiscussionViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DiscussionUiState())
 
     init {
-        if (autoFirstQuestion) requestFirstQuestion()
+        // 사용자 동작(토론 시작) 직후 한 번만. 실패해도 다시 자동으로 부르지 않고 "첫 질문 받기" 버튼에 맡긴다(요구사항 "비용 통제").
+        if (autoFirstQuestion && savedState.get<Boolean>(KEY_AUTO_ASKED) != true) {
+            savedState[KEY_AUTO_ASKED] = true
+            requestFirstQuestion()
+        }
     }
 
     fun onInputChange(value: String) = local.update { it.copy(input = value) }
@@ -108,12 +115,14 @@ class DiscussionViewModel(
     }
 
     companion object {
+        private const val KEY_AUTO_ASKED = "autoFirstQuestionAsked"
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val route = createSavedStateHandle().toRoute<DiscussionRoute>()
+                val handle = createSavedStateHandle()
+                val route = handle.toRoute<DiscussionRoute>()
                 val c = appContainer()
-                // 재생성(회전) 시에도 fresh가 다시 true지만 Repository가 "이미 질문이 있으면 요청하지 않음"으로 막는다.
-                DiscussionViewModel(c.discussionRepository, c.bookRepository, route.discussionId, autoFirstQuestion = route.fresh)
+                DiscussionViewModel(c.discussionRepository, c.bookRepository, route.discussionId, autoFirstQuestion = route.fresh, savedState = handle)
             }
         }
     }

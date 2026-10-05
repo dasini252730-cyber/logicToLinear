@@ -17,6 +17,7 @@ class AiErrorMessageTest {
             Triple(AiResult.ServerError(503), R.string.ai_error_server, AiErrorAction.RETRY),
             Triple(AiResult.Network(IOException()), R.string.ai_error_network, AiErrorAction.RETRY),
             Triple(AiResult.Rejected(400, "bad"), R.string.ai_error_rejected, AiErrorAction.NONE),
+            Triple(AiResult.Incomplete("max_tokens"), R.string.ai_error_incomplete, AiErrorAction.RETRY),
         )
         cases.forEach { (failure, res, action) ->
             assertEquals(failure.toString(), res, failure.messageRes())

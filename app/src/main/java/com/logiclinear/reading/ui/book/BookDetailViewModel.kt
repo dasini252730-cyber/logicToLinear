@@ -127,9 +127,11 @@ class BookDetailViewModel(
 
     /** "이야기 시작"·"새 토론": Discussion 행을 만들고 토론 화면으로 보낸다. 첫 질문은 토론 화면이 요청한다. */
     fun startDiscussion() {
+        if (local.value.startingDiscussion) return // 연타로 빈 토론 행이 둘 생기지 않게
+        local.update { it.copy(startingDiscussion = true) }
         viewModelScope.launch {
             val id = discussionRepository.start(bookId)
-            local.update { it.copy(proposalOpen = false, startedDiscussionId = id) }
+            local.update { it.copy(proposalOpen = false, startedDiscussionId = id, startingDiscussion = false) }
         }
     }
 

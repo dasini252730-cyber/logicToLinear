@@ -62,7 +62,10 @@ class AnalysisViewModelTest {
     @After
     fun tearDown() = db.close()
 
-    private fun vm() = AnalysisViewModel(AnalysisRepository(db, ai, RecommendationEnricher(noAladin)) { "p" }, BookRepository(db.bookDao()))
+    private fun vm() = AnalysisViewModel(
+        AnalysisRepository(db, ai, RecommendationEnricher(noAladin), { "p" }, workDispatcher = mainDispatcherRule.dispatcher),
+        BookRepository(db.bookDao()),
+    )
 
     private suspend fun seedReady(books: Int = 3, quotes: Int = 10) {
         var first = 0L

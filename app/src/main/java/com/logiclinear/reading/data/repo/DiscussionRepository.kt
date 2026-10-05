@@ -14,8 +14,12 @@ import com.logiclinear.reading.domain.decodeMessages
 import com.logiclinear.reading.domain.encodeMessages
 import com.logiclinear.reading.domain.isClosingTurn
 import com.logiclinear.reading.domain.toChatMessages
+import android.util.Log
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import java.time.Instant
 
 /** 프롬프트 텍스트 공급자. res/raw 파일을 호출 시점에 읽는다(프롬프트는 리소스 파일, rules/ai-api.md). */
@@ -35,6 +39,8 @@ class DiscussionRepository(
     private val aiChat: AiChat,
     private val prompts: DiscussionPrompts,
     private val clock: () -> Instant = ::nowMillis,
+    /** 프롬프트 파일 읽기용. 테스트는 테스트 디스패처를 넣는다. */
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     private val dao get() = db.discussionDao()
 
@@ -62,12 +68,14 @@ class DiscussionRepository(
         return callAndAppend(discussion, messages)
     }
 
-    /** 재전송: 실패 표시된 사용자 메시지들을 다시 보낸다. */
+    /** 재전송: 마지막 AI 메시지 뒤의 실패 메시지만 다시 보낸다(그 앞의 failed는 데이터 오류라 건드리지 않는다). 끝난 토론은 무시. */
     suspend fun resend(discussionId: Long): TurnResult {
         val discussion = dao.getById(discussionId) ?: return TurnResult.Ok
+        if (discussion.endedAt != null) return TurnResult.Ok
         val messages = decodeMessages(discussion.messagesJson)
-        if (messages.none { it.failed }) return TurnResult.Ok
-        val retried = messages.map { if (it.failed) it.copy(failed = false) else it }
+        val lastAi = messages.indexOfLast { !it.isUser }
+        if (messages.withIndex().none { (i, m) -> i > lastAi && m.failed }) return TurnResult.Ok
+        val retried = messages.mapIndexed { i, m -> if (i > lastAi && m.failed) m.copy(failed = false) else m }
         save(discussion, retried)
         return callAndAppend(discussion, retried)
     }
@@ -80,13 +88,19 @@ class DiscussionRepository(
         val book = db.bookDao().getById(discussion.bookId) ?: return TurnResult.Ok
         val quotes = db.quoteDao().observeByBook(book.id).first()
         val closing = isClosingTurn(messages)
+        // 프롬프트 raw 파일 읽기는 블로킹 I/O라 메인 스레드 밖에서.
+        val (role, start, close) = withContext(ioDispatcher) { Triple(prompts.role(), prompts.start(), prompts.close()) }
         val request = AiRequest(
-            system = buildDiscussionSystem(prompts.role(), book, quotes),
-            messages = toChatMessages(messages, prompts.start(), if (closing) prompts.close() else null),
+            system = buildDiscussionSystem(role, book, quotes),
+            messages = toChatMessages(messages, start, if (closing) close else null),
             maxTokens = DISCUSSION_MAX_TOKENS,
         )
         return when (val result = aiChat.complete(request)) {
             is AiResult.Success -> {
+                // 캐시 적중 확인용(T-003: Haiku는 접두부 4,096 토큰 미만이면 캐시되지 않는다). 토큰 수만 남기고 본문·키는 쓰지 않는다.
+                result.usage?.let { u ->
+                    Log.d(TAG, "usage in=${u.inputTokens} out=${u.outputTokens} cacheCreate=${u.cacheCreationInputTokens} cacheRead=${u.cacheReadInputTokens}")
+                }
                 val reply = DiscussionMessage(ChatMessage.ASSISTANT, result.text.trim(), clock().toEpochMilli())
                 save(discussion.copy(endedAt = if (closing) clock() else discussion.endedAt), messages + reply)
                 TurnResult.Ok
@@ -106,5 +120,9 @@ class DiscussionRepository(
 
     private suspend fun save(discussion: Discussion, messages: List<DiscussionMessage>) {
         dao.upsert(discussion.copy(messagesJson = encodeMessages(messages)))
+    }
+
+    private companion object {
+        const val TAG = "Discussion"
     }
 }

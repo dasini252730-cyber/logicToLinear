@@ -58,7 +58,7 @@ class RecommendationEnricherTest {
         val items = listOf(item("다른 책", "김훈", "1"), item("흰", "한강 (지은이)", "2"), item("흰 - 특별판", "한강", "3"))
         assertEquals("2", pickMatch(items, Recommendation("흰", "한강"))?.isbn13)
         assertEquals("2", pickMatch(items, Recommendation("흰", "모르는 저자"))?.isbn13) // 저자 불일치 → 제목으로
-        assertEquals("1", pickMatch(items, Recommendation("전혀 다른 제목", null))?.isbn13) // 폴백: 첫 항목
+        assertNull(pickMatch(items, Recommendation("전혀 다른 제목", null))) // 저자도 제목도 안 맞으면 붙이지 않는다
         assertNull(pickMatch(emptyList(), Recommendation("흰", null)))
     }
 

@@ -59,7 +59,7 @@ class AnalysisRepositoryTest {
     @After
     fun tearDown() = db.close()
 
-    private fun repo(ai: AiChat) = AnalysisRepository(db, ai, RecommendationEnricher(aladin)) { "시스템 프롬프트" }
+    private fun repo(ai: AiChat) = AnalysisRepository(db, ai, RecommendationEnricher(aladin), systemPrompt = { "시스템 프롬프트" })
 
     private suspend fun seed() {
         val done = db.bookDao().insert(Book(title = "채식주의자", author = "한강", status = BookStatus.DONE, rating = 5))
@@ -115,6 +115,18 @@ class AnalysisRepositoryTest {
         val result = repo(FakeAi(AiResult.InvalidKey)).run()
         assertEquals(AnalysisRunResult.Failed(AiResult.InvalidKey), result)
         assertTrue(db.analysisDao().observeAllDesc().first().isEmpty())
+    }
+
+    @Test
+    fun max_tokens로_끊긴_응답은_저장하지_않고_Incomplete로_돌려주며_추천은_5건까지만_후처리한다() = runTest {
+        seed()
+        val cut = repo(FakeAi(AiResult.Success("""{"taste":"끊긴 글", "recommendations":[{"title":"흰"""", null, AiResult.STOP_MAX_TOKENS))).run()
+        assertEquals(AnalysisRunResult.Failed(AiResult.Incomplete(AiResult.STOP_MAX_TOKENS)), cut)
+        assertTrue(db.analysisDao().observeAllDesc().first().isEmpty())
+
+        val many = (1..8).joinToString(",") { """{"title":"책 $it","author":"a","reason":"r"}""" }
+        val saved = repo(FakeAi(AiResult.Success("""{"taste":"t","recommendations":[$many]}""", null, "end_turn"))).run() as AnalysisRunResult.Saved
+        assertEquals(5, decodeRecommendations(saved.analysis.recommendationsJson).size)
     }
 
     @Test

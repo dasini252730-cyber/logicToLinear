@@ -1,6 +1,7 @@
 package com.logiclinear.reading.ui.discussion
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.logiclinear.reading.MainDispatcherRule
@@ -54,7 +55,7 @@ class DiscussionViewModelTest {
             .allowMainThreadQueries()
             .setQueryCoroutineContext(mainDispatcherRule.dispatcher)
             .build()
-        repo = DiscussionRepository(db, ai, DiscussionPrompts({ "역할" }, { "시작" }, { "마무리" }))
+        repo = DiscussionRepository(db, ai, DiscussionPrompts({ "역할" }, { "시작" }, { "마무리" }), ioDispatcher = mainDispatcherRule.dispatcher)
         bookId = db.bookDao().insert(Book(title = "채식주의자", status = BookStatus.DONE))
         discussionId = repo.start(bookId)
     }
@@ -62,7 +63,8 @@ class DiscussionViewModelTest {
     @After
     fun tearDown() = db.close()
 
-    private fun vm(fresh: Boolean) = DiscussionViewModel(repo, BookRepository(db.bookDao()), discussionId, autoFirstQuestion = fresh)
+    private fun vm(fresh: Boolean, handle: SavedStateHandle = SavedStateHandle()) =
+        DiscussionViewModel(repo, BookRepository(db.bookDao()), discussionId, autoFirstQuestion = fresh, savedState = handle)
 
     @Test
     fun 새_토론은_첫_질문을_자동_요청하고_다시_열면_요청하지_않는다() = runTest(mainDispatcherRule.dispatcher) {
@@ -88,20 +90,31 @@ class DiscussionViewModelTest {
     @Test
     fun 첫_질문_실패면_오류와_첫_질문_받기_상태가_되고_버튼으로_다시_요청한다() = runTest(mainDispatcherRule.dispatcher) {
         answer = AiResult.Network(IOException())
-        val vm = vm(fresh = true)
+        val handle = SavedStateHandle()
+        val vm = vm(fresh = true, handle = handle)
         val collector = launch { vm.uiState.collect {} }
         advanceUntilIdle()
 
+        assertEquals(1, calls)
         assertNotNull(vm.uiState.value.error)
         assertTrue(vm.uiState.value.needsFirstQuestion)
         assertFalse(vm.uiState.value.canSend)
 
-        answer = AiResult.Success("드디어 질문", null, null)
-        vm.requestFirstQuestion()
-        advanceUntilIdle()
-        assertNull(vm.uiState.value.error)
-        assertFalse(vm.uiState.value.needsFirstQuestion)
+        // 프로세스 재시작으로 같은 라우트(fresh=true)가 복원돼도 자동 요청은 다시 나가지 않는다
         collector.cancel()
+        val restored = vm(fresh = true, handle = handle)
+        val c2 = launch { restored.uiState.collect {} }
+        advanceUntilIdle()
+        assertEquals(1, calls)
+        assertTrue(restored.uiState.value.needsFirstQuestion)
+
+        answer = AiResult.Success("드디어 질문", null, null)
+        restored.requestFirstQuestion()
+        advanceUntilIdle()
+        assertEquals(2, calls)
+        assertNull(restored.uiState.value.error)
+        assertFalse(restored.uiState.value.needsFirstQuestion)
+        c2.cancel()
     }
 
     @Test

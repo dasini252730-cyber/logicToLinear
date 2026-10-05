@@ -73,7 +73,7 @@ class AppContainer(context: Context) {
             db = database,
             aiChat = aiChat,
             enricher = RecommendationEnricher(aladinClient),
-            systemPrompt = { rawText(R.raw.prompt_analysis_system) },
+            systemPrompt = { analysisSystem },
         )
     }
 
@@ -82,13 +82,15 @@ class AppContainer(context: Context) {
         DiscussionRepository(
             db = database,
             aiChat = aiChat,
-            prompts = DiscussionPrompts(
-                role = { rawText(R.raw.prompt_discussion_role) },
-                start = { rawText(R.raw.prompt_discussion_start) },
-                close = { rawText(R.raw.prompt_discussion_close) },
-            ),
+            prompts = DiscussionPrompts(role = { discussionRole }, start = { discussionStart }, close = { discussionClose }),
         )
     }
+
+    // 프롬프트는 바뀌지 않으므로 한 번만 읽는다(Repository가 IO 디스패처에서 처음 읽는다).
+    private val discussionRole by lazy { rawText(R.raw.prompt_discussion_role) }
+    private val discussionStart by lazy { rawText(R.raw.prompt_discussion_start) }
+    private val discussionClose by lazy { rawText(R.raw.prompt_discussion_close) }
+    private val analysisSystem by lazy { rawText(R.raw.prompt_analysis_system) }
 
     private fun rawText(id: Int): String = appContext.resources.openRawResource(id).bufferedReader().use { it.readText() }.trim()
 

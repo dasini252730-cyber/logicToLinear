@@ -18,11 +18,12 @@ fun AiResult.Failure.messageRes(): Int = when (this) {
     is AiResult.ServerError -> R.string.ai_error_server
     is AiResult.Network -> R.string.ai_error_network
     is AiResult.Rejected -> R.string.ai_error_rejected
+    is AiResult.Incomplete -> R.string.ai_error_incomplete
 }
 
 fun AiResult.Failure.action(): AiErrorAction = when (this) {
     AiResult.NoKey, AiResult.InvalidKey -> AiErrorAction.OPEN_SETTINGS
-    AiResult.RateLimited, is AiResult.ServerError, is AiResult.Network -> AiErrorAction.RETRY
+    AiResult.RateLimited, is AiResult.ServerError, is AiResult.Network, is AiResult.Incomplete -> AiErrorAction.RETRY
     is AiResult.Rejected -> AiErrorAction.NONE
 }
 
