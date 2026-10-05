@@ -256,7 +256,7 @@
       "description": "Kotlin + Jetpack Compose 단일 모듈 프로젝트를 만든다. minSdk 26, 패키지 구조 초안, Gradle 버전 카탈로그 설정. assembleDebug가 통과해야 한다.",
       "doc": "docs/tasks/T-101.md",
       "phase": 1,
-      "status": "in_progress",
+      "status": "review",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
