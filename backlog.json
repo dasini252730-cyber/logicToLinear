@@ -2,7 +2,7 @@
   "project": "독서 기록 앱 (Android)",
   "version": 1,
   "createdAt": "2026-10-05",
-  "updatedAt": "2026-10-05",
+  "updatedAt": "2026-10-06",
   "spec": "docs/요구사항.md",
   "guide": "CLAUDE.md",
   "taskDocDir": "docs/tasks",
@@ -2555,11 +2555,12 @@
       "acceptanceCriteria": [
         "콜드 스타트 중앙값이 2초 이하로 유지된다",
         "책 상세 글귀 영역의 '글귀 찍기'를 누르면 그 책 전용 카메라(책 바꾸기 없음, 뒤로 가면 책 상세)가 뜨고, 저장 뒤 같은 카메라로 돌아오며 뒤로 가면 상세에 새 글귀가 보인다",
-        "앱을 열면 서재가 첫 화면이고 하단 탭은 서재·분석·추천·설정 3개이며 홈 카메라와 카메라 탭이 없다(요구사항·product-principles·CLAUDE.md의 원칙 1도 같이 고침)"
+        "앱을 열면 서재가 첫 화면이고 하단 탭은 서재·분석·추천·설정 3개이며 홈 카메라와 카메라 탭이 없다(요구사항·product-principles·CLAUDE.md의 원칙 1도 같이 고침)",
+        "책 상세에서 '글귀 찍기'를 누른 뒤 카메라 프리뷰가 뜨기까지 2초 이하(실기기 3회 측정, 새 원칙 1의 기준)"
       ],
       "tags": [],
       "createdAt": "2026-10-05",
-      "updatedAt": "2026-10-05",
+      "updatedAt": "2026-10-06",
       "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
