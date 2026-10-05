@@ -25,6 +25,7 @@
 | Stop | verify-build.mjs | 소스가 바뀌었으면 lint·build·테스트. 실패하면 작업 종료를 막고 되돌림 |
 
 - 빌드 검증은 `gradlew.bat lintDebug assembleDebug testDebugUnitTest`다. `gradlew`가 없으면(프로젝트 생성 전) 건너뛴다. 마지막 성공 시점의 소스 해시를 `.claude/state/`에 기억해 변경이 없으면 다시 돌리지 않는다.
+- `status <id> done`은 id를 리터럴로 쓴다(`for t in …; do status $t done`처럼 셸 변수를 쓰면 hook이 명령 문자열에서 id를 읽어 커밋 메시지가 "$T 완료"가 된다. 2026-10-05에 한 번 발생, 되돌리지 않음).
 - backlog CLI를 호출하는 Bash 명령 뒤에 실패할 수 있는 명령을 `&&`로 붙이지 않는다. Bash 호출이 실패로 끝나면 PostToolUse hook(백로그 커밋)이 실행되지 않는다. CLI 호출은 단독 명령으로 보낸다.
 - hook이 거부하거나 block하면 그 메시지를 따른다. hook을 우회하거나 `.claude/settings.json`을 바꾸는 것은 사용자 요청이 있을 때만.
 - hook 스크립트를 고친 뒤에는 `echo '{...}' | node scripts/hooks/<name>.mjs`로 파이프 테스트를 한다. 입력 예시는 각 스크립트 상단 주석 참고.

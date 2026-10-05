@@ -22,7 +22,8 @@
 
 ## 현재 상태
 
-- Android 프로젝트 골격이 있다(T-101). 빈 자리 표시 화면 하나, 패키지 디렉터리 초안(`.gitkeep`), Compose 외 기능 의존성은 아직 없다. `node scripts/backlog.mjs next`로 현재 위치를 확인한다.
+- 1~7단계 기능이 모두 구현되어 있다(2026-10-05 기준): Room 4테이블, 서재·직접 입력·알라딘 검색, 카메라·OCR·문장 선택, 완독 처리·글귀 삭제, 설정(키·모델·호출 카운터)·백업, Anthropic 분석·추천 화면, 완독 후 토론. 실기기 확인(T-113·T-212·T-307·T-406·T-508·T-610·T-708)과 8단계 점검이 남아 있다. `node scripts/backlog.mjs next`와 `node scripts/backlog-dashboard.mjs`(보드)로 현재 위치를 확인한다.
+- 단위 테스트 179개(Robolectric 포함)가 `gradlew.bat testDebugUnitTest`로 돈다. lint 0.
 - `needs_human` 4개(TTB 키, Anthropic 키, 실기기 준비, HTTP 클라이언트 선택)는 사용자가 처리한다. 이 중 실기기 준비(T-005) 전에는 "실기기에서 뜬다" 류의 완료 조건을 확인할 수 없다.
 - 작업 브랜치는 `dev`. `main`이면 전환을 요청한다.
 
