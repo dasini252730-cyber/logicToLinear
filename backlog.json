@@ -2434,6 +2434,39 @@
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
+    },
+    {
+      "id": "T-805",
+      "title": "isbn13 유니크 인덱스와 Migration(v2)",
+      "description": "Book.isbn13 인덱스를 유니크로 바꿔 검색 등록·백업 가져오기·추천 담기 등 모든 삽입 경로에서 같은 isbn13 중복을 DB가 막게 한다. Room version 2 Migration과 백업 schemaVersion을 같은 커밋에서 올린다. 기존 중복 행 정리 전략(합치기)을 먼저 정한다.",
+      "doc": "docs/tasks/T-805.md",
+      "phase": 8,
+      "status": "todo",
+      "priority": "P3",
+      "assignee": "claude",
+      "estimateMinutes": 30,
+      "dependsOn": [
+        "T-801"
+      ],
+      "specRefs": [
+        "데이터 모델 > Book",
+        "백업"
+      ],
+      "acceptanceCriteria": [
+        "Migration 1→2 테스트 통과(MigrationTestHelper)",
+        "같은 isbn13 두 번 insert 시 두 번째가 거부되고 호출자가 Duplicate로 처리한다",
+        "백업 schemaVersion이 2로 올라가고 v1 백업이 migrateBackup으로 읽힌다"
+      ],
+      "tags": [
+        "db",
+        "migration"
+      ],
+      "createdAt": "2026-10-05",
+      "updatedAt": "2026-10-05",
+      "startedAt": null,
+      "completedAt": null,
+      "blockedReason": null,
+      "notes": ""
     }
   ]
 }
