@@ -13,11 +13,14 @@ import com.logiclinear.reading.data.repo.QuoteRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -127,7 +130,8 @@ class BookDetailViewModelTest {
         val target = vm.uiState.value.quotes.single()
 
         vm.deleteQuote(target)
-        advanceUntilIdle()
+        advanceTimeBy(1_000) // 5초 창 안
+        runCurrent()
         assertTrue(vm.uiState.value.quotes.isEmpty())
         assertEquals(target, vm.uiState.value.undoCandidate)
 
@@ -147,10 +151,12 @@ class BookDetailViewModelTest {
         advanceUntilIdle()
 
         vm.deleteQuote(vm.uiState.value.quotes.single())
-        advanceUntilIdle()
-        vm.clearUndo()
-        advanceUntilIdle()
+        advanceTimeBy(BookDetailViewModel.UNDO_WINDOW_MS - 1)
+        runCurrent()
+        assertNotNull(vm.uiState.value.undoCandidate)
 
+        advanceTimeBy(2) // 5초 경과: ViewModel이 후보를 비운다
+        runCurrent()
         assertNull(vm.uiState.value.undoCandidate)
         assertEquals(0, db.quoteDao().countAll().first())
         collector.cancel()

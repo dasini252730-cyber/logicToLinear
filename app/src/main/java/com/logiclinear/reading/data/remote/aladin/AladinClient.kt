@@ -2,6 +2,8 @@ package com.logiclinear.reading.data.remote.aladin
 
 import com.logiclinear.reading.data.secret.SecretKey
 import com.logiclinear.reading.data.secret.SecretStore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -42,7 +44,8 @@ class AladinClient(
     private val secretStore: SecretStore,
 ) : AladinSearch {
     override suspend fun searchByTitle(title: String): AladinResult {
-        val key = secretStore.get(SecretKey.ALADIN_TTB) ?: return AladinResult.NoKey
+        // EncryptedSharedPreferences 첫 접근은 Keystore 초기화가 있어 메인 스레드에서 읽지 않는다.
+        val key = withContext(Dispatchers.IO) { secretStore.get(SecretKey.ALADIN_TTB) } ?: return AladinResult.NoKey
         val query = title.trim()
         if (query.isEmpty()) return AladinResult.Empty
         return try {

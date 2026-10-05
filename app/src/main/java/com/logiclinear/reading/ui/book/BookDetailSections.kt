@@ -29,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.logiclinear.reading.R
 import com.logiclinear.reading.data.db.Book
@@ -37,13 +39,17 @@ import com.logiclinear.reading.data.db.Quote
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+/** 책 상세·완독 시트가 같은 날짜 표기를 쓴다. */
+internal val BOOK_DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+private val DATE_FORMAT: DateTimeFormatter get() = BOOK_DATE_FORMAT
 
-/** DONE 책의 별점·한 줄·완독일(T-403). 값이 없으면 그 줄은 비운다. */
+/** 별점·한 줄·완독일(T-403). 값이 없으면 그 줄은 비운다. 다시 읽기 뒤에도 보인다. */
 @Composable
 fun ReviewSection(book: Book) {
     Column {
-        Row {
+        val ratingLabel = book.rating?.let { stringResource(R.string.finish_rating_star, it) }
+        // 별 아이콘 n개 대신 "별점 n" 하나로 읽힌다.
+        Row(modifier = if (ratingLabel != null) Modifier.semantics(mergeDescendants = true) { contentDescription = ratingLabel } else Modifier) {
             repeat(book.rating ?: 0) {
                 Icon(Icons.Filled.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             }
@@ -73,11 +79,13 @@ fun QuotesSection(quotes: List<Quote>, onLongPress: (Quote) -> Unit) {
         if (quotes.isEmpty()) {
             Text(stringResource(R.string.quotes_empty), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        val deleteLabel = stringResource(R.string.book_action_delete)
         quotes.forEachIndexed { index, quote ->
             if (index > 0) HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             QuoteItem(
                 quote = quote,
-                modifier = Modifier.combinedClickable(onClick = {}, onLongClick = { onLongPress(quote) }),
+                // 스크린리더가 "삭제" 동작을 찾을 수 있게 라벨을 둔다. 탭 자체는 아무 일도 하지 않는다.
+                modifier = Modifier.combinedClickable(onClick = {}, onLongClickLabel = deleteLabel, onLongClick = { onLongPress(quote) }),
             )
         }
     }

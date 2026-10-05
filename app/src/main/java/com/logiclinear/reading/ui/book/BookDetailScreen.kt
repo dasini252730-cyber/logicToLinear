@@ -41,7 +41,6 @@ import com.logiclinear.reading.data.db.Quote
 import com.logiclinear.reading.ui.components.BookCover
 import com.logiclinear.reading.ui.components.labelRes
 import com.logiclinear.reading.ui.theme.ReadingLogTheme
-import kotlinx.coroutines.withTimeoutOrNull
 
 /** 상세 화면 이벤트. 글귀 삭제는 T-404에서 추가된다. */
 data class BookDetailActions(
@@ -55,7 +54,8 @@ data class BookDetailActions(
     val onDismissProposal: () -> Unit,
     val onDeleteQuote: (Quote) -> Unit,
     val onUndoDelete: () -> Unit,
-    val onUndoExpired: () -> Unit,
+    /** 스낵바를 밀어서 치웠을 때. 5초 만료는 ViewModel이 센다. */
+    val onUndoDismissed: () -> Unit,
     val finish: FinishActions,
 )
 
@@ -80,7 +80,7 @@ fun BookDetailEntry(
             onDismissProposal = viewModel::dismissProposal,
             onDeleteQuote = viewModel::deleteQuote,
             onUndoDelete = viewModel::undoDelete,
-            onUndoExpired = viewModel::clearUndo,
+            onUndoDismissed = viewModel::clearUndo,
             finish = FinishActions(
                 onRating = viewModel::setRating,
                 onOneLiner = viewModel::setOneLiner,
@@ -98,14 +98,14 @@ fun BookDetailScreen(state: BookDetailUiState, actions: BookDetailActions) {
     val snackbar = remember { SnackbarHostState() }
     val undoLabel = stringResource(R.string.quote_undo)
     val deletedMessage = stringResource(R.string.quote_deleted)
-    // 요구사항 "삭제": 되돌리기 스낵바 5초. 탭하면 복구, 5초가 지나면 후보를 비운다(DB에서는 이미 지워져 있다).
+    // 요구사항 "삭제": 되돌리기 스낵바 5초. 후보가 있는 동안만 떠 있고, 5초 만료는 ViewModel이 후보를 비워서 알린다.
     LaunchedEffect(state.undoCandidate) {
-        val quote = state.undoCandidate ?: return@LaunchedEffect
-        val result = withTimeoutOrNull(UNDO_WINDOW_MS) {
-            snackbar.showSnackbar(deletedMessage, actionLabel = undoLabel, duration = SnackbarDuration.Indefinite)
+        if (state.undoCandidate == null) {
+            snackbar.currentSnackbarData?.dismiss()
+            return@LaunchedEffect
         }
-        snackbar.currentSnackbarData?.dismiss()
-        if (result == SnackbarResult.ActionPerformed) actions.onUndoDelete() else if (state.undoCandidate == quote) actions.onUndoExpired()
+        val result = snackbar.showSnackbar(deletedMessage, actionLabel = undoLabel, duration = SnackbarDuration.Indefinite)
+        if (result == SnackbarResult.ActionPerformed) actions.onUndoDelete() else actions.onUndoDismissed()
     }
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
@@ -147,7 +147,8 @@ private fun BookBody(book: Book, state: BookDetailUiState, actions: BookDetailAc
         }
         Spacer(Modifier.height(12.dp))
         AssistChip(onClick = {}, enabled = false, label = { Text(stringResource(book.status.labelRes())) })
-        if (book.status == BookStatus.DONE) {
+        // 다시 읽기(DONE→READING) 뒤에도 이전 별점·한 줄·완독일을 그대로 보여준다(T-402 완료 조건).
+        if (book.hasReview()) {
             Spacer(Modifier.height(12.dp))
             ReviewSection(book)
         }
@@ -158,7 +159,7 @@ private fun BookBody(book: Book, state: BookDetailUiState, actions: BookDetailAc
     }
 }
 
-private const val UNDO_WINDOW_MS = 5_000L
+private fun Book.hasReview() = rating != null || oneLiner != null || finishedAt != null
 
 @Preview(showBackground = true)
 @Composable

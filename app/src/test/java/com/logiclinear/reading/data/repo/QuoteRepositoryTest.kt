@@ -47,6 +47,23 @@ class QuoteRepositoryTest {
     }
 
     @Test
+    fun 최근_글귀를_지우면_lastQuoteAt이_이전_글귀_시각으로_돌아가고_모두_지우면_null() = runTest {
+        val bookId = db.bookDao().insert(Book(title = "책"))
+        repo.add(Quote(bookId = bookId, text = "먼저", createdAt = Instant.ofEpochMilli(1_000)))
+        repo.add(Quote(bookId = bookId, text = "나중", createdAt = Instant.ofEpochMilli(2_000)))
+        val latest = repo.observeByBook(bookId).first().first()
+
+        repo.delete(latest)
+        assertEquals(Instant.ofEpochMilli(1_000), db.bookDao().getById(bookId)!!.lastQuoteAt)
+
+        assertTrue(repo.restore(latest))
+        assertEquals(Instant.ofEpochMilli(2_000), db.bookDao().getById(bookId)!!.lastQuoteAt)
+
+        repo.observeByBook(bookId).first().forEach { repo.delete(it) }
+        assertNull(db.bookDao().getById(bookId)!!.lastQuoteAt)
+    }
+
+    @Test
     fun 되돌리기는_같은_id로_복구한다() = runTest {
         val bookId = db.bookDao().insert(Book(title = "책"))
         repo.add(Quote(bookId = bookId, text = "문장"))

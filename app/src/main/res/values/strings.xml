@@ -31,9 +31,32 @@
     <string name="quote_saved_with_page">저장됨 (p.%1$d)</string>
     <string name="quote_saved">저장됨</string>
 
-    <!-- 자리 표시 화면 (T-606·T-501에서 교체). 개발 일정 용어를 쓰지 않는다. -->
+    <!-- 자리 표시 화면 (T-606에서 교체). 개발 일정 용어를 쓰지 않는다. -->
     <string name="analysis_placeholder">분석·추천을 준비하고 있어요</string>
-    <string name="settings_placeholder">설정을 준비하고 있어요</string>
+
+    <!-- 설정 (API 키 입력, 모델 선택, 비용 통제, 백업) -->
+    <string name="settings_section_keys">API 키</string>
+    <string name="settings_ttb_label">알라딘 TTB 키</string>
+    <string name="settings_anthropic_label">Anthropic API 키</string>
+    <string name="settings_save">저장</string>
+    <string name="settings_key_saved">저장됨</string>
+    <string name="settings_key_not_set">미입력</string>
+    <string name="settings_section_ai">AI</string>
+    <string name="settings_model_haiku">Haiku (기본)</string>
+    <string name="settings_model_sonnet">Sonnet</string>
+    <string name="settings_calls_this_month">이번 달 호출 횟수: %1$d</string>
+    <string name="settings_section_backup">백업</string>
+    <string name="settings_export">내보내기</string>
+    <string name="settings_import">가져오기</string>
+    <string name="settings_export_done">내보내기 완료</string>
+    <string name="settings_export_failed">내보내기에 실패했어요</string>
+    <string name="settings_import_question">기존 데이터를 지우고 덮어쓸까요, 합칠까요?</string>
+    <string name="settings_import_overwrite">덮어쓰기</string>
+    <string name="settings_import_merge">합치기</string>
+    <string name="settings_import_done">가져오기 완료: 책 %1$d, 글귀 %2$d</string>
+    <string name="settings_import_failed">가져오기에 실패했어요</string>
+    <string name="settings_import_too_new">이 백업은 더 새로운 앱에서 만들었어요. 앱을 업데이트해 주세요</string>
+    <string name="settings_import_corrupt">백업 파일을 읽을 수 없어요</string>
 
     <!-- 서재 -->
     <string name="library_empty_reading">읽는 중인 책이 없어요. + 버튼으로 등록하세요</string>

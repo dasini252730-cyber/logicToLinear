@@ -106,7 +106,7 @@ private fun RatingStars(rating: Int?, onRating: (Int) -> Unit) {
 private fun FinishedAtField(value: LocalDate, onChange: (LocalDate) -> Unit) {
     var open by remember { mutableStateOf(false) }
     OutlinedButton(onClick = { open = true }) {
-        Text(stringResource(R.string.finish_date_label, value.toString()))
+        Text(stringResource(R.string.finish_date_label, value.format(BOOK_DATE_FORMAT)))
     }
     if (open) {
         val pickerState = rememberDatePickerState(initialSelectedDateMillis = value.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())

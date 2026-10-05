@@ -5,10 +5,12 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 
 /**
  * EncryptedSharedPreferences 기반 저장소(요구사항 "기술 스택"). 키는 Android Keystore의 마스터 키로 암호화된다.
@@ -45,7 +47,7 @@ class EncryptedSecretStore(context: Context) : SecretStore {
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
         awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
-    }.distinctUntilChanged()
+    }.distinctUntilChanged().flowOn(Dispatchers.IO) // 첫 접근의 Keystore 초기화·복호화를 메인 스레드에서 떼어낸다
 
     private companion object {
         const val FILE_NAME = "secrets"

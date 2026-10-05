@@ -3,7 +3,12 @@ package com.logiclinear.reading
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.logiclinear.reading.data.backup.BackupIo
+import com.logiclinear.reading.data.backup.BackupRepository
+import com.logiclinear.reading.data.backup.ContentResolverBackupIo
 import com.logiclinear.reading.data.db.AppDatabase
+import com.logiclinear.reading.data.prefs.AppPreferences
+import com.logiclinear.reading.data.prefs.SharedPrefsAppPreferences
 import com.logiclinear.reading.data.remote.aladin.AladinClient
 import com.logiclinear.reading.data.remote.aladin.AladinSearch
 import com.logiclinear.reading.data.repo.BookRepository
@@ -35,6 +40,14 @@ class AppContainer(context: Context) {
 
     /** API 키. 설정 화면에서만 쓰고, 네트워크 클라이언트가 호출 직전에 읽는다. */
     val secretStore: SecretStore by lazy { EncryptedSecretStore(appContext) }
+
+    /** 비밀이 아닌 설정(모델 선택)과 월별 AI 호출 횟수. */
+    val appPreferences: AppPreferences by lazy { SharedPrefsAppPreferences(appContext) }
+
+    /** 백업 JSON 내보내기·가져오기. 파일 입출력은 backupIo가 SAF Uri로 한다. */
+    val backupRepository: BackupRepository by lazy { BackupRepository(database) }
+
+    val backupIo: BackupIo by lazy { ContentResolverBackupIo(appContext) }
 
     /** 알라딘 책 검색. 키는 호출마다 secretStore에서 읽는다. ViewModel은 이것을 직접 쓰지 않고 BookRepository를 거친다. */
     private val aladinClient: AladinSearch by lazy { AladinClient.create(secretStore) }

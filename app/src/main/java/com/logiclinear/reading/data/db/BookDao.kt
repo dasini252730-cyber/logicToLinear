@@ -41,6 +41,14 @@ interface BookDao {
     )
     fun observeLatestByQuote(status: BookStatus): Flow<Book?>
 
+    /** 백업 내보내기(T-502). */
+    @Query("SELECT * FROM book ORDER BY id")
+    suspend fun getAll(): List<Book>
+
+    /** 백업 덮어쓰기(T-505). Quote·Discussion은 CASCADE로 함께 지워진다. */
+    @Query("DELETE FROM book")
+    suspend fun deleteAll()
+
     /** 알라딘 등록 중복 차단용(요구사항 "책 검색": 같은 isbn13이 있으면 막는다). */
     @Query("SELECT * FROM book WHERE isbn13 = :isbn13 LIMIT 1")
     suspend fun findByIsbn13(isbn13: String): Book?

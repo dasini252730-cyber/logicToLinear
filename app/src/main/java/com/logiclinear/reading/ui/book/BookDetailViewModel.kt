@@ -15,6 +15,8 @@ import com.logiclinear.reading.data.repo.QuoteRepository
 import com.logiclinear.reading.domain.ONE_LINER_MAX
 import com.logiclinear.reading.domain.normalizeReview
 import com.logiclinear.reading.ui.navigation.BookDetailRoute
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +33,7 @@ class BookDetailViewModel(
     private val bookId: Long,
 ) : ViewModel() {
     private val local = MutableStateFlow(BookDetailLocalState())
+    private var undoJob: Job? = null
 
     val uiState: StateFlow<BookDetailUiState> = combine(
         bookRepository.observeById(bookId),
@@ -41,23 +44,33 @@ class BookDetailViewModel(
 
     // ---- 글귀 삭제·되돌리기 (T-404) ----
 
-    /** 길게 눌러 삭제. DB에서 바로 지우고 되돌리기 후보로 둔다(요구사항 "삭제": 되돌리기 스낵바 5초). */
+    /**
+     * 길게 눌러 삭제. DB에서 바로 지우고 되돌리기 후보로 둔다(요구사항 "삭제": 되돌리기 스낵바 5초).
+     * 5초는 화면이 아니라 여기서 센다. 회전해도 처음부터 다시 흐르지 않는다. 그 사이 다른 글귀를 지우면 앞 후보는 지워진 채 끝난다.
+     */
     fun deleteQuote(quote: Quote) {
-        viewModelScope.launch {
+        undoJob?.cancel()
+        undoJob = viewModelScope.launch {
             quoteRepository.delete(quote)
             local.update { it.copy(undoCandidate = quote) }
+            delay(UNDO_WINDOW_MS)
+            local.update { if (it.undoCandidate == quote) it.copy(undoCandidate = null) else it }
         }
     }
 
     /** 스낵바 "되돌리기". 책이 그 사이 지워졌으면 복구할 수 없어 조용히 끝낸다(T-404 인계 메모). */
     fun undoDelete() {
         val quote = local.value.undoCandidate ?: return
+        undoJob?.cancel()
         local.update { it.copy(undoCandidate = null) }
         viewModelScope.launch { quoteRepository.restore(quote) }
     }
 
-    /** 스낵바가 5초 뒤 사라지면 호출. 이미 DB에서 지워져 있으므로 할 일은 후보 비우기뿐이다. */
-    fun clearUndo() = local.update { it.copy(undoCandidate = null) }
+    /** 사용자가 스낵바를 밀어서 치웠을 때. 이미 DB에서 지워져 있으므로 할 일은 후보 비우기뿐이다. */
+    fun clearUndo() {
+        undoJob?.cancel()
+        local.update { it.copy(undoCandidate = null) }
+    }
 
     /** WANT → READING ("읽기 시작"). */
     fun startReading() = changeStatus(BookStatus.READING)
@@ -123,6 +136,8 @@ class BookDetailViewModel(
     }
 
     companion object {
+        const val UNDO_WINDOW_MS = 5_000L
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val route = createSavedStateHandle().toRoute<BookDetailRoute>()

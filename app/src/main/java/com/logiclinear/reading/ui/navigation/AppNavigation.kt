@@ -33,7 +33,7 @@ import com.logiclinear.reading.ui.home.HomeEntry
 import com.logiclinear.reading.ui.library.LibraryEntry
 import com.logiclinear.reading.ui.search.BookSearchEntry
 import com.logiclinear.reading.ui.select.SelectEntry
-import com.logiclinear.reading.ui.settings.SettingsScreen
+import com.logiclinear.reading.ui.settings.SettingsEntry
 
 /**
  * 앱 전체 네비게이션. 시작 화면은 카메라 홈(요구사항 "첫 화면"). 하단 탭(서재·분석·추천·설정)은 홈과 탭 화면에서 보인다.
@@ -80,7 +80,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 )
             }
             composable<AnalysisRoute> { AnalysisScreen() }
-            composable<SettingsRoute> { SettingsScreen() }
+            composable<SettingsRoute> { SettingsEntry() }
             // 저장·삭제 완료는 "서재까지" 팝한다. 사용자가 그 사이 뒤로를 눌러 이미 서재에 있으면 아무 일도 하지 않는다.
             composable<BookFormRoute> {
                 BookFormEntry(
