@@ -1341,7 +1341,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": "2026-10-05 2026-10-05 사용자 확정: 도서 검색은 국립중앙도서관 Open API로 간다. 이 API가 주지 않는 기능(표지 이미지, 소개글)은 포기한다(검색 등록 시 cover·description 빈 값, 책 상세·추천 카드는 빈 값이면 그 줄을 생략). 인증키 승인 뒤에 착수한다. 착수 시 docs/요구사항.md·rules/product-principles.md의 알라딘 표기도 국립중앙도서관으로 고친다."
+      "notes": "2026-10-05 2026-10-05 사용자 확정: 도서 검색은 국립중앙도서관 Open API로 간다. 이 API가 주지 않는 기능(표지 이미지, 소개글)은 포기한다(검색 등록 시 cover·description 빈 값, 책 상세·추천 카드는 빈 값이면 그 줄을 생략). 인증키 승인 뒤에 착수한다. 착수 시 docs/요구사항.md·rules/product-principles.md의 알라딘 표기도 국립중앙도서관으로 고친다.\n2026-10-05 T-308 리뷰에서 이월(2026-10-05): (1) addFromSearch는 isbn13이 빈 값이면 중복 검사를 건너뛴다. NL 응답의 isbn 형태를 확인한 뒤 addRecommendation처럼 제목+저자(isSameBook) 폴백을 넣을지 정한다. (2) res/raw/prompt_analysis_system.txt의 '장르·카테고리 통계' 줄은 category가 비면 근거 없는 문단을 만들 수 있다. KDC 대분류로 category를 채우면서 그 줄을 재검토한다. (3) SettingsViewModel 180/200줄(90%): 이 task에서 키 칸을 또 건드리므로 백업 내보내기/가져오기 로직을 SettingsBackupViewModel 또는 BackupRepository 쪽으로 분리 예정. (4) task-briefer 브리핑을 반드시 먼저 부른다."
     },
     {
       "id": "T-401",
