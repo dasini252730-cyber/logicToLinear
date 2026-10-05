@@ -1,8 +1,8 @@
 package com.logiclinear.reading.data.ai
 
-import com.logiclinear.reading.data.remote.aladin.AladinItem
-import com.logiclinear.reading.data.remote.aladin.AladinResult
-import com.logiclinear.reading.data.remote.aladin.AladinSearch
+import com.logiclinear.reading.data.remote.books.BookSearchItem
+import com.logiclinear.reading.data.remote.books.BookSearchResult
+import com.logiclinear.reading.data.remote.books.BookSearch
 import com.logiclinear.reading.domain.Recommendation
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -12,25 +12,25 @@ import java.io.IOException
 
 class RecommendationEnricherTest {
     private fun item(title: String, author: String, isbn: String, cover: String = "https://c/$isbn.jpg") =
-        AladinItem(title = title, author = author, isbn13 = isbn, cover = cover, link = "https://a/$isbn")
+        BookSearchItem(title = title, author = author, isbn13 = isbn, cover = cover, link = "https://a/$isbn")
 
-    private class FakeAladin(private val answers: Map<String, AladinResult>, private val throwOn: Set<String> = emptySet()) : AladinSearch {
+    private class FakeBookSearch(private val answers: Map<String, BookSearchResult>, private val throwOn: Set<String> = emptySet()) : BookSearch {
         val queries = mutableListOf<String>()
 
-        override suspend fun searchByTitle(title: String): AladinResult {
+        override suspend fun searchByTitle(title: String): BookSearchResult {
             queries += title
             if (title in throwOn) throw IOException("끊김")
-            return answers[title] ?: AladinResult.Empty
+            return answers[title] ?: BookSearchResult.Empty
         }
     }
 
     @Test
-    fun 알라딘에_있는_책은_isbn_표지_링크가_붙고_없는_책은_그대로다() = runTest {
-        val aladin = FakeAladin(
+    fun 검색에_있는_책은_isbn_표지_링크가_붙고_없는_책은_그대로다() = runTest {
+        val search = FakeBookSearch(
             mapOf(
-                "채식주의자" to AladinResult.Found(listOf(item("채식주의자 (리마스터판)", "한강 (지은이)", "9788936434595"), item("채식주의자", "한강 (지은이)", "9788936433598"))),
-                "없는 책" to AladinResult.Empty,
-                "오류 책" to AladinResult.ApiError(900, "한도 초과"),
+                "채식주의자" to BookSearchResult.Found(listOf(item("채식주의자 (리마스터판)", "한강 (지은이)", "9788936434595"), item("채식주의자", "한강 (지은이)", "9788936433598"))),
+                "없는 책" to BookSearchResult.Empty,
+                "오류 책" to BookSearchResult.ApiError("429", "한도 초과"),
             ),
             throwOn = setOf("예외 책"),
         )
@@ -41,16 +41,16 @@ class RecommendationEnricherTest {
             Recommendation("예외 책", null, "이유4"),
         )
 
-        val out = RecommendationEnricher(aladin).enrich(input)
+        val out = RecommendationEnricher(search).enrich(input)
 
         assertEquals("9788936434595", out[0].isbn13) // 저자 일치 첫 항목
         assertEquals("https://c/9788936434595.jpg", out[0].coverUrl)
-        assertEquals("https://a/9788936434595", out[0].aladinUrl)
+        assertEquals("https://a/9788936434595", out[0].storeUrl)
         assertEquals("이유1", out[0].reason)
         assertEquals(input[1], out[1])
         assertEquals(input[2], out[2])
         assertEquals(input[3], out[3]) // 예외가 전체를 실패시키지 않는다
-        assertEquals(4, aladin.queries.size)
+        assertEquals(4, search.queries.size)
     }
 
     @Test
@@ -64,13 +64,13 @@ class RecommendationEnricherTest {
 
     @Test
     fun 이미_isbn이_있으면_조회하지_않고_키_없음은_그대로_둔다() = runTest {
-        val aladin = FakeAladin(mapOf("흰" to AladinResult.NoKey))
+        val search = FakeBookSearch(mapOf("흰" to BookSearchResult.NoKey))
         val filled = Recommendation("채식주의자", "한강", "r", isbn13 = "9788936433598")
 
-        val out = RecommendationEnricher(aladin).enrich(listOf(filled, Recommendation("흰", "한강", "r2")))
+        val out = RecommendationEnricher(search).enrich(listOf(filled, Recommendation("흰", "한강", "r2")))
 
         assertEquals(filled, out[0])
         assertNull(out[1].isbn13)
-        assertEquals(listOf("흰"), aladin.queries)
+        assertEquals(listOf("흰"), search.queries)
     }
 }

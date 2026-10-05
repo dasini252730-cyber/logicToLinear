@@ -38,7 +38,7 @@ data class AnalysisActions(
     val onOpenLink: (String) -> Unit = {},
 )
 
-/** 네비게이션 진입점. 담기 결과 스낵바와 알라딘 링크 열기를 여기서 처리한다. */
+/** 네비게이션 진입점. 담기 결과 스낵바와 책 정보 링크 열기를 여기서 처리한다. */
 @Composable
 fun AnalysisEntry(onOpenSettings: () -> Unit, viewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory)) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()

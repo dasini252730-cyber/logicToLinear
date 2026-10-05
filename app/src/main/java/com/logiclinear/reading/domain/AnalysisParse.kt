@@ -5,7 +5,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 /**
- * 추천 한 건. AI 응답은 title·author·reason만 주고, isbn13·coverUrl·aladinUrl은 알라딘 후처리(T-605)가 채운다.
+ * 추천 한 건. AI 응답은 title·author·reason만 주고, isbn13·coverUrl·storeUrl은 도서 검색 후처리(T-605)가 채운다.
  * Analysis.recommendationsJson의 원소 모양과 같다.
  */
 @Serializable
@@ -15,7 +15,7 @@ data class Recommendation(
     val reason: String = "",
     val isbn13: String? = null,
     val coverUrl: String? = null,
-    val aladinUrl: String? = null,
+    val storeUrl: String? = null,
 )
 
 /** 요구사항 "출력은 JSON만: {"taste": "...", "recommendations": [...]}" */

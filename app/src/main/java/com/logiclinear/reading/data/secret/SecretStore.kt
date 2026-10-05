@@ -4,7 +4,8 @@ import kotlinx.coroutines.flow.Flow
 
 /** 앱이 보관하는 비밀. 요구사항 "기술 스택": 설정 화면에서 사용자가 입력, 코드에 하드코딩하지 않음, 백업에 넣지 않음. */
 enum class SecretKey(val prefName: String) {
-    ALADIN_TTB("aladin_ttb_key"),
+    /** 카카오 책 검색 REST API 키(이전 공급자 OpenAPI 종료로 교체, 2026-10-05). */
+    KAKAO_REST("kakao_rest_key"),
     ANTHROPIC_API("anthropic_api_key"),
 }
 

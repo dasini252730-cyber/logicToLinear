@@ -46,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.logiclinear.reading.R
 import com.logiclinear.reading.data.db.BookStatus
-import com.logiclinear.reading.data.remote.aladin.AladinItem
+import com.logiclinear.reading.data.remote.books.BookSearchItem
 import com.logiclinear.reading.ui.book.BOOK_STATUS_CHOICES
 import com.logiclinear.reading.ui.components.BookCover
 import com.logiclinear.reading.ui.components.labelRes
@@ -88,7 +88,7 @@ fun BookSearchScreen(
     onQueryChange: (String) -> Unit,
     onStatusChange: (BookStatus) -> Unit,
     onSearch: () -> Unit,
-    onPick: (AladinItem) -> Unit,
+    onPick: (BookSearchItem) -> Unit,
     onManualEntry: () -> Unit,
     onDismissDuplicate: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -160,9 +160,9 @@ private fun StatusChoice(selected: BookStatus, onSelect: (BookStatus) -> Unit) {
 }
 
 @Composable
-private fun ResultList(items: List<AladinItem>, enabled: Boolean, onPick: (AladinItem) -> Unit) {
+private fun ResultList(items: List<BookSearchItem>, enabled: Boolean, onPick: (BookSearchItem) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        // 알라딘이 같은 isbn13을 두 번 주거나 isbn·link가 모두 빈 동명 항목이 있어도 키가 겹치지 않게 index를 섞는다.
+        // 검색 결과에 같은 isbn13이 두 번 오거나 isbn·link가 모두 빈 동명 항목이 있어도 키가 겹치지 않게 index를 섞는다.
         itemsIndexed(items, key = { index, it -> "$index-${it.isbn13}" }) { _, item ->
             Row(
                 modifier = Modifier.fillMaxWidth().clickable(enabled = enabled) { onPick(item) }.padding(vertical = 10.dp),
@@ -202,7 +202,7 @@ private fun BookSearchScreenPreview() {
         BookSearchScreen(
             state = BookSearchUiState(
                 query = "채식주의자",
-                results = listOf(AladinItem(title = "채식주의자", author = "한강 (지은이)", publisher = "창비", isbn13 = "9788936433598")),
+                results = listOf(BookSearchItem(title = "채식주의자", author = "한강 (지은이)", publisher = "창비", isbn13 = "9788936433598")),
             ),
             onQueryChange = {}, onStatusChange = {}, onSearch = {}, onPick = {}, onManualEntry = {}, onDismissDuplicate = {}, onOpenSettings = {}, onBack = {},
         )

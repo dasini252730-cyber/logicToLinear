@@ -22,9 +22,9 @@
 
 ## 현재 상태
 
-- 1~7단계 기능이 모두 구현되어 있다(2026-10-05 기준): Room 4테이블, 서재·직접 입력·알라딘 검색, 카메라·OCR·문장 선택, 완독 처리·글귀 삭제, 설정(키·모델·호출 카운터)·백업, Anthropic 분석·추천 화면, 완독 후 토론. 실기기 확인(T-113·T-212·T-307·T-406·T-508·T-610·T-708)과 8단계 점검이 남아 있다. `node scripts/backlog.mjs next`와 `node scripts/backlog-dashboard.mjs`(보드)로 현재 위치를 확인한다.
-- 단위 테스트 179개(Robolectric 포함)가 `gradlew.bat testDebugUnitTest`로 돈다. lint 0.
-- `needs_human` 4개(TTB 키, Anthropic 키, 실기기 준비, HTTP 클라이언트 선택)는 사용자가 처리한다. 이 중 실기기 준비(T-005) 전에는 "실기기에서 뜬다" 류의 완료 조건을 확인할 수 없다.
+- 1~7단계 기능이 모두 구현되어 있다(2026-10-05 기준): Room 4테이블, 서재·직접 입력·책 검색(공급자 중립 BookSearch 인터페이스, 현재 카카오 구현은 임시이며 T-309에서 국립중앙도서관 Open API로 교체 예정), 카메라·OCR·문장 선택, 완독 처리·글귀 삭제, 설정(키·모델·호출 카운터)·백업, Anthropic 분석·추천 화면, 완독 후 토론. 실기기 확인(T-113·T-212·T-307·T-406·T-508·T-610·T-708)과 8단계 점검이 남아 있다. `node scripts/backlog.mjs next`와 `node scripts/backlog-dashboard.mjs`(보드)로 현재 위치를 확인한다.
+- 단위 테스트 177개(Robolectric 포함)가 `gradlew.bat testDebugUnitTest`로 돈다. lint 0.
+- `needs_human` 4개(도서 검색 API 키, Anthropic 키, 실기기 준비, HTTP 클라이언트 선택)는 사용자가 처리한다. 이 중 실기기 준비(T-005) 전에는 "실기기에서 뜬다" 류의 완료 조건을 확인할 수 없다.
 - 작업 브랜치는 `dev`. `main`이면 전환을 요청한다.
 
 ## 작업 루프 (요약, 상세는 rules/workflow.md)
@@ -44,7 +44,7 @@ next → task-briefer(haiku) 브리핑 → status in_progress → 구현·테스
 - JDK는 Android Studio JBR(21). Git Bash에서는 `java`가 PATH에 없으므로 gradlew 전에 `export JAVA_HOME="C:\\Program Files\\Android\\Android Studio\\jbr"`를 붙인다. PowerShell은 시스템 JAVA_HOME이 이미 JBR이다.
 - Android SDK는 `local.properties`의 `sdk.dir`(gitignore 대상). platforms 34·36·37.0 설치됨.
 - 빌드 스택: AGP 9.4.1(Kotlin 내장, `kotlin-android` 플러그인 적용 금지), Gradle 9.8.0 래퍼, Kotlin 2.4.20, compileSdk·targetSdk 37, minSdk 26. 세부는 `docs/tasks/T-101.md`.
-- HTTP 클라이언트: Retrofit + OkHttp + kotlinx-serialization 컨버터(T-006 결정). 알라딘·Anthropic 호출 모두 이 조합.
+- HTTP 클라이언트: Retrofit + OkHttp + kotlinx-serialization 컨버터(T-006 결정). 카카오 책 검색·Anthropic 호출 모두 이 조합.
 - 테스트: Robolectric(sdk=34 고정) + `MainDispatcherRule` + Room `setQueryCoroutineContext(테스트 디스패처)`. 기기 없이 `./gradlew testDebugUnitTest`로 Room·ViewModel까지 돈다.
 
 ## 자주 쓰는 명령

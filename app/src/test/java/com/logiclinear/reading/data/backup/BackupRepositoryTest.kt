@@ -37,7 +37,7 @@ class BackupRepositoryTest {
     @After
     fun tearDown() = db.close()
 
-    /** 책 2권(알라딘 1, 직접 입력 1), 글귀 3, 토론 1, 분석 1이 든 백업. 책 id는 DB와 겹치지 않게 큰 값. */
+    /** 책 2권(검색 등록 1, 직접 입력 1), 글귀 3, 토론 1, 분석 1이 든 백업. 책 id는 DB와 겹치지 않게 큰 값. */
     private fun sampleBackup() = BackupFile(
         exportedAt = 1_000,
         books = listOf(
@@ -70,7 +70,7 @@ class BackupRepositoryTest {
         assertEquals(listOf(1, 1, 1, 1), listOf(file.books.size, file.quotes.size, file.discussions.size, file.analyses.size))
         assertEquals(file.books.single().id, file.quotes.single().bookId)
         val text = backupJson.encodeToString(BackupFile.serializer(), file)
-        assertFalse(text.contains("apiKey") || text.contains("ttb", ignoreCase = true) || text.contains("anthropic", ignoreCase = true))
+        assertFalse(text.contains("apiKey") || text.contains("kakao", ignoreCase = true) || text.contains("anthropic", ignoreCase = true))
     }
 
     @Test

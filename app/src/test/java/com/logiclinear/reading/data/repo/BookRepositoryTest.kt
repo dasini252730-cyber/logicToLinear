@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.logiclinear.reading.data.db.AppDatabase
 import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.BookStatus
-import com.logiclinear.reading.data.remote.aladin.AladinItem
+import com.logiclinear.reading.data.remote.books.BookSearchItem
 import com.logiclinear.reading.domain.Review
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -80,7 +80,7 @@ class BookRepositoryTest {
 
     @Test
     fun 검색_등록은_isbn13_중복을_막고_빈_필드는_null로_저장한다() = runTest {
-        val item = AladinItem(title = " 책 ", author = "", publisher = "출판사", isbn13 = "9780000000001", cover = "", categoryName = "", description = "")
+        val item = BookSearchItem(title = " 책 ", author = "", publisher = "출판사", isbn13 = "9780000000001", cover = "", category = "", description = "")
 
         val first = repo.addFromSearch(item, BookStatus.READING)
         val second = repo.addFromSearch(item.copy(title = "다른 제목"), BookStatus.WANT)
@@ -96,7 +96,7 @@ class BookRepositoryTest {
 
     @Test
     fun isbn13이_없는_검색_결과는_중복_검사_없이_등록된다() = runTest {
-        val item = AladinItem(title = "무ISBN", isbn13 = "")
+        val item = BookSearchItem(title = "무ISBN", isbn13 = "")
         assertTrue(repo.addFromSearch(item, BookStatus.READING) is AddResult.Added)
         assertTrue(repo.addFromSearch(item, BookStatus.READING) is AddResult.Added)
     }

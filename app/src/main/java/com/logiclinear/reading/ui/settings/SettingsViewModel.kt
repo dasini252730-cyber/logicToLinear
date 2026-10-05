@@ -36,9 +36,9 @@ import java.time.ZoneId
 
 /** 설정 화면 상태(요구사항 "설정": API 키 입력, JSON 내보내기/가져오기; "비용 통제": 모델 선택, 이번 달 호출 횟수). */
 data class SettingsUiState(
-    val ttbInput: String = "",
+    val kakaoInput: String = "",
     val anthropicInput: String = "",
-    val ttbSet: Boolean = false,
+    val kakaoSet: Boolean = false,
     val anthropicSet: Boolean = false,
     val model: AiModel = AiModel.DEFAULT,
     val callsThisMonth: Int = 0,
@@ -62,7 +62,7 @@ sealed interface SettingsMessage {
 enum class ImportMode { OVERWRITE, MERGE }
 
 private data class LocalState(
-    val ttbInput: String = "",
+    val kakaoInput: String = "",
     val anthropicInput: String = "",
     val busy: Boolean = false,
     val pendingImport: BackupFile? = null,
@@ -82,27 +82,27 @@ class SettingsViewModel(
     private val local = MutableStateFlow(LocalState())
 
     val uiState: StateFlow<SettingsUiState> = combine(
-        secretStore.observeIsSet(SecretKey.ALADIN_TTB),
+        secretStore.observeIsSet(SecretKey.KAKAO_REST),
         secretStore.observeIsSet(SecretKey.ANTHROPIC_API),
         prefs.model,
         prefs.observeCallsIn(YearMonth.from(clock().atZone(zone))),
         local,
-    ) { ttbSet, anthropicSet, model, calls, local ->
+    ) { kakaoSet, anthropicSet, model, calls, local ->
         SettingsUiState(
-            ttbInput = local.ttbInput, anthropicInput = local.anthropicInput,
-            ttbSet = ttbSet, anthropicSet = anthropicSet, model = model, callsThisMonth = calls,
+            kakaoInput = local.kakaoInput, anthropicInput = local.anthropicInput,
+            kakaoSet = kakaoSet, anthropicSet = anthropicSet, model = model, callsThisMonth = calls,
             busy = local.busy, pendingImport = local.pendingImport, message = local.message,
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, SettingsUiState())
 
-    fun onTtbChange(value: String) = local.update { it.copy(ttbInput = value) }
+    fun onKakaoChange(value: String) = local.update { it.copy(kakaoInput = value) }
 
     fun onAnthropicChange(value: String) = local.update { it.copy(anthropicInput = value) }
 
     /** 저장 버튼. 빈 입력은 저장하지 않는다(실수로 키를 지우는 일을 막는다). 저장 후 입력 칸은 비운다. */
     fun saveKey(key: SecretKey) {
         val value = when (key) {
-            SecretKey.ALADIN_TTB -> local.value.ttbInput
+            SecretKey.KAKAO_REST -> local.value.kakaoInput
             SecretKey.ANTHROPIC_API -> local.value.anthropicInput
         }.trim()
         if (value.isEmpty()) return
@@ -110,7 +110,7 @@ class SettingsViewModel(
             secretStore.set(key, value)
             local.update {
                 when (key) {
-                    SecretKey.ALADIN_TTB -> it.copy(ttbInput = "", message = SettingsMessage.KeySaved(key))
+                    SecretKey.KAKAO_REST -> it.copy(kakaoInput = "", message = SettingsMessage.KeySaved(key))
                     SecretKey.ANTHROPIC_API -> it.copy(anthropicInput = "", message = SettingsMessage.KeySaved(key))
                 }
             }

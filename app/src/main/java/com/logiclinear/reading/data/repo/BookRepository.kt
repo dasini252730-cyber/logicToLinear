@@ -3,9 +3,9 @@ package com.logiclinear.reading.data.repo
 import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.BookDao
 import com.logiclinear.reading.data.db.BookStatus
-import com.logiclinear.reading.data.remote.aladin.AladinItem
-import com.logiclinear.reading.data.remote.aladin.AladinResult
-import com.logiclinear.reading.data.remote.aladin.AladinSearch
+import com.logiclinear.reading.data.remote.books.BookSearchItem
+import com.logiclinear.reading.data.remote.books.BookSearchResult
+import com.logiclinear.reading.data.remote.books.BookSearch
 import com.logiclinear.reading.domain.BookIdentity
 import com.logiclinear.reading.domain.Recommendation
 import com.logiclinear.reading.domain.isSameBook
@@ -23,14 +23,14 @@ sealed interface AddResult {
 
 /**
  * 책 데이터 접근. UI·ViewModel은 DAO·HTTP 클라이언트를 직접 쓰지 않고 이 클래스를 거친다(rules/android.md).
- * [aladin]이 없으면(테스트 등) 검색은 [AladinResult.NoKey]로 끝난다.
+ * [search]가 없으면(테스트 등) 검색은 [BookSearchResult.NoKey]로 끝난다.
  */
 class BookRepository(
     private val bookDao: BookDao,
-    private val aladin: AladinSearch? = null,
+    private val search: BookSearch? = null,
 ) {
-    /** 알라딘 제목 검색(요구사항 "책 검색"). 네트워크는 여기서만 부른다. */
-    suspend fun searchAladin(title: String): AladinResult = aladin?.searchByTitle(title) ?: AladinResult.NoKey
+    /** 도서 검색 제목 검색(요구사항 "책 검색"). 네트워크는 여기서만 부른다. */
+    suspend fun searchBooks(title: String): BookSearchResult = search?.searchByTitle(title) ?: BookSearchResult.NoKey
 
     fun observeByStatus(status: BookStatus): Flow<List<Book>> = bookDao.observeByStatus(status)
 
@@ -60,10 +60,10 @@ class BookRepository(
     suspend fun setStatus(book: Book, status: BookStatus) = bookDao.update(book.copy(status = status))
 
     /**
-     * 알라딘 검색 결과 등록(요구사항 "책 검색"). 같은 isbn13이 이미 있으면 등록하지 않고 [AddResult.Duplicate].
-     * 저장 필드 7개: title, author, publisher, isbn13, cover, categoryName, description.
+     * 검색 결과 등록(요구사항 "책 검색"). 같은 isbn13이 이미 있으면 등록하지 않고 [AddResult.Duplicate].
+     * 저장 필드 7개: title, author, publisher, isbn13, cover, category(카카오는 비어 있음), description.
      */
-    suspend fun addFromSearch(item: AladinItem, status: BookStatus): AddResult {
+    suspend fun addFromSearch(item: BookSearchItem, status: BookStatus): AddResult {
         val isbn = item.isbn13.trim().ifEmpty { null }
         if (isbn != null) bookDao.findByIsbn13(isbn)?.let { return AddResult.Duplicate(it.id) }
         val id = bookDao.insert(
@@ -73,7 +73,7 @@ class BookRepository(
                 publisher = item.publisher.trim().ifEmpty { null },
                 isbn13 = isbn,
                 coverUrl = item.cover.trim().ifEmpty { null },
-                category = item.categoryName.trim().ifEmpty { null },
+                category = item.category.trim().ifEmpty { null },
                 description = item.description.trim().ifEmpty { null },
                 status = status,
             ),
@@ -85,7 +85,7 @@ class BookRepository(
     fun observeAll(): Flow<List<Book>> = bookDao.observeAll()
 
     /**
-     * 추천 카드 "읽고 싶음에 담기"(요구사항 "흐름 4", "예외 처리": 알라딘에 없으면 직접 입력 책으로 생성).
+     * 추천 카드 "읽고 싶음에 담기"(요구사항 "흐름 4", "예외 처리": 도서 검색에 없으면 직접 입력 책으로 생성).
      * isbn13이 있으면 isbn13으로, 없으면 제목+저자로 같은 책을 찾아 있으면 [AddResult.Duplicate].
      */
     suspend fun addRecommendation(rec: Recommendation): AddResult {

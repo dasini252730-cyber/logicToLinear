@@ -32,7 +32,7 @@ import com.logiclinear.reading.ui.theme.ReadingLogTheme
 
 /** 설정 화면 이벤트. */
 data class SettingsActions(
-    val onTtbChange: (String) -> Unit = {},
+    val onKakaoChange: (String) -> Unit = {},
     val onAnthropicChange: (String) -> Unit = {},
     val onSaveKey: (SecretKey) -> Unit = {},
     val onSelectModel: (AiModel) -> Unit = {},
@@ -64,7 +64,7 @@ fun SettingsEntry(viewModel: SettingsViewModel = viewModel(factory = SettingsVie
         state = state,
         snackbar = snackbar,
         actions = SettingsActions(
-            onTtbChange = viewModel::onTtbChange,
+            onKakaoChange = viewModel::onKakaoChange,
             onAnthropicChange = viewModel::onAnthropicChange,
             onSaveKey = viewModel::saveKey,
             onSelectModel = viewModel::setModel,
@@ -100,11 +100,11 @@ fun SettingsScreen(
         ) {
             SectionTitle(stringResource(R.string.settings_section_keys))
             KeyField(
-                label = stringResource(R.string.settings_ttb_label),
-                value = state.ttbInput,
-                isSet = state.ttbSet,
-                onChange = actions.onTtbChange,
-                onSave = { actions.onSaveKey(SecretKey.ALADIN_TTB) },
+                label = stringResource(R.string.settings_kakao_label),
+                value = state.kakaoInput,
+                isSet = state.kakaoSet,
+                onChange = actions.onKakaoChange,
+                onSave = { actions.onSaveKey(SecretKey.KAKAO_REST) },
             )
             KeyField(
                 label = stringResource(R.string.settings_anthropic_label),
@@ -131,7 +131,7 @@ fun SettingsScreen(
 @Composable
 private fun messageText(message: SettingsMessage): String = when (message) {
     is SettingsMessage.KeySaved -> stringResource(
-        if (message.key == SecretKey.ALADIN_TTB) R.string.settings_key_saved_ttb else R.string.settings_key_saved_anthropic,
+        if (message.key == SecretKey.KAKAO_REST) R.string.settings_key_saved_kakao else R.string.settings_key_saved_anthropic,
     )
     SettingsMessage.ExportDone -> stringResource(R.string.settings_export_done)
     SettingsMessage.ExportFailed -> stringResource(R.string.settings_export_failed)
@@ -147,6 +147,6 @@ private const val BACKUP_MIME = "application/json"
 @Composable
 private fun SettingsScreenPreview() {
     ReadingLogTheme {
-        SettingsScreen(state = SettingsUiState(ttbSet = true, callsThisMonth = 3), actions = SettingsActions())
+        SettingsScreen(state = SettingsUiState(kakaoSet = true, callsThisMonth = 3), actions = SettingsActions())
     }
 }

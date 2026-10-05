@@ -31,7 +31,7 @@ sealed interface AnalysisRunResult {
 
 /**
  * 취향 분석·추천(요구사항 "AI 기능"). 호출은 [run] 한 곳에서만 일어나고, 그것은 사용자가 버튼을 눌렀을 때만 불린다.
- * 수집(buildAnalysisInput) → 호출 → 파싱(parseAnalysis) → 알라딘 후처리 → Analysis 저장.
+ * 수집(buildAnalysisInput) → 호출 → 파싱(parseAnalysis) → 도서 검색 후처리 → Analysis 저장.
  */
 class AnalysisRepository(
     private val db: AppDatabase,
@@ -98,7 +98,7 @@ class AnalysisRepository(
         /** "최근 토론"의 범위. 각 토론에서 마지막 사용자 발언 3개를 쓴다. */
         const val RECENT_DISCUSSIONS = 5
 
-        /** 요구사항 "5권 추천". 모델이 더 돌려줘도 알라딘 병렬 조회를 이 수로 묶는다. */
+        /** 요구사항 "5권 추천". 모델이 더 돌려줘도 도서 검색 병렬 조회를 이 수로 묶는다. */
         const val MAX_RECOMMENDATIONS = 5
     }
 }

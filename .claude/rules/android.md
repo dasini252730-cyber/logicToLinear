@@ -13,7 +13,7 @@ paths:
 - 단일 `app` 모듈. 패키지 초안(프로젝트 생성 시 확정):
   - `data/db` Room 엔티티·DAO·Database·Converter
   - `data/repo` Repository
-  - `data/remote/aladin`, `data/remote/anthropic` HTTP 클라이언트·DTO
+  - `data/remote/books`(책 검색, 공급자 중립 BookSearch + 현재 카카오 구현, T-309에서 국립중앙도서관으로 교체), `data/remote/anthropic` HTTP 클라이언트·DTO
   - `data/backup` 백업 모델·매퍼
   - `data/secret` SecretStore(EncryptedSharedPreferences)
   - `domain` 순수 함수(줄 합치기, 페이지 후보, JSON 파싱, 동일 책 판정, 턴 계산)

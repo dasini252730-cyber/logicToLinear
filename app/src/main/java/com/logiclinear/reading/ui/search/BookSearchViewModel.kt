@@ -7,8 +7,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.logiclinear.reading.appContainer
 import com.logiclinear.reading.data.db.BookStatus
-import com.logiclinear.reading.data.remote.aladin.AladinItem
-import com.logiclinear.reading.data.remote.aladin.AladinResult
+import com.logiclinear.reading.data.remote.books.BookSearchItem
+import com.logiclinear.reading.data.remote.books.BookSearchResult
 import com.logiclinear.reading.data.repo.AddResult
 import com.logiclinear.reading.data.repo.BookRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,16 +18,16 @@ import kotlinx.coroutines.launch
 
 /**
  * 책 검색 화면 상태(요구사항 "흐름 2"). 검색 실패·오프라인·한도 초과·결과 없음은 모두 [fallbackQuery]로
- * 직접 입력 폼에 검색어를 넘긴다(요구사항 "예외 처리"). TTB 키가 없으면 [needsKey].
+ * 직접 입력 폼에 검색어를 넘긴다(요구사항 "예외 처리"). 검색 키가 없으면 [needsKey].
  */
 data class BookSearchUiState(
     val query: String = "",
     val status: BookStatus = BookStatus.READING,
     val searching: Boolean = false,
-    val results: List<AladinItem> = emptyList(),
-    /** TTB 키가 설정에 없다. */
+    val results: List<BookSearchItem> = emptyList(),
+    /** 카카오 REST API 키가 설정에 없다. */
     val needsKey: Boolean = false,
-    /** 알라딘이 키 오류(errorCode 100)를 돌려줬다. 폴백이 아니라 설정 안내로 보낸다(리뷰 반영). */
+    /** 검색 공급자가 키 오류(401·403)를 돌려줬다. 폴백이 아니라 설정 안내로 보낸다. */
     val keyInvalid: Boolean = false,
     /** 직접 입력 폼으로 전환. 화면이 이 값을 보고 이동한 뒤 [consumeFallback]. */
     val fallbackQuery: String? = null,
@@ -54,15 +54,11 @@ class BookSearchViewModel(
         if (query.isEmpty() || _uiState.value.searching) return
         _uiState.update { it.copy(searching = true, needsKey = false, keyInvalid = false, duplicate = false) }
         viewModelScope.launch {
-            when (val result = bookRepository.searchAladin(query)) {
-                is AladinResult.Found -> _uiState.update { it.copy(searching = false, results = result.items) }
-                AladinResult.NoKey -> _uiState.update { it.copy(searching = false, needsKey = true) }
-                is AladinResult.ApiError -> if (result.code == ALADIN_INVALID_KEY) {
-                    _uiState.update { it.copy(searching = false, results = emptyList(), keyInvalid = true) }
-                } else {
-                    _uiState.update { it.copy(searching = false, results = emptyList(), fallbackQuery = query) }
-                }
-                AladinResult.Empty, is AladinResult.Network ->
+            when (val result = bookRepository.searchBooks(query)) {
+                is BookSearchResult.Found -> _uiState.update { it.copy(searching = false, results = result.items) }
+                BookSearchResult.NoKey -> _uiState.update { it.copy(searching = false, needsKey = true) }
+                BookSearchResult.InvalidKey -> _uiState.update { it.copy(searching = false, results = emptyList(), keyInvalid = true) }
+                BookSearchResult.Empty, is BookSearchResult.ApiError, is BookSearchResult.Network ->
                     _uiState.update { it.copy(searching = false, results = emptyList(), fallbackQuery = query) }
             }
         }
@@ -74,7 +70,7 @@ class BookSearchViewModel(
     fun consumeFallback() = _uiState.update { it.copy(fallbackQuery = null) }
 
     /** 결과를 탭하면 등록(요구사항 "흐름 2" 2단계). 같은 isbn13이 있으면 막는다. */
-    fun register(item: AladinItem) {
+    fun register(item: BookSearchItem) {
         if (_uiState.value.registering) return
         _uiState.update { it.copy(registering = true, duplicate = false) }
         viewModelScope.launch {
@@ -88,9 +84,6 @@ class BookSearchViewModel(
     fun dismissDuplicate() = _uiState.update { it.copy(duplicate = false) }
 
     companion object {
-        /** 알라딘 errorCode 100 = 잘못된 TTBKey. 한도 초과 등 다른 코드의 실제 값은 T-307 실기기에서 기록한다. */
-        const val ALADIN_INVALID_KEY = 100
-
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer { BookSearchViewModel(appContainer().bookRepository) }
         }

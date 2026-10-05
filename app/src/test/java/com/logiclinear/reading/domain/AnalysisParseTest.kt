@@ -51,7 +51,7 @@ class AnalysisParseTest {
 
     @Test
     fun recommendationsJson_인코딩_디코딩_라운드트립과_깨진_값() {
-        val list = listOf(Recommendation("흰", "한강", "이유", isbn13 = "9788954651134", coverUrl = "https://c/1.jpg", aladinUrl = "https://a/1"))
+        val list = listOf(Recommendation("흰", "한강", "이유", isbn13 = "9788954651134", coverUrl = "https://c/1.jpg", storeUrl = "https://a/1"))
         val json = encodeRecommendations(list)
         assertEquals(list, decodeRecommendations(json))
         assertEquals(emptyList<Recommendation>(), decodeRecommendations("깨짐"))

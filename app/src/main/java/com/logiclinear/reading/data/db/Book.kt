@@ -16,17 +16,17 @@ import java.time.LocalDate
 )
 data class Book(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    /** 필수. 알라딘 검색 또는 직접 입력. */
+    /** 필수. 책 검색 또는 직접 입력. */
     val title: String,
     val author: String? = null,
     val publisher: String? = null,
-    /** 알라딘 등록 시에만 채워진다. 직접 입력 책은 null. */
+    /** 검색 등록 시에만 채워진다. 직접 입력 책은 null. */
     val isbn13: String? = null,
-    /** 알라딘 표지 URL. 오프라인 표시는 이미지 캐시가 담당한다. */
+    /** 표지 URL. 오프라인 표시는 이미지 캐시가 담당한다. */
     val coverUrl: String? = null,
-    /** 알라딘 categoryName. 예: 국내도서>소설/시/희곡>한국소설 */
+    /** 검색 공급자의 분류. 카카오 책 검색은 분류를 주지 않아 지금은 null이다(예: 국내도서>소설). */
     val category: String? = null,
-    /** 알라딘 소개글. 분석·토론 프롬프트에 쓴다. */
+    /** 검색 공급자 소개글. 분석·토론 프롬프트에 쓴다. */
     val description: String? = null,
     val status: BookStatus = BookStatus.READING,
     /** 1~5. DONE일 때만. */

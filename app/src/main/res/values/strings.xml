@@ -44,15 +44,15 @@
     <string name="analysis_add_want">읽고 싶음에 담기</string>
     <string name="analysis_added">읽고 싶음에 담았어요</string>
     <string name="analysis_history">이전 기록 %1$d건</string>
-    <string name="analysis_open_aladin">알라딘에서 보기</string>
+    <string name="analysis_open_link">책 정보 보기</string>
 
     <!-- 설정 (API 키 입력, 모델 선택, 비용 통제, 백업) -->
     <string name="settings_section_keys">API 키</string>
-    <string name="settings_ttb_label">알라딘 TTB 키</string>
+    <string name="settings_kakao_label">카카오 REST API 키</string>
     <string name="settings_anthropic_label">Anthropic API 키</string>
     <string name="settings_save">저장</string>
     <string name="settings_key_saved">저장됨</string>
-    <string name="settings_key_saved_ttb">알라딘 TTB 키를 저장했어요</string>
+    <string name="settings_key_saved_kakao">카카오 REST API 키를 저장했어요</string>
     <string name="settings_key_saved_anthropic">Anthropic API 키를 저장했어요</string>
     <string name="settings_key_not_set">미입력</string>
     <string name="settings_section_ai">AI</string>
@@ -106,8 +106,8 @@
     <string name="search_action">검색</string>
     <string name="search_manual_entry">직접 입력</string>
     <string name="search_duplicate">이미 서재에 있어요</string>
-    <string name="search_needs_key">알라딘 검색을 쓰려면 설정에서 TTB 키를 입력하세요</string>
-    <string name="search_key_invalid">알라딘 TTB 키가 올바르지 않아요. 설정에서 다시 입력하세요</string>
+    <string name="search_needs_key">책 검색을 쓰려면 설정에서 카카오 REST API 키를 입력하세요</string>
+    <string name="search_key_invalid">카카오 REST API 키가 올바르지 않아요. 설정에서 다시 입력하세요</string>
     <string name="search_open_settings">설정으로</string>
 
     <!-- 직접 입력 등록 (흐름 2) -->

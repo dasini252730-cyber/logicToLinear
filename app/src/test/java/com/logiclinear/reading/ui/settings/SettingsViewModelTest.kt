@@ -99,20 +99,20 @@ class SettingsViewModelTest {
         val collector = launch { vm.uiState.collect {} }
         advanceUntilIdle()
 
-        vm.onTtbChange("   ")
-        vm.saveKey(SecretKey.ALADIN_TTB)
+        vm.onKakaoChange("   ")
+        vm.saveKey(SecretKey.KAKAO_REST)
         advanceUntilIdle()
-        assertFalse(vm.uiState.value.ttbSet)
+        assertFalse(vm.uiState.value.kakaoSet)
 
-        vm.onTtbChange("  ttb-key  ")
-        vm.saveKey(SecretKey.ALADIN_TTB)
+        vm.onKakaoChange("  kakao-key  ")
+        vm.saveKey(SecretKey.KAKAO_REST)
         advanceUntilIdle()
 
-        assertTrue(vm.uiState.value.ttbSet)
+        assertTrue(vm.uiState.value.kakaoSet)
         assertFalse(vm.uiState.value.anthropicSet)
-        assertEquals("", vm.uiState.value.ttbInput)
-        assertEquals("ttb-key", secretStore.get(SecretKey.ALADIN_TTB))
-        assertEquals(SettingsMessage.KeySaved(SecretKey.ALADIN_TTB), vm.uiState.value.message)
+        assertEquals("", vm.uiState.value.kakaoInput)
+        assertEquals("kakao-key", secretStore.get(SecretKey.KAKAO_REST))
+        assertEquals(SettingsMessage.KeySaved(SecretKey.KAKAO_REST), vm.uiState.value.message)
         collector.cancel()
     }
 
@@ -133,7 +133,7 @@ class SettingsViewModelTest {
 
     @Test
     fun 내보내기는_규칙대로_이름을_짓고_파일에_키가_없으며_실패는_메시지로_알린다() = runTest(mainDispatcherRule.dispatcher) {
-        secretStore.set(SecretKey.ALADIN_TTB, "secret-ttb-value")
+        secretStore.set(SecretKey.KAKAO_REST, "secret-kakao-value")
         db.bookDao().insert(Book(title = "책"))
         val vm = vm()
         val collector = launch { vm.uiState.collect {} }
@@ -145,7 +145,7 @@ class SettingsViewModelTest {
 
         val text = io.files.getValue(uri)
         assertTrue(text.contains("\"schemaVersion\": $DB_SCHEMA_VERSION"))
-        assertFalse(text.contains("secret-ttb-value"))
+        assertFalse(text.contains("secret-kakao-value"))
         assertEquals(SettingsMessage.ExportDone, vm.uiState.value.message)
 
         io.failWrite = true

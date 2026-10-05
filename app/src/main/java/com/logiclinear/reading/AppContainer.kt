@@ -9,8 +9,8 @@ import com.logiclinear.reading.data.backup.ContentResolverBackupIo
 import com.logiclinear.reading.data.db.AppDatabase
 import com.logiclinear.reading.data.prefs.AppPreferences
 import com.logiclinear.reading.data.prefs.SharedPrefsAppPreferences
-import com.logiclinear.reading.data.remote.aladin.AladinClient
-import com.logiclinear.reading.data.remote.aladin.AladinSearch
+import com.logiclinear.reading.data.remote.books.KakaoBookClient
+import com.logiclinear.reading.data.remote.books.BookSearch
 import com.logiclinear.reading.data.remote.anthropic.AiChat
 import com.logiclinear.reading.data.remote.anthropic.AnthropicClient
 import com.logiclinear.reading.data.ai.RecommendationEnricher
@@ -34,7 +34,7 @@ class AppContainer(context: Context) {
 
     val database: AppDatabase by lazy { AppDatabase.build(appContext) }
 
-    val bookRepository: BookRepository by lazy { BookRepository(database.bookDao(), aladinClient) }
+    val bookRepository: BookRepository by lazy { BookRepository(database.bookDao(), bookSearchClient) }
 
     val quoteRepository: QuoteRepository by lazy { QuoteRepository(database.quoteDao(), database.bookDao()) }
 
@@ -72,7 +72,7 @@ class AppContainer(context: Context) {
         AnalysisRepository(
             db = database,
             aiChat = aiChat,
-            enricher = RecommendationEnricher(aladinClient),
+            enricher = RecommendationEnricher(bookSearchClient),
             systemPrompt = { analysisSystem },
         )
     }
@@ -94,8 +94,8 @@ class AppContainer(context: Context) {
 
     private fun rawText(id: Int): String = appContext.resources.openRawResource(id).bufferedReader().use { it.readText() }.trim()
 
-    /** 알라딘 책 검색. 키는 호출마다 secretStore에서 읽는다. ViewModel은 이것을 직접 쓰지 않고 BookRepository를 거친다. */
-    private val aladinClient: AladinSearch by lazy { AladinClient.create(secretStore) }
+    /** 도서 검색(카카오 책 검색). 키는 호출마다 secretStore에서 읽는다. ViewModel은 이것을 직접 쓰지 않고 BookRepository를 거친다. */
+    private val bookSearchClient: BookSearch by lazy { KakaoBookClient.create(secretStore) }
 }
 
 /**

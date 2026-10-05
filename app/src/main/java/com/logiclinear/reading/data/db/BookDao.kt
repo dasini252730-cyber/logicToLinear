@@ -53,7 +53,7 @@ interface BookDao {
     @Query("DELETE FROM book")
     suspend fun deleteAll()
 
-    /** 알라딘 등록 중복 차단용(요구사항 "책 검색": 같은 isbn13이 있으면 막는다). */
+    /** 검색 등록 중복 차단용(요구사항 "책 검색": 같은 isbn13이 있으면 막는다). */
     @Query("SELECT * FROM book WHERE isbn13 = :isbn13 LIMIT 1")
     suspend fun findByIsbn13(isbn13: String): Book?
 

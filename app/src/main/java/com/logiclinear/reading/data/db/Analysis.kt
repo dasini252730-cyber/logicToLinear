@@ -13,7 +13,7 @@ data class Analysis(
     val runAt: Instant = nowMillis(),
     /** AI가 쓴 취향 해석 글. JSON 파싱에 실패하면 응답 원문이 그대로 들어간다. */
     val tasteText: String,
-    /** [{title, author, reason, isbn13?, coverUrl?, aladinUrl?}] JSON 배열. 파싱 실패 시 "[]". */
+    /** [{title, author, reason, isbn13?, coverUrl?, storeUrl?}] JSON 배열. 파싱 실패 시 "[]". */
     val recommendationsJson: String = "[]",
     /** 실행 당시 DONE 책 수. */
     val inputBookCount: Int,

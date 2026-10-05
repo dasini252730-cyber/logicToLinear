@@ -9,8 +9,8 @@ import com.logiclinear.reading.data.db.AppDatabase
 import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.BookStatus
 import com.logiclinear.reading.data.db.Quote
-import com.logiclinear.reading.data.remote.aladin.AladinResult
-import com.logiclinear.reading.data.remote.aladin.AladinSearch
+import com.logiclinear.reading.data.remote.books.BookSearchResult
+import com.logiclinear.reading.data.remote.books.BookSearch
 import com.logiclinear.reading.data.remote.anthropic.AiChat
 import com.logiclinear.reading.data.remote.anthropic.AiRequest
 import com.logiclinear.reading.data.remote.anthropic.AiResult
@@ -46,8 +46,8 @@ class AnalysisViewModelTest {
     private val ai = object : AiChat {
         override suspend fun complete(request: AiRequest): AiResult { aiCalls++; return aiAnswer }
     }
-    private val noAladin = object : AladinSearch {
-        override suspend fun searchByTitle(title: String): AladinResult = AladinResult.Empty
+    private val noSearch = object : BookSearch {
+        override suspend fun searchByTitle(title: String): BookSearchResult = BookSearchResult.Empty
     }
 
     @Before
@@ -63,7 +63,7 @@ class AnalysisViewModelTest {
     fun tearDown() = db.close()
 
     private fun vm() = AnalysisViewModel(
-        AnalysisRepository(db, ai, RecommendationEnricher(noAladin), { "p" }, workDispatcher = mainDispatcherRule.dispatcher),
+        AnalysisRepository(db, ai, RecommendationEnricher(noSearch), { "p" }, workDispatcher = mainDispatcherRule.dispatcher),
         BookRepository(db.bookDao()),
     )
 

@@ -101,7 +101,7 @@ private fun RecommendationCardView(card: RecommendationCard, onAddToWant: (Recom
                 if (rec.reason.isNotBlank()) Text(rec.reason, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 4.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 4.dp)) {
                     if (!card.inLibrary) TextButton(onClick = { onAddToWant(rec) }) { Text(stringResource(R.string.analysis_add_want)) }
-                    rec.aladinUrl?.let { url -> TextButton(onClick = { onOpenLink(url) }) { Text(stringResource(R.string.analysis_open_aladin)) } }
+                    rec.storeUrl?.let { url -> TextButton(onClick = { onOpenLink(url) }) { Text(stringResource(R.string.analysis_open_link)) } }
                 }
             }
         }

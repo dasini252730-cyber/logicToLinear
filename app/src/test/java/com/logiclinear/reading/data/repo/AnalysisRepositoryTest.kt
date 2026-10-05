@@ -9,9 +9,9 @@ import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.BookStatus
 import com.logiclinear.reading.data.db.Discussion
 import com.logiclinear.reading.data.db.Quote
-import com.logiclinear.reading.data.remote.aladin.AladinItem
-import com.logiclinear.reading.data.remote.aladin.AladinResult
-import com.logiclinear.reading.data.remote.aladin.AladinSearch
+import com.logiclinear.reading.data.remote.books.BookSearchItem
+import com.logiclinear.reading.data.remote.books.BookSearchResult
+import com.logiclinear.reading.data.remote.books.BookSearch
 import com.logiclinear.reading.data.remote.anthropic.AiChat
 import com.logiclinear.reading.data.remote.anthropic.AiRequest
 import com.logiclinear.reading.data.remote.anthropic.AiResult
@@ -42,11 +42,11 @@ class AnalysisRepositoryTest {
         }
     }
 
-    private val aladin = object : AladinSearch {
-        override suspend fun searchByTitle(title: String): AladinResult = if (title == "흰") {
-            AladinResult.Found(listOf(AladinItem(title = "흰", author = "한강 (지은이)", publisher = "난다", isbn13 = "9788954651134", cover = "https://c/white.jpg", categoryName = "국내도서>소설", description = "소개", link = "https://a/white")))
+    private val search = object : BookSearch {
+        override suspend fun searchByTitle(title: String): BookSearchResult = if (title == "흰") {
+            BookSearchResult.Found(listOf(BookSearchItem(title = "흰", author = "한강 (지은이)", publisher = "난다", isbn13 = "9788954651134", cover = "https://c/white.jpg", category = "국내도서>소설", description = "소개", link = "https://a/white")))
         } else {
-            AladinResult.Empty
+            BookSearchResult.Empty
         }
     }
 
@@ -59,7 +59,7 @@ class AnalysisRepositoryTest {
     @After
     fun tearDown() = db.close()
 
-    private fun repo(ai: AiChat) = AnalysisRepository(db, ai, RecommendationEnricher(aladin), systemPrompt = { "시스템 프롬프트" })
+    private fun repo(ai: AiChat) = AnalysisRepository(db, ai, RecommendationEnricher(search), systemPrompt = { "시스템 프롬프트" })
 
     private suspend fun seed() {
         val done = db.bookDao().insert(Book(title = "채식주의자", author = "한강", status = BookStatus.DONE, rating = 5))
