@@ -500,7 +500,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-05 T-101 리뷰 인계: MainActivity가 enableEdgeToEdge()를 켜고 targetSdk 37은 edge-to-edge 강제. 실제 화면을 넣을 때 Scaffold 또는 WindowInsets.safeDrawing 패딩으로 상태바·내비바 겹침을 처리할 것. PlaceholderScreen(MainActivity.kt)은 이 task에서 삭제."
     },
     {
       "id": "T-109",
