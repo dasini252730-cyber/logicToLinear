@@ -2537,6 +2537,33 @@
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
+    },
+    {
+      "id": "T-806",
+      "title": "하단 탭에 카메라(홈) 항목 추가: 서재·설정에서 카메라로 돌아가는 길이 없음",
+      "description": "실기기 확인(2026-10-05)에서 사용자가 서재·토론 화면에 들어간 뒤 카메라로 돌아가는 방법을 찾지 못했다. 현재는 시스템 뒤로가기로만 홈(카메라)에 갈 수 있고 하단 탭은 서재·분석·추천·설정 세 개뿐이다. 하단 탭 맨 앞에 '카메라' 항목을 추가해 어느 화면에서든 한 번에 홈으로 가게 한다. 홈이 카메라라는 원칙과 2초 시작은 그대로. 탭 순서·아이콘은 사용자 확인.",
+      "doc": "docs/tasks/T-806.md",
+      "phase": 8,
+      "status": "todo",
+      "priority": "P3",
+      "assignee": "claude",
+      "estimateMinutes": 30,
+      "dependsOn": [],
+      "specRefs": [
+        "화면 흐름"
+      ],
+      "acceptanceCriteria": [
+        "서재·분석·설정 화면에서 하단 탭 '카메라'를 누르면 홈(카메라)으로 간다",
+        "홈에서는 '카메라' 탭이 선택 상태로 보인다",
+        "콜드 스타트 중앙값이 2초 이하로 유지된다"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-05",
+      "updatedAt": "2026-10-05",
+      "startedAt": null,
+      "completedAt": null,
+      "blockedReason": null,
+      "notes": ""
     }
   ]
 }
