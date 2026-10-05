@@ -2614,11 +2614,12 @@
       "acceptanceCriteria": [
         "ui/home 패키지가 없고 ui/capture에 CaptureScreen·CaptureViewModel이 있다",
         "CaptureViewModel 상태에 선택기·기본 책 관련 필드가 없다",
-        "기존 테스트(HomeViewModelTest → CaptureViewModelTest) 전체 통과"
+        "기존 테스트(HomeViewModelTest → CaptureViewModelTest) 전체 통과",
+        "CaptureViewModel에서 BookPickerSheet·chooseBook·openPicker·observeDefaultReadingBook 구독·noReadingBook 배너 분기를 제거하고 고정 책만 다룬다(T-806 리뷰 경고 2 이월)"
       ],
       "tags": [],
       "createdAt": "2026-10-05",
-      "updatedAt": "2026-10-05",
+      "updatedAt": "2026-10-06",
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
