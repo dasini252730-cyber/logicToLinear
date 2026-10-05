@@ -1317,7 +1317,7 @@
       "description": "사용자 결정(2026-10-05): 카카오 대신 국립중앙도서관 소장자료 검색 Open API(GET https://www.nl.go.kr/NL/search/openApi/search.do?key=&kwd=&srchTarget=title&apiType=json&pageNum=1&pageSize=10&category=도서)를 쓴다. 인증키는 관리자 승인(업무일 1~2일) 대기 중. 조사 결과: 오류는 HTTP 200에 {errorCode,errorMsg}로 온다(010 키 없음, 011 유효하지 않은 키, 000·101 서버 오류, 012~015 파라미터 오류). Content-Type은 text/json;charset=UTF-8이라 Retrofit 컨버터 미디어 타입을 맞춰야 한다. 응답 필드는 공식 표상 total·result[]·title_info·author_info·pub_info·pub_year_info·isbn·call_no·type_name·detail_link·kdc_code_1s·kdc_name_1s(실제 JSON 키 표기는 키 승인 후 실호출로 확인). 표지·소개글은 없고 KDC 대분류로 Book.category를 채울 수 있다. KakaoBookApi/KakaoBookClient를 NlBookApi/NlBookClient로 바꾸고 SecretKey.KAKAO_REST→NL_OPENAPI, 설정 문구·추천 링크(detail_link)를 바꾼다.",
       "doc": "docs/tasks/T-309.md",
       "phase": 3,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P1",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -1338,10 +1338,10 @@
       "tags": [],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
-      "notes": "2026-10-05 2026-10-05 사용자 확정: 도서 검색은 국립중앙도서관 Open API로 간다. 이 API가 주지 않는 기능(표지 이미지, 소개글)은 포기한다(검색 등록 시 cover·description 빈 값, 책 상세·추천 카드는 빈 값이면 그 줄을 생략). 인증키 승인 뒤에 착수한다. 착수 시 docs/요구사항.md·rules/product-principles.md의 알라딘 표기도 국립중앙도서관으로 고친다.\n2026-10-05 T-308 리뷰에서 이월(2026-10-05): (1) addFromSearch는 isbn13이 빈 값이면 중복 검사를 건너뛴다. NL 응답의 isbn 형태를 확인한 뒤 addRecommendation처럼 제목+저자(isSameBook) 폴백을 넣을지 정한다. (2) res/raw/prompt_analysis_system.txt의 '장르·카테고리 통계' 줄은 category가 비면 근거 없는 문단을 만들 수 있다. KDC 대분류로 category를 채우면서 그 줄을 재검토한다. (3) SettingsViewModel 180/200줄(90%): 이 task에서 키 칸을 또 건드리므로 백업 내보내기/가져오기 로직을 SettingsBackupViewModel 또는 BackupRepository 쪽으로 분리 예정. (4) task-briefer 브리핑을 반드시 먼저 부른다."
+      "notes": "2026-10-05 2026-10-05 사용자 확정: 도서 검색은 국립중앙도서관 Open API로 간다. 이 API가 주지 않는 기능(표지 이미지, 소개글)은 포기한다(검색 등록 시 cover·description 빈 값, 책 상세·추천 카드는 빈 값이면 그 줄을 생략). 인증키 승인 뒤에 착수한다. 착수 시 docs/요구사항.md·rules/product-principles.md의 알라딘 표기도 국립중앙도서관으로 고친다.\n2026-10-05 T-308 리뷰에서 이월(2026-10-05): (1) addFromSearch는 isbn13이 빈 값이면 중복 검사를 건너뛴다. NL 응답의 isbn 형태를 확인한 뒤 addRecommendation처럼 제목+저자(isSameBook) 폴백을 넣을지 정한다. (2) res/raw/prompt_analysis_system.txt의 '장르·카테고리 통계' 줄은 category가 비면 근거 없는 문단을 만들 수 있다. KDC 대분류로 category를 채우면서 그 줄을 재검토한다. (3) SettingsViewModel 180/200줄(90%): 이 task에서 키 칸을 또 건드리므로 백업 내보내기/가져오기 로직을 SettingsBackupViewModel 또는 BackupRepository 쪽으로 분리 예정. (4) task-briefer 브리핑을 반드시 먼저 부른다.\n2026-10-05 [in_progress] 사용자 지시(2026-10-05): 폰이 필요한 것 외에 전부 진행. 인증키(T-001) 승인 전이라 실호출 확인만 남기고 구현한다"
     },
     {
       "id": "T-401",
