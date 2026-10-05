@@ -1,0 +1,91 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/backlog.mjs *)",
+      "Bash(node scripts/gen-task-docs.mjs*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(gradlew.bat *)",
+      "Bash(./gradlew *)"
+    ],
+    "deny": [
+      "Read(backlog.json)",
+      "Edit(backlog.json)",
+      "Write(backlog.json)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/session-start.mjs\"",
+            "timeout": 20,
+            "statusMessage": "브랜치와 백로그 확인 중"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|MultiEdit|NotebookEdit|Grep|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/guard-backlog.mjs\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/gate-backlog-status.mjs\"",
+            "timeout": 600,
+            "statusMessage": "review/done 전환 전 lint·build 검증 중"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/check-lines.mjs\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/backlog-commit.mjs\"",
+            "timeout": 60,
+            "statusMessage": "백로그 변경 커밋 중"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/verify-build.mjs\"",
+            "timeout": 600,
+            "statusMessage": "lint·build·테스트 검증 중"
+          }
+        ]
+      }
+    ]
+  }
+}

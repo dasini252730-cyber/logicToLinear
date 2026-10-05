@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 플랫폼 창 테마. Compose가 그리기 전 창 배경색만 담당한다. 색상·타이포그래피는 ui/theme/Theme.kt. -->
+    <style name="Theme.ReadingLog" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+</resources>

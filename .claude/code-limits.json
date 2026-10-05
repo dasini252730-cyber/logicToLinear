@@ -1,0 +1,18 @@
+{
+  "_comment": "파일 줄 수 상한. 위에서부터 첫 번째로 매칭되는 규칙을 쓴다. 85% 이상이면 경고, 100% 초과면 재작업. limit가 null이면 검사하지 않는다.",
+  "warnRatio": 0.85,
+  "rules": [
+    { "glob": "**/*Test.kt", "limit": 400, "why": "테스트는 케이스가 많아 여유를 둔다" },
+    { "glob": "**/*Screen.kt", "limit": 250, "why": "Compose 화면. 넘으면 컴포저블을 파일로 분리" },
+    { "glob": "**/*ViewModel.kt", "limit": 200, "why": "상태와 이벤트만. 로직은 Repository나 순수 함수로" },
+    { "glob": "**/*Dao.kt", "limit": 120, "why": "쿼리 선언만" },
+    { "glob": "**/*Repository.kt", "limit": 200 },
+    { "glob": "**/*.kt", "limit": 300, "why": "기본 Kotlin 파일 상한" },
+    { "glob": "**/*.kts", "limit": 150, "why": "Gradle 스크립트" },
+    { "glob": "**/*.xml", "limit": 200 },
+    { "glob": "scripts/hooks/*.mjs", "limit": 150, "why": "hook은 작고 단순해야 한다" },
+    { "glob": "scripts/backlog.mjs", "limit": 400, "why": "CLI 진입점. 명령이 늘면 파일 분리" },
+    { "glob": "scripts/**/*.mjs", "limit": 250 },
+    { "glob": "**/*.{md,json,toml,properties,txt,pro}", "limit": null }
+  ]
+}

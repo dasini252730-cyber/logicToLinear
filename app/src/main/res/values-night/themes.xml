@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 다크 모드 창 테마. Compose darkColorScheme이 그려지기 전 흰 창이 번쩍이는 것을 막는다. -->
+    <style name="Theme.ReadingLog" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>
