@@ -1242,7 +1242,7 @@
     {
       "id": "T-307",
       "title": "3단계 실기기 확인",
-      "description": "실제 카카오 REST API 키로 책 5권을 검색 등록하고, 중복 차단과 오프라인 폴백, 한도 초과(429) 응답을 확인한다.",
+      "description": "실제 국립중앙도서관 Open API 인증키(T-001 승인 후, T-309 교체 후)로 책 5권을 검색 등록하고, 중복 차단과 오프라인 폴백, 키 오류(errorCode 011) 응답을 확인한다.",
       "doc": "docs/tasks/T-307.md",
       "phase": 3,
       "status": "todo",
