@@ -90,7 +90,6 @@
         "클로드 코드 작업 순서"
       ],
       "acceptanceCriteria": [
-        "TTB 키를 확보했다",
         "일 호출 한도를 확인해 docs/tasks/T-001.md에 적었다"
       ],
       "tags": [
