@@ -110,7 +110,7 @@
       "description": "Anthropic Console에서 API 키를 발급받고 결제 한도를 설정한다. 키는 앱 설정 화면에서만 입력한다.",
       "doc": "docs/tasks/T-002.md",
       "phase": 0,
-      "status": "needs_human",
+      "status": "done",
       "priority": "P2",
       "assignee": "human",
       "estimateMinutes": 30,
@@ -130,7 +130,7 @@
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
-      "completedAt": null,
+      "completedAt": "2026-10-05",
       "blockedReason": null,
       "notes": "2026-10-05 2026-10-05 사용자가 Anthropic API 키를 발급받아 전달함. 키 자체는 원칙 6에 따라 저장소·문서·로그 어디에도 기록하지 않고, 실기기 설정 화면(Anthropic 키 칸)에 사용자가 직접 입력한다. 상태 전환은 사용자가 한다(assignee human)."
     },
@@ -200,7 +200,7 @@
       "description": "Android Studio, SDK, JDK 설치를 확인하고 실제 폰의 USB 디버깅을 켜서 adb devices에 잡히는지 확인한다.",
       "doc": "docs/tasks/T-005.md",
       "phase": 0,
-      "status": "needs_human",
+      "status": "done",
       "priority": "P0",
       "assignee": "human",
       "estimateMinutes": 30,
@@ -218,7 +218,7 @@
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
       "startedAt": null,
-      "completedAt": null,
+      "completedAt": "2026-10-05",
       "blockedReason": null,
       "notes": "2026-10-05 2026-10-05 실기기 연결 확인: adb devices에 R3KL4058K0P(삼성 SM-S942N, Android 16, API 36) device 상태로 표시됨. 상태 전환은 사용자(assignee human)."
     },
@@ -988,7 +988,7 @@
       "description": "앱 아이콘 탭에서 카메라 프리뷰까지 시간을 실기기에서 측정한다. 2초를 넘으면 DB 초기화 지연, 스플래시 제거, CameraX 바인딩 선행 등으로 줄인다.",
       "doc": "docs/tasks/T-211.md",
       "phase": 2,
-      "status": "needs_human",
+      "status": "review",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -1010,7 +1010,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": "2026-10-05 [needs_human] 콜드 스타트 측정은 실기기(T-005) 연결 후 가능. 코드 점검은 완료, 측정 방법은 docs/tasks/T-211.md"
+      "notes": "2026-10-05 [needs_human] 콜드 스타트 측정은 실기기(T-005) 연결 후 가능. 코드 점검은 완료, 측정 방법은 docs/tasks/T-211.md\n2026-10-05 [review] 실기기 측정 3회 기록(중앙값 459ms). T-308 작업 트리가 커밋되기 전이라 done은 보류(done hook이 전체 변경을 쓸어 담음)"
     },
     {
       "id": "T-212",
