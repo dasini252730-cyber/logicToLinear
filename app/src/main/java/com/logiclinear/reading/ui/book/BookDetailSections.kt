@@ -150,12 +150,11 @@ fun DeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
  * 토론 기능(T-707) 전까지 시작 버튼은 비활성 자리다.
  */
 @Composable
-fun DiscussionProposalDialog(onDismiss: () -> Unit) {
+fun DiscussionProposalDialog(onStart: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.proposal_title)) },
-        text = { Text(stringResource(R.string.proposal_not_ready)) },
-        confirmButton = { Button(onClick = {}, enabled = false) { Text(stringResource(R.string.proposal_start)) } },
+        confirmButton = { Button(onClick = onStart) { Text(stringResource(R.string.proposal_start)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.proposal_later)) } },
     )
 }

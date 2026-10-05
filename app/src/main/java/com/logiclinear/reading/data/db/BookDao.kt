@@ -45,6 +45,10 @@ interface BookDao {
     @Query("SELECT * FROM book ORDER BY id")
     suspend fun getAll(): List<Book>
 
+    /** 추천 카드의 "이미 서재에 있음" 판정(T-608). */
+    @Query("SELECT * FROM book ORDER BY id")
+    fun observeAll(): Flow<List<Book>>
+
     /** 백업 덮어쓰기(T-505). Quote·Discussion은 CASCADE로 함께 지워진다. */
     @Query("DELETE FROM book")
     suspend fun deleteAll()

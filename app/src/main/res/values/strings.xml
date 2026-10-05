@@ -31,8 +31,20 @@
     <string name="quote_saved_with_page">저장됨 (p.%1$d)</string>
     <string name="quote_saved">저장됨</string>
 
-    <!-- 자리 표시 화면 (T-606에서 교체). 개발 일정 용어를 쓰지 않는다. -->
-    <string name="analysis_placeholder">분석·추천을 준비하고 있어요</string>
+    <!-- 분석·추천 (흐름 4, AI 기능 > 취향 분석·추천) -->
+    <string name="analysis_need_books">책 %1$d권</string>
+    <string name="analysis_need_quotes">글귀 %1$d개</string>
+    <string name="analysis_need_more">%1$s 더 필요해요</string>
+    <string name="analysis_run">분석·추천 실행</string>
+    <string name="analysis_running">분석하고 있어요</string>
+    <string name="analysis_empty">아직 분석이 없어요. 다 읽은 책과 글귀가 쌓이면 버튼을 눌러 보세요</string>
+    <string name="analysis_latest">최신 분석</string>
+    <string name="analysis_run_at">%1$s 실행 · 책 %2$d권 · 글귀 %3$d개 기준</string>
+    <string name="analysis_recommendations">추천 책</string>
+    <string name="analysis_add_want">읽고 싶음에 담기</string>
+    <string name="analysis_added">읽고 싶음에 담았어요</string>
+    <string name="analysis_history">이전 기록 %1$d</string>
+    <string name="analysis_open_aladin">알라딘에서 보기</string>
 
     <!-- 설정 (API 키 입력, 모델 선택, 비용 통제, 백업) -->
     <string name="settings_section_keys">API 키</string>
@@ -40,6 +52,8 @@
     <string name="settings_anthropic_label">Anthropic API 키</string>
     <string name="settings_save">저장</string>
     <string name="settings_key_saved">저장됨</string>
+    <string name="settings_key_saved_ttb">알라딘 TTB 키를 저장했어요</string>
+    <string name="settings_key_saved_anthropic">Anthropic API 키를 저장했어요</string>
     <string name="settings_key_not_set">미입력</string>
     <string name="settings_section_ai">AI</string>
     <string name="settings_model_haiku">Haiku (기본)</string>
@@ -57,6 +71,16 @@
     <string name="settings_import_failed">가져오기에 실패했어요</string>
     <string name="settings_import_too_new">이 백업은 더 새로운 앱에서 만들었어요. 앱을 업데이트해 주세요</string>
     <string name="settings_import_corrupt">백업 파일을 읽을 수 없어요</string>
+
+    <!-- AI 호출 오류 (요구사항 "비용 통제": 오류를 보여주고 재시도 버튼; "예외 처리": 키 미입력 → 설정 화면으로 안내) -->
+    <string name="ai_error_no_key">Anthropic API 키를 설정에서 입력하세요</string>
+    <string name="ai_error_invalid_key">Anthropic API 키가 올바르지 않아요. 설정에서 다시 입력하세요</string>
+    <string name="ai_error_rate_limited">요청이 너무 많아요. 잠시 뒤 다시 시도해 주세요</string>
+    <string name="ai_error_server">AI 서버에 문제가 있어요. 다시 시도해 주세요</string>
+    <string name="ai_error_network">네트워크에 연결할 수 없어요. 다시 시도해 주세요</string>
+    <string name="ai_error_rejected">요청을 처리하지 못했어요 (%1$d)</string>
+    <string name="ai_retry">다시 시도</string>
+    <string name="ai_open_settings">설정으로</string>
 
     <!-- 서재 -->
     <string name="library_empty_reading">읽는 중인 책이 없어요. + 버튼으로 등록하세요</string>
@@ -82,6 +106,7 @@
     <string name="search_manual_entry">직접 입력</string>
     <string name="search_duplicate">이미 서재에 있어요</string>
     <string name="search_needs_key">알라딘 검색을 쓰려면 설정에서 TTB 키를 입력하세요</string>
+    <string name="search_key_invalid">알라딘 TTB 키가 올바르지 않아요. 설정에서 다시 입력하세요</string>
     <string name="search_open_settings">설정으로</string>
 
     <!-- 직접 입력 등록 (흐름 2) -->
@@ -111,9 +136,25 @@
     <string name="finish_empty_hint">별점과 한 줄을 비우면 분석 품질이 떨어져요</string>
     <string name="finish_save">저장</string>
     <string name="proposal_title">이 책에 대해 AI와 이야기해볼까요?</string>
-    <string name="proposal_not_ready">토론 기능을 준비하고 있어요</string>
     <string name="proposal_start">이야기 시작</string>
     <string name="proposal_later">나중에</string>
+
+    <!-- 완독 후 토론 (AI 기능 > 완독 후 토론, 예외 처리) -->
+    <string name="discussion_title">토론</string>
+    <string name="discussion_turns_left">남은 턴 %1$d</string>
+    <string name="discussion_input_hint">답을 적어 주세요</string>
+    <string name="discussion_send">전송</string>
+    <string name="discussion_ended">20턴이 끝나 토론을 마무리했어요</string>
+    <string name="discussion_not_sent">전송 안 됨</string>
+    <string name="discussion_resend">재전송</string>
+    <string name="discussion_first_question_failed">첫 질문을 받지 못했어요</string>
+    <string name="discussion_ask_first">첫 질문 받기</string>
+    <string name="discussion_waiting">답을 생각하고 있어요</string>
+    <string name="discussion_list_header">토론 %1$d</string>
+    <string name="discussion_new">새 토론</string>
+    <string name="discussion_in_progress">진행 중</string>
+    <string name="discussion_ended_label">종료</string>
+    <string name="discussion_message_count">메시지 %1$d개</string>
 
     <!-- 책 상세: 소감·글귀 -->
     <string name="review_no_rating">별점 없음</string>

@@ -39,6 +39,13 @@ class SameBookTest {
     }
 
     @Test
+    fun 제목이_비어_있으면_isbn이_없는_한_같은_책이_아니다() {
+        assertFalse(isSameBook(BookIdentity("", null, null), BookIdentity("  ", "", null)))
+        assertFalse(isSameBook(BookIdentity("", "한강", null), BookIdentity("", "한강", null)))
+        assertTrue(isSameBook(BookIdentity("", null, "9788936433598"), BookIdentity("", null, "9788936433598")))
+    }
+
+    @Test
     fun isbn_정규화는_숫자만_남기고_비면_null() {
         assertEquals("9788936433598", normalizeIsbn("978-89-364-3359-8"))
         assertNull(normalizeIsbn("   "))

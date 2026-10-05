@@ -26,9 +26,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.logiclinear.reading.R
-import com.logiclinear.reading.ui.analysis.AnalysisScreen
+import com.logiclinear.reading.ui.analysis.AnalysisEntry
 import com.logiclinear.reading.ui.book.BookDetailEntry
 import com.logiclinear.reading.ui.book.BookFormEntry
+import com.logiclinear.reading.ui.discussion.DiscussionEntry
 import com.logiclinear.reading.ui.home.HomeEntry
 import com.logiclinear.reading.ui.library.LibraryEntry
 import com.logiclinear.reading.ui.search.BookSearchEntry
@@ -70,16 +71,14 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 BookSearchEntry(
                     onBack = { navController.popBackStack() },
                     onRegistered = { navController.popBackStack<LibraryRoute>(inclusive = false) },
-                    // 검색 실패·오프라인·직접 입력: 검색 화면을 폼으로 바꾼다(요구사항 "예외 처리": 직접 입력 폼으로 전환).
-                    onManualEntry = { query ->
-                        navController.navigate(BookFormRoute(initialTitle = query.ifBlank { null })) {
-                            popUpTo<BookSearchRoute> { inclusive = true }
-                        }
-                    },
-                    onOpenSettings = { navController.navigateTopLevel(TopLevelRoute.SETTINGS) },
+                    // 검색 실패·오프라인·직접 입력: 직접 입력 폼으로 전환(요구사항 "예외 처리"). 검색 화면은 백스택에 남겨
+                    // 뒤로가기로 검색어만 고칠 수 있게 한다(리뷰 반영). 저장되면 폼이 서재까지 팝한다.
+                    onManualEntry = { query -> navController.navigate(BookFormRoute(initialTitle = query.ifBlank { null })) },
+                    // 설정도 위에 쌓아 키를 넣고 뒤로가기로 검색에 돌아온다.
+                    onOpenSettings = { navController.navigate(SettingsRoute) },
                 )
             }
-            composable<AnalysisRoute> { AnalysisScreen() }
+            composable<AnalysisRoute> { AnalysisEntry(onOpenSettings = { navController.navigateTopLevel(TopLevelRoute.SETTINGS) }) }
             composable<SettingsRoute> { SettingsEntry() }
             // 저장·삭제 완료는 "서재까지" 팝한다. 사용자가 그 사이 뒤로를 눌러 이미 서재에 있으면 아무 일도 하지 않는다.
             composable<BookFormRoute> {
@@ -92,6 +91,13 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 BookDetailEntry(
                     onBack = { navController.popBackStack() },
                     onDeleted = { navController.popBackStack<LibraryRoute>(inclusive = false) },
+                    onOpenDiscussion = { id, fresh -> navController.navigate(DiscussionRoute(id, fresh)) },
+                )
+            }
+            composable<DiscussionRoute> {
+                DiscussionEntry(
+                    onBack = { navController.popBackStack() },
+                    onOpenSettings = { navController.navigateTopLevel(TopLevelRoute.SETTINGS) },
                 )
             }
         }

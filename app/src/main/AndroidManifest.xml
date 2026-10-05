@@ -3,6 +3,8 @@
 
     <!-- 글귀 촬영. 사진은 저장하지 않으므로 저장소 권한은 필요 없다. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 알라딘 검색·표지·Anthropic 호출. OkHttp 매니페스트가 병합하지만 앱이 네트워크를 쓴다는 사실을 여기에 드러낸다. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application

@@ -131,6 +131,23 @@ class BookSearchViewModelTest {
     }
 
     @Test
+    fun 키_오류_코드는_폴백이_아니라_설정_안내로_간다() = runTest(mainDispatcherRule.dispatcher) {
+        val vm = vm(AladinResult.ApiError(BookSearchViewModel.ALADIN_INVALID_KEY, "잘못된 TTBKey입니다."))
+        vm.onQueryChange("책")
+        vm.search()
+        advanceUntilIdle()
+
+        assertTrue(vm.uiState.value.keyInvalid)
+        assertNull(vm.uiState.value.fallbackQuery)
+
+        val other = vm(AladinResult.ApiError(900, "한도 초과"))
+        other.onQueryChange("책")
+        other.search()
+        advanceUntilIdle()
+        assertEquals("책", other.uiState.value.fallbackQuery)
+    }
+
+    @Test
     fun 빈_검색어는_호출하지_않고_직접_입력_버튼은_빈_제목으로_전환() = runTest(mainDispatcherRule.dispatcher) {
         val fake = FakeAladin(AladinResult.Empty)
         val vm = vm(AladinResult.Empty, fake)

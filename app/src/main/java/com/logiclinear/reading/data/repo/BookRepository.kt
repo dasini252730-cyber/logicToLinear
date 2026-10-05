@@ -6,6 +6,9 @@ import com.logiclinear.reading.data.db.BookStatus
 import com.logiclinear.reading.data.remote.aladin.AladinItem
 import com.logiclinear.reading.data.remote.aladin.AladinResult
 import com.logiclinear.reading.data.remote.aladin.AladinSearch
+import com.logiclinear.reading.domain.BookIdentity
+import com.logiclinear.reading.domain.Recommendation
+import com.logiclinear.reading.domain.isSameBook
 import com.logiclinear.reading.domain.Review
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -73,6 +76,29 @@ class BookRepository(
                 category = item.categoryName.trim().ifEmpty { null },
                 description = item.description.trim().ifEmpty { null },
                 status = status,
+            ),
+        )
+        return AddResult.Added(id)
+    }
+
+    /** 서재 전체. 추천 카드가 "이미 서재에 있음"을 판정할 때 쓴다. */
+    fun observeAll(): Flow<List<Book>> = bookDao.observeAll()
+
+    /**
+     * 추천 카드 "읽고 싶음에 담기"(요구사항 "흐름 4", "예외 처리": 알라딘에 없으면 직접 입력 책으로 생성).
+     * isbn13이 있으면 isbn13으로, 없으면 제목+저자로 같은 책을 찾아 있으면 [AddResult.Duplicate].
+     */
+    suspend fun addRecommendation(rec: Recommendation): AddResult {
+        val identity = BookIdentity(rec.title, rec.author, rec.isbn13)
+        bookDao.getAll().firstOrNull { isSameBook(BookIdentity(it.title, it.author, it.isbn13), identity) }
+            ?.let { return AddResult.Duplicate(it.id) }
+        val id = bookDao.insert(
+            Book(
+                title = rec.title.trim(),
+                author = rec.author?.trim()?.ifEmpty { null },
+                isbn13 = rec.isbn13?.trim()?.ifEmpty { null },
+                coverUrl = rec.coverUrl?.trim()?.ifEmpty { null },
+                status = BookStatus.WANT,
             ),
         )
         return AddResult.Added(id)

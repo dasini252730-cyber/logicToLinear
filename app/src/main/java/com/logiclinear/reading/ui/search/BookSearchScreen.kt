@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,6 +50,7 @@ import com.logiclinear.reading.data.remote.aladin.AladinItem
 import com.logiclinear.reading.ui.book.BOOK_STATUS_CHOICES
 import com.logiclinear.reading.ui.components.BookCover
 import com.logiclinear.reading.ui.components.labelRes
+import com.logiclinear.reading.ui.theme.ReadingLogTheme
 
 /** 네비게이션 진입점. 등록되면 서재로, 검색 실패·직접 입력이면 직접 입력 폼으로 간다. */
 @Composable
@@ -133,7 +135,7 @@ fun BookSearchScreen(
             StatusChoice(state.status, onStatusChange)
             Spacer(Modifier.height(8.dp))
             when {
-                state.needsKey -> NeedsKey(onOpenSettings, onManualEntry)
+                state.needsKey || state.keyInvalid -> NeedsKey(invalid = state.keyInvalid, onOpenSettings, onManualEntry)
                 state.searching -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                 else -> ResultList(state.results, enabled = !state.registering, onPick = onPick)
             }
@@ -160,7 +162,8 @@ private fun StatusChoice(selected: BookStatus, onSelect: (BookStatus) -> Unit) {
 @Composable
 private fun ResultList(items: List<AladinItem>, enabled: Boolean, onPick: (AladinItem) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(items, key = { it.isbn13.ifEmpty { it.link.ifEmpty { it.title } } }) { item ->
+        // 알라딘이 같은 isbn13을 두 번 주거나 isbn·link가 모두 빈 동명 항목이 있어도 키가 겹치지 않게 index를 섞는다.
+        itemsIndexed(items, key = { index, it -> "$index-${it.isbn13}" }) { _, item ->
             Row(
                 modifier = Modifier.fillMaxWidth().clickable(enabled = enabled) { onPick(item) }.padding(vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -182,12 +185,26 @@ private fun ResultList(items: List<AladinItem>, enabled: Boolean, onPick: (Aladi
 }
 
 @Composable
-private fun NeedsKey(onOpenSettings: () -> Unit, onManualEntry: () -> Unit) {
+private fun NeedsKey(invalid: Boolean, onOpenSettings: () -> Unit, onManualEntry: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
-        Text(stringResource(R.string.search_needs_key), style = MaterialTheme.typography.bodyLarge)
+        Text(stringResource(if (invalid) R.string.search_key_invalid else R.string.search_needs_key), style = MaterialTheme.typography.bodyLarge)
         Row {
             TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.search_open_settings)) }
             TextButton(onClick = onManualEntry) { Text(stringResource(R.string.search_manual_entry)) }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BookSearchScreenPreview() {
+    ReadingLogTheme {
+        BookSearchScreen(
+            state = BookSearchUiState(
+                query = "채식주의자",
+                results = listOf(AladinItem(title = "채식주의자", author = "한강 (지은이)", publisher = "창비", isbn13 = "9788936433598")),
+            ),
+            onQueryChange = {}, onStatusChange = {}, onSearch = {}, onPick = {}, onManualEntry = {}, onDismissDuplicate = {}, onOpenSettings = {}, onBack = {},
+        )
     }
 }

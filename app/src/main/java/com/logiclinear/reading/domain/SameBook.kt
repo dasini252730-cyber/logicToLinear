@@ -15,7 +15,9 @@ fun isSameBook(a: BookIdentity, b: BookIdentity): Boolean {
     val isbnA = normalizeIsbn(a.isbn13)
     val isbnB = normalizeIsbn(b.isbn13)
     if (isbnA != null && isbnB != null) return isbnA == isbnB
-    return normalizeText(a.title) == normalizeText(b.title) && normalizeText(a.author) == normalizeText(b.author)
+    val titleA = normalizeText(a.title)
+    if (titleA.isEmpty()) return false // 제목 없는 책끼리는 같은 책으로 묶지 않는다(손으로 고친 백업 대비)
+    return titleA == normalizeText(b.title) && normalizeText(a.author) == normalizeText(b.author)
 }
 
 /** 숫자만 남긴다. 하이픈 표기(978-89-…)와 붙여 쓴 표기를 같게 본다. 숫자가 없으면 null. */

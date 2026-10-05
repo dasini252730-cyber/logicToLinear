@@ -13,13 +13,13 @@ import com.logiclinear.reading.data.backup.BackupParseResult
 import com.logiclinear.reading.data.backup.BackupRepository
 import com.logiclinear.reading.data.backup.ImportSummary
 import com.logiclinear.reading.data.backup.backupFileName
-import com.logiclinear.reading.data.backup.backupJson
 import com.logiclinear.reading.data.backup.parseBackup
 import com.logiclinear.reading.data.db.nowMillis
 import com.logiclinear.reading.data.prefs.AiModel
 import com.logiclinear.reading.data.prefs.AppPreferences
 import com.logiclinear.reading.data.secret.SecretKey
 import com.logiclinear.reading.data.secret.SecretStore
+import com.logiclinear.reading.domain.runCatchingCancellable
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneId
@@ -126,8 +127,9 @@ class SettingsViewModel(
         if (uri == null || local.value.busy) return
         local.update { it.copy(busy = true) }
         viewModelScope.launch {
-            val message = runCatching {
-                backupIo.write(uri, backupJson.encodeToString(BackupFile.serializer(), backupRepository.export(clock())))
+            // 직렬화·파일 쓰기는 메인 스레드 밖에서(리뷰 반영).
+            val message = runCatchingCancellable {
+                withContext(ioDispatcher) { backupIo.write(uri, backupRepository.exportJson(clock())) }
             }.fold(onSuccess = { SettingsMessage.ExportDone }, onFailure = { SettingsMessage.ExportFailed })
             local.update { it.copy(busy = false, message = message) }
         }
@@ -138,8 +140,8 @@ class SettingsViewModel(
         if (uri == null || local.value.busy) return
         local.update { it.copy(busy = true) }
         viewModelScope.launch {
-            val text = runCatching { backupIo.read(uri) }.getOrNull()
-            val next = when (val parsed = text?.let(::parseBackup)) {
+            val parsed = runCatchingCancellable { withContext(ioDispatcher) { parseBackup(backupIo.read(uri)) } }.getOrNull()
+            val next = when (parsed) {
                 null -> LocalState(message = SettingsMessage.ImportFailed)
                 is BackupParseResult.Ok -> LocalState(pendingImport = parsed.file)
                 is BackupParseResult.TooNew -> LocalState(message = SettingsMessage.ImportTooNew)
@@ -153,7 +155,7 @@ class SettingsViewModel(
         val file = local.value.pendingImport ?: return
         local.update { it.copy(busy = true, pendingImport = null) }
         viewModelScope.launch {
-            val message = runCatching {
+            val message = runCatchingCancellable {
                 when (mode) {
                     ImportMode.OVERWRITE -> backupRepository.overwrite(file)
                     ImportMode.MERGE -> backupRepository.merge(file)

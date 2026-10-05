@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>백로그 보드</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1b1f24; --muted: #6b7280; --line: #e5e7eb; --accent: #2563eb;
+    --todo: #9ca3af; --in_progress: #f59e0b; --review: #8b5cf6; --needs_human: #ef4444; --done: #16a34a; --cancelled: #6b7280; --waiting: #0ea5e9;
+    --bar-bg: #e5e7eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1115; --card: #171a21; --text: #e6e8eb; --muted: #9aa3ad; --line: #2a2f3a; --accent: #60a5fa; --bar-bg: #2a2f3a;
+    }
+  }
+  :root[data-theme="dark"] { --bg: #0f1115; --card: #171a21; --text: #e6e8eb; --muted: #9aa3ad; --line: #2a2f3a; --accent: #60a5fa; --bar-bg: #2a2f3a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; padding: 14px 16px 6px; }
+  header h1 { font-size: 18px; margin: 0; }
+  header .meta { color: var(--muted); font-size: 12px; }
+  header .live { margin-left: auto; font-size: 12px; color: var(--muted); }
+  header .live b { color: var(--done); }
+  header .live.stale b { color: var(--needs_human); }
+  main { padding: 0 16px 24px; display: grid; gap: 14px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+  .card.active { outline: 2px solid var(--accent); }
+  .card .n { font-size: 22px; font-weight: 700; }
+  .card .l { font-size: 12px; color: var(--muted); }
+  .phases { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+  .phase { display: grid; grid-template-columns: 150px 1fr 90px; gap: 10px; align-items: center; font-size: 13px; cursor: pointer; }
+  .phase.active .name { color: var(--accent); font-weight: 600; }
+  .bar { height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; display: flex; }
+  .bar span { display: block; height: 100%; }
+  .phase .cnt { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .toolbar input, .toolbar select { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font: inherit; }
+  .toolbar input { min-width: 200px; flex: 1; }
+  .toolbar label { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+  .wrap { background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { border-top: 0; font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; position: sticky; top: 0; background: var(--card); }
+  tr.row { cursor: pointer; }
+  tr.row:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  tr.row.ready td.id::after { content: " ▶"; color: var(--done); font-size: 11px; }
+  td.id { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; color: #fff; white-space: nowrap; }
+  .deps { color: var(--muted); font-size: 12px; }
+  .deps .open { color: var(--needs_human); }
+  .tags { color: var(--muted); font-size: 12px; }
+  .empty { padding: 24px; text-align: center; color: var(--muted); }
+  /* 상세 패널 */
+  .panel { position: fixed; inset: 0 0 0 auto; width: min(720px, 100%); background: var(--card); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.15); transform: translateX(100%); transition: transform .2s; display: flex; flex-direction: column; z-index: 10; }
+  .panel.open { transform: none; }
+  .panel header { border-bottom: 1px solid var(--line); padding: 12px 16px; gap: 10px; }
+  .panel header button { margin-left: auto; background: none; border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .panel .body { padding: 14px 16px 32px; overflow: auto; }
+  .md { font-size: 14px; }
+  .md h1 { font-size: 18px; } .md h2 { font-size: 16px; margin-top: 22px; border-bottom: 1px solid var(--line); padding-bottom: 4px; } .md h3 { font-size: 14px; }
+  .md table { border: 1px solid var(--line); margin: 8px 0; width: auto; }
+  .md td, .md th { border: 1px solid var(--line); padding: 4px 8px; font-size: 13px; }
+  .md code { background: var(--bar-bg); padding: 1px 4px; border-radius: 4px; font-size: 12.5px; }
+  .md pre { background: var(--bar-bg); padding: 10px; border-radius: 8px; overflow: auto; }
+  .md li.done { color: var(--muted); }
+  .kv { display: grid; grid-template-columns: 90px 1fr; gap: 4px 10px; font-size: 13px; margin-bottom: 14px; }
+  .kv .k { color: var(--muted); }
+  @media (max-width: 640px) { .phase { grid-template-columns: 1fr; gap: 4px; } .phase .cnt { text-align: left; } th:nth-child(5), td:nth-child(5), th:nth-child(6), td:nth-child(6) { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="project">백로그 보드</h1>
+  <span class="meta" id="git"></span>
+  <span class="meta" id="progress"></span>
+  <span class="live" id="live"><b>●</b> 연결 중</span>
+</header>
+<main>
+  <section class="cards" id="cards"></section>
+  <section class="phases" id="phases"></section>
+  <section class="toolbar">
+    <input id="q" placeholder="id·제목·태그 검색" autocomplete="off">
+    <label>담당 <select id="assignee"><option value="">전체</option><option>claude</option><option>human</option></select></label>
+    <label><input type="checkbox" id="hideDone"> 완료·취소 숨기기</label>
+    <label><input type="checkbox" id="onlyReady"> 시작 가능만</label>
+    <span class="meta" id="count"></span>
+  </section>
+  <section class="wrap">
+    <table>
+      <thead><tr><th>ID</th><th>상태</th><th>제목</th><th>단계</th><th>담당</th><th>선행</th><th>갱신</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>조건에 맞는 task가 없어요</div>
+  </section>
+</main>
+<aside class="panel" id="panel" aria-hidden="true">
+  <header><h1 id="panelTitle"></h1><button id="close">닫기</button></header>
+  <div class="body"><div class="kv" id="kv"></div><div class="md" id="md"></div></div>
+</aside>
+<script>
+const STATUS_LABEL = { todo: "할 일", in_progress: "작업 중", review: "리뷰", needs_human: "사람 판단", done: "완료", cancelled: "취소", waiting: "대기" };
+const ORDER = ["in_progress", "review", "needs_human", "waiting", "todo", "done", "cancelled"];
+const state = { data: null, status: "", phase: "", q: "", assignee: "", hideDone: false, onlyReady: false, open: null, lastHash: "" };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pill = (s) => `<span class="pill" style="background:var(--${s})">${STATUS_LABEL[s] || s}</span>`;
+
+try { Object.assign(state, JSON.parse(localStorage.getItem("backlog-board") || "{}"), { data: null, lastHash: "" }); } catch {}
+function persist() { try { localStorage.setItem("backlog-board", JSON.stringify({ status: state.status, phase: state.phase, q: state.q, assignee: state.assignee, hideDone: state.hideDone, onlyReady: state.onlyReady })); } catch {} }
+
+async function poll() {
+  try {
+    const res = await fetch("/api/backlog", { cache: "no-store" });
+    const data = await res.json();
+    const hash = data.fileMtime + "|" + data.git.head + "|" + data.git.dirty;
+    $("live").className = "live"; $("live").innerHTML = `<b>●</b> 실시간 · ${new Date(data.generatedAt).toLocaleTimeString("ko-KR")}`;
+    if (hash !== state.lastHash) { state.lastHash = hash; state.data = data; render(); if (state.open) openTask(state.open, true); }
+  } catch (e) {
+    $("live").className = "live stale"; $("live").innerHTML = `<b>●</b> 서버 연결 끊김 (node scripts/backlog-dashboard.mjs)`;
+  }
+}
+
+function render() {
+  const d = state.data; if (!d) return;
+  $("project").textContent = d.project;
+  $("git").textContent = `${d.git.branch} · ${d.git.head.split("\t")[0]} ${d.git.head.split("\t")[1] || ""}${d.git.dirty ? ` · 변경 ${d.git.dirty}개` : ""}`;
+  const done = d.tasks.filter((t) => t.status === "done").length;
+  const total = d.tasks.filter((t) => t.status !== "cancelled").length;
+  $("progress").textContent = `${done}/${total} 완료 (${Math.round(done / Math.max(total, 1) * 100)}%)`;
+
+  const counts = Object.fromEntries(ORDER.map((s) => [s, d.tasks.filter((t) => t.status === s).length]));
+  $("cards").innerHTML = ORDER.map((s) => `<div class="card ${state.status === s ? "active" : ""}" data-s="${s}"><div class="n" style="color:var(--${s})">${counts[s]}</div><div class="l">${STATUS_LABEL[s]}</div></div>`).join("");
+  $("cards").querySelectorAll(".card").forEach((c) => c.onclick = () => { state.status = state.status === c.dataset.s ? "" : c.dataset.s; persist(); render(); });
+
+  $("phases").innerHTML = d.phases.map((p) => {
+    const ts = d.tasks.filter((t) => t.phase === p.id && t.status !== "cancelled");
+    const seg = ORDER.filter((s) => s !== "cancelled").map((s) => { const n = ts.filter((t) => t.status === s).length; return n ? `<span style="width:${n / Math.max(ts.length, 1) * 100}%;background:var(--${s})" title="${STATUS_LABEL[s]} ${n}"></span>` : ""; }).join("");
+    const dn = ts.filter((t) => t.status === "done").length;
+    return `<div class="phase ${String(state.phase) === String(p.id) ? "active" : ""}" data-p="${p.id}" title="${esc(p.goal)}"><span class="name">${p.id}. ${esc(p.name)}</span><div class="bar">${seg}</div><span class="cnt">${dn}/${ts.length}</span></div>`;
+  }).join("");
+  $("phases").querySelectorAll(".phase").forEach((el) => el.onclick = () => { state.phase = String(state.phase) === el.dataset.p ? "" : el.dataset.p; persist(); render(); });
+
+  $("q").value = state.q; $("assignee").value = state.assignee; $("hideDone").checked = state.hideDone; $("onlyReady").checked = state.onlyReady;
+  const q = state.q.trim().toLowerCase();
+  let rows = d.tasks.filter((t) =>
+    (!state.status || t.status === state.status) &&
+    (state.phase === "" || String(t.phase) === String(state.phase)) &&
+    (!state.assignee || t.assignee === state.assignee) &&
+    (!state.hideDone || !["done", "cancelled"].includes(t.status)) &&
+    (!state.onlyReady || t.ready) &&
+    (!q || `${t.id} ${t.title} ${(t.tags || []).join(" ")}`.toLowerCase().includes(q)));
+  rows.sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status) || a.id.localeCompare(b.id));
+  $("count").textContent = `${rows.length}개`;
+  $("empty").hidden = rows.length > 0;
+  $("rows").innerHTML = rows.map((t) => `<tr class="row ${t.ready ? "ready" : ""}" data-id="${t.id}">
+    <td class="id">${t.id}</td><td>${pill(t.status)}</td>
+    <td>${esc(t.title)}${t.blockedReason ? `<div class="deps open">${esc(t.blockedReason)}</div>` : ""}${(t.tags || []).length ? `<div class="tags">${t.tags.map(esc).join(" · ")}</div>` : ""}</td>
+    <td>${t.phase}</td><td>${esc(t.assignee)}</td>
+    <td class="deps">${(t.dependsOn || []).map((dep) => `<span class="${t.blockedBy.includes(dep) ? "open" : ""}">${dep}</span>`).join(", ") || "-"}</td>
+    <td class="deps">${esc(t.completedAt || t.updatedAt || "")}</td></tr>`).join("");
+  $("rows").querySelectorAll("tr").forEach((tr) => tr.onclick = () => openTask(tr.dataset.id));
+}
+
+async function openTask(id, silent) {
+  const t = state.data?.tasks.find((x) => x.id === id); if (!t) return;
+  state.open = id;
+  $("panelTitle").textContent = `${t.id} ${t.title}`;
+  $("kv").innerHTML = [["상태", pill(t.status)], ["단계", `${t.phase}`], ["담당", esc(t.assignee)], ["우선순위", esc(t.priority)], ["예상", `${t.estimateMinutes}분`],
+    ["선행", (t.dependsOn || []).map((d) => `<span class="${t.blockedBy.includes(d) ? "open" : ""}">${d}</span>`).join(", ") || "-"], ["후행", t.dependents.join(", ") || "-"],
+    ["완료 조건", `<ul style="margin:0;padding-left:18px">${(t.acceptanceCriteria || []).map((a) => `<li>${esc(a)}</li>`).join("")}</ul>`],
+    ["메모", esc(t.notes || "-").replace(/\n/g, "<br>")]].map(([k, v]) => `<div class="k">${k}</div><div>${v}</div>`).join("");
+  $("panel").classList.add("open"); $("panel").setAttribute("aria-hidden", "false");
+  if (!silent) $("md").innerHTML = '<p class="deps">문서 불러오는 중…</p>';
+  try { const res = await fetch(`/api/doc/${id}`, { cache: "no-store" }); $("md").innerHTML = res.ok ? markdown(await res.text()) : '<p class="deps">상세 문서가 없어요</p>'; }
+  catch { $("md").innerHTML = '<p class="deps">문서를 불러오지 못했어요</p>'; }
+}
+function closePanel() { state.open = null; $("panel").classList.remove("open"); $("panel").setAttribute("aria-hidden", "true"); }
+
+/** 작은 마크다운 변환기: 제목, 목록(체크박스), 표, 코드, 굵게, 링크. 문서가 그 정도만 쓴다. */
+function markdown(src) {
+  const inline = (s) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, txt, href) => /^T-\d+\.md$/.test(href) ? `<a href="#" data-open="${href.slice(0, -3)}">${txt}</a>` : `<a href="${esc(href)}" target="_blank" rel="noopener">${txt}</a>`);
+  const out = []; const lines = src.split(/\r?\n/); let i = 0;
+  while (i < lines.length) {
+    const l = lines[i];
+    if (l.startsWith("```")) { const buf = []; i++; while (i < lines.length && !lines[i].startsWith("```")) buf.push(lines[i++]); i++; out.push(`<pre>${esc(buf.join("\n"))}</pre>`); continue; }
+    if (/^\|/.test(l)) { const rows = []; while (i < lines.length && /^\|/.test(lines[i])) rows.push(lines[i++]); const cells = (r) => r.replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+      const body = rows.filter((r) => !/^\|\s*-{2,}/.test(r)); out.push(`<table>${body.map((r, k) => `<tr>${cells(r).map((c) => `<${k ? "td" : "th"}>${inline(c)}</${k ? "td" : "th"}>`).join("")}</tr>`).join("")}</table>`); continue; }
+    if (/^\s*[-*] /.test(l)) { const items = []; while (i < lines.length && /^\s*[-*] /.test(lines[i])) items.push(lines[i++]);
+      out.push(`<ul>${items.map((it) => { const m = it.match(/^\s*[-*] (?:\[([ xX])\] )?(.*)$/); const chk = m[1] ? (m[1] === " " ? "☐ " : "☑ ") : ""; return `<li class="${m[1] && m[1] !== " " ? "done" : ""}">${chk}${inline(m[2])}</li>`; }).join("")}</ul>`); continue; }
+    const h = l.match(/^(#{1,3}) (.*)$/);
+    if (h) { out.push(`<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`); i++; continue; }
+    if (!l.trim()) { i++; continue; }
+    const para = []; while (i < lines.length && lines[i].trim() && !/^(#{1,3} |\||```|\s*[-*] )/.test(lines[i])) para.push(lines[i++]);
+    out.push(`<p>${inline(para.join(" "))}</p>`);
+  }
+  return out.join("");
+}
+
+$("q").oninput = (e) => { state.q = e.target.value; persist(); render(); };
+$("assignee").onchange = (e) => { state.assignee = e.target.value; persist(); render(); };
+$("hideDone").onchange = (e) => { state.hideDone = e.target.checked; persist(); render(); };
+$("onlyReady").onchange = (e) => { state.onlyReady = e.target.checked; persist(); render(); };
+$("close").onclick = closePanel;
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
+$("md").addEventListener("click", (e) => { const a = e.target.closest("a[data-open]"); if (a) { e.preventDefault(); openTask(a.dataset.open); } });
+poll(); setInterval(poll, 3000);
+</script>
+</body>
+</html>

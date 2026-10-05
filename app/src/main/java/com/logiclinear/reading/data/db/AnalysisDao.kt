@@ -12,7 +12,7 @@ interface AnalysisDao {
     suspend fun insert(analysis: Analysis): Long
 
     /** 분석 화면: 첫 번째가 최신 결과, 나머지는 접힌 이전 기록. */
-    @Query("SELECT * FROM analysis ORDER BY runAt DESC")
+    @Query("SELECT * FROM analysis ORDER BY runAt DESC, id DESC")
     fun observeAllDesc(): Flow<List<Analysis>>
 
     /** 백업 내보내기(T-502). */

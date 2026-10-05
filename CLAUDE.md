@@ -54,6 +54,7 @@ node scripts/backlog.mjs show T-101           task 상세
 node scripts/backlog.mjs status T-101 in_progress
 node scripts/backlog.mjs add --title "..." --phase 2 --desc "..." --deps T-205 --ac "..."
 node scripts/backlog.mjs help
+node scripts/backlog-dashboard.mjs           백로그 보드(브라우저, http://localhost:4173, 3초마다 갱신)
 
 gradlew.bat assembleDebug                     빌드
 gradlew.bat installDebug                      실기기 설치

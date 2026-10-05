@@ -32,12 +32,18 @@ data class BookDetailRoute(val bookId: Long)
 object BookSearchRoute
 
 /**
- * 직접 입력 책 등록(T-110). 알라딘 검색(T-303)이 생기면 그 화면이 먼저 뜨고, 검색 실패·오프라인이면
- * 여기로 넘어온다(요구사항 "예외 처리": 직접 입력 폼으로 전환). [initialTitle]은 그때 검색어를 미리 채우기 위한
- * 자리로, 백로그 T-305 설명에 따른 것이다. 현재 호출자는 null만 넘긴다.
+ * 직접 입력 책 등록(T-110). 알라딘 검색(T-303)이 먼저 뜨고, 검색 실패·오프라인·"직접 입력" 버튼이면
+ * 여기로 넘어온다(요구사항 "예외 처리": 직접 입력 폼으로 전환). [initialTitle]에 그때의 검색어가 들어와 제목을 미리 채운다(T-305).
  */
 @Serializable
 data class BookFormRoute(val initialTitle: String? = null)
+
+/**
+ * 완독 후 토론 화면(T-703). [fresh]가 true면 방금 만든 토론이라 첫 질문을 자동 요청한다(요구사항: 첫 메시지는 앱이 요청).
+ * 책 상세 목록에서 다시 열 때는 false — 첫 질문이 없으면 버튼으로 다시 요청한다.
+ */
+@Serializable
+data class DiscussionRoute(val discussionId: Long, val fresh: Boolean = false)
 
 /** 하단 탭에 노출되는 라우트. 카메라 홈은 탭이 아니지만 하단 탭은 홈에서도 보인다. */
 enum class TopLevelRoute(val route: Any) {

@@ -1,6 +1,7 @@
 package com.logiclinear.reading.ui.book
 
 import com.logiclinear.reading.data.db.Book
+import com.logiclinear.reading.data.db.Discussion
 import com.logiclinear.reading.data.db.Quote
 import java.time.LocalDate
 
@@ -26,6 +27,10 @@ data class BookDetailUiState(
     val finishDraft: FinishDraft = FinishDraft(),
     val proposalOpen: Boolean = false,
     val undoCandidate: Quote? = null,
+    /** 이 책의 토론 목록(T-707). 최신 시작 순. */
+    val discussions: List<Discussion> = emptyList(),
+    /** 방금 만든 토론 id. 화면이 토론 화면으로 이동한 뒤 비운다. */
+    val startedDiscussionId: Long? = null,
 )
 
 /** ViewModel이 들고 있는 화면 로컬 상태. DB에서 오는 book·quotes와 합쳐 [BookDetailUiState]가 된다. */
@@ -36,8 +41,9 @@ internal data class BookDetailLocalState(
     val finishDraft: FinishDraft = FinishDraft(),
     val proposalOpen: Boolean = false,
     val undoCandidate: Quote? = null,
+    val startedDiscussionId: Long? = null,
 ) {
-    fun toUiState(book: Book?, quotes: List<Quote>) = BookDetailUiState(
+    fun toUiState(book: Book?, quotes: List<Quote>, discussions: List<Discussion>) = BookDetailUiState(
         book = book,
         quotes = quotes,
         loaded = true,
@@ -47,5 +53,7 @@ internal data class BookDetailLocalState(
         finishDraft = finishDraft,
         proposalOpen = proposalOpen,
         undoCandidate = undoCandidate,
+        discussions = discussions,
+        startedDiscussionId = startedDiscussionId,
     )
 }

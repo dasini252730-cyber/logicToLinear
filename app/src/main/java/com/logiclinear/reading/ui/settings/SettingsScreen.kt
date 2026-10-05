@@ -130,7 +130,9 @@ fun SettingsScreen(
 /** 메시지 → 문구. 요구사항 원문이 있는 것은 그대로 쓴다. */
 @Composable
 private fun messageText(message: SettingsMessage): String = when (message) {
-    is SettingsMessage.KeySaved -> stringResource(R.string.settings_key_saved)
+    is SettingsMessage.KeySaved -> stringResource(
+        if (message.key == SecretKey.ALADIN_TTB) R.string.settings_key_saved_ttb else R.string.settings_key_saved_anthropic,
+    )
     SettingsMessage.ExportDone -> stringResource(R.string.settings_export_done)
     SettingsMessage.ExportFailed -> stringResource(R.string.settings_export_failed)
     is SettingsMessage.ImportDone -> stringResource(R.string.settings_import_done, message.summary.books, message.summary.quotes)

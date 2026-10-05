@@ -56,6 +56,8 @@ data class BookDetailActions(
     val onUndoDelete: () -> Unit,
     /** 스낵바를 밀어서 치웠을 때. 5초 만료는 ViewModel이 센다. */
     val onUndoDismissed: () -> Unit,
+    val onStartDiscussion: () -> Unit,
+    val onOpenDiscussion: (Long) -> Unit,
     val finish: FinishActions,
 )
 
@@ -63,10 +65,16 @@ data class BookDetailActions(
 fun BookDetailEntry(
     onBack: () -> Unit,
     onDeleted: () -> Unit,
+    onOpenDiscussion: (discussionId: Long, fresh: Boolean) -> Unit,
     viewModel: BookDetailViewModel = viewModel(factory = BookDetailViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(state.deleted) { if (state.deleted) onDeleted() }
+    LaunchedEffect(state.startedDiscussionId) {
+        val id = state.startedDiscussionId ?: return@LaunchedEffect
+        viewModel.consumeStartedDiscussion()
+        onOpenDiscussion(id, true)
+    }
     BookDetailScreen(
         state = state,
         actions = BookDetailActions(
@@ -81,6 +89,8 @@ fun BookDetailEntry(
             onDeleteQuote = viewModel::deleteQuote,
             onUndoDelete = viewModel::undoDelete,
             onUndoDismissed = viewModel::clearUndo,
+            onStartDiscussion = viewModel::startDiscussion,
+            onOpenDiscussion = { onOpenDiscussion(it, false) },
             finish = FinishActions(
                 onRating = viewModel::setRating,
                 onOneLiner = viewModel::setOneLiner,
@@ -130,7 +140,7 @@ fun BookDetailScreen(state: BookDetailUiState, actions: BookDetailActions) {
     }
     if (state.confirmDelete) DeleteDialog(onConfirm = actions.onConfirmDelete, onDismiss = actions.onCancelDelete)
     if (state.finishOpen) FinishBookSheet(state.finishDraft, actions.finish)
-    if (state.proposalOpen) DiscussionProposalDialog(onDismiss = actions.onDismissProposal)
+    if (state.proposalOpen) DiscussionProposalDialog(onStart = actions.onStartDiscussion, onDismiss = actions.onDismissProposal)
 }
 
 @Composable
@@ -155,6 +165,13 @@ private fun BookBody(book: Book, state: BookDetailUiState, actions: BookDetailAc
         Spacer(Modifier.height(20.dp))
         StatusActions(book.status, actions)
         Spacer(Modifier.height(24.dp))
+        DiscussionListSection(
+            discussions = state.discussions,
+            canStart = book.status == BookStatus.DONE,
+            onStart = actions.onStartDiscussion,
+            onOpen = actions.onOpenDiscussion,
+        )
+        if (state.discussions.isNotEmpty() || book.status == BookStatus.DONE) Spacer(Modifier.height(24.dp))
         QuotesSection(state.quotes, onLongPress = actions.onDeleteQuote)
     }
 }
@@ -164,7 +181,7 @@ private fun Book.hasReview() = rating != null || oneLiner != null || finishedAt 
 @Preview(showBackground = true)
 @Composable
 private fun BookDetailScreenPreview() {
-    val noop = BookDetailActions({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, FinishActions({}, {}, {}, {}, {}))
+    val noop = BookDetailActions({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, FinishActions({}, {}, {}, {}, {}))
     ReadingLogTheme {
         BookDetailScreen(
             state = BookDetailUiState(

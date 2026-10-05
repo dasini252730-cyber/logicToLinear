@@ -19,6 +19,10 @@ node scripts/backlog.mjs add --title "..." --phase n --desc "..." --deps T-xxx -
 node scripts/backlog.mjs validate | stats | docs | help
 ```
 
+## 모니터링 보드
+
+`node scripts/backlog-dashboard.mjs [--port 4173]`을 띄우고 `http://localhost:4173`을 열면 상태별·단계별 집계, task 표(검색·필터), task 상세 문서를 볼 수 있다. 3초마다 다시 읽으므로 CLI로 상태를 바꾸면 화면이 따라온다. 서버 스크립트가 backlog.json을 읽는 것은 CLI와 같은 경로라 허용된다. 페이지 자체(`scripts/dashboard/index.html`)는 수정 전용이 아니라 조회 전용이다.
+
 `docs/tasks/<id>.md`는 직접 편집해도 된다. 작업 메모·결과·브리핑·리뷰를 거기에 쓴다.
 
 ## 상태 흐름

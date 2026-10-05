@@ -25,8 +25,10 @@ data class BookSearchUiState(
     val status: BookStatus = BookStatus.READING,
     val searching: Boolean = false,
     val results: List<AladinItem> = emptyList(),
-    val searched: Boolean = false,
+    /** TTB 키가 설정에 없다. */
     val needsKey: Boolean = false,
+    /** 알라딘이 키 오류(errorCode 100)를 돌려줬다. 폴백이 아니라 설정 안내로 보낸다(리뷰 반영). */
+    val keyInvalid: Boolean = false,
     /** 직접 입력 폼으로 전환. 화면이 이 값을 보고 이동한 뒤 [consumeFallback]. */
     val fallbackQuery: String? = null,
     /** 같은 isbn13이 이미 있을 때. 문구는 요구사항 원문 "이미 서재에 있어요". */
@@ -50,13 +52,18 @@ class BookSearchViewModel(
     fun search() {
         val query = _uiState.value.query.trim()
         if (query.isEmpty() || _uiState.value.searching) return
-        _uiState.update { it.copy(searching = true, needsKey = false, duplicate = false) }
+        _uiState.update { it.copy(searching = true, needsKey = false, keyInvalid = false, duplicate = false) }
         viewModelScope.launch {
             when (val result = bookRepository.searchAladin(query)) {
-                is AladinResult.Found -> _uiState.update { it.copy(searching = false, searched = true, results = result.items) }
+                is AladinResult.Found -> _uiState.update { it.copy(searching = false, results = result.items) }
                 AladinResult.NoKey -> _uiState.update { it.copy(searching = false, needsKey = true) }
-                AladinResult.Empty, is AladinResult.ApiError, is AladinResult.Network ->
-                    _uiState.update { it.copy(searching = false, searched = true, results = emptyList(), fallbackQuery = query) }
+                is AladinResult.ApiError -> if (result.code == ALADIN_INVALID_KEY) {
+                    _uiState.update { it.copy(searching = false, results = emptyList(), keyInvalid = true) }
+                } else {
+                    _uiState.update { it.copy(searching = false, results = emptyList(), fallbackQuery = query) }
+                }
+                AladinResult.Empty, is AladinResult.Network ->
+                    _uiState.update { it.copy(searching = false, results = emptyList(), fallbackQuery = query) }
             }
         }
     }
@@ -81,6 +88,9 @@ class BookSearchViewModel(
     fun dismissDuplicate() = _uiState.update { it.copy(duplicate = false) }
 
     companion object {
+        /** 알라딘 errorCode 100 = 잘못된 TTBKey. 한도 초과 등 다른 코드의 실제 값은 T-307 실기기에서 기록한다. */
+        const val ALADIN_INVALID_KEY = 100
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer { BookSearchViewModel(appContainer().bookRepository) }
         }

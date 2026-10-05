@@ -55,7 +55,35 @@ class BookDetailViewModelTest {
     @After
     fun tearDown() = db.close()
 
-    private fun viewModel(id: Long) = BookDetailViewModel(repo, quotes, id)
+    private val noAi = object : com.logiclinear.reading.data.remote.anthropic.AiChat {
+        override suspend fun complete(request: com.logiclinear.reading.data.remote.anthropic.AiRequest) =
+            com.logiclinear.reading.data.remote.anthropic.AiResult.NoKey
+    }
+    private val discussions by lazy {
+        com.logiclinear.reading.data.repo.DiscussionRepository(db, noAi, com.logiclinear.reading.data.repo.DiscussionPrompts({ "" }, { "" }, { "" }))
+    }
+
+    private fun viewModel(id: Long) = BookDetailViewModel(repo, quotes, discussions, id)
+
+    @Test
+    fun 토론_시작은_행을_만들고_id를_알리며_목록에_보인다() = runTest(mainDispatcherRule.dispatcher) {
+        val id = repo.add(Book(title = "책", status = BookStatus.DONE))
+        val vm = viewModel(id)
+        val collector = launch { vm.uiState.collect {} }
+        advanceUntilIdle()
+
+        vm.startDiscussion()
+        advanceUntilIdle()
+        val started = vm.uiState.value.startedDiscussionId
+        assertNotNull(started)
+        assertEquals(listOf(started), vm.uiState.value.discussions.map { it.id })
+
+        vm.consumeStartedDiscussion()
+        vm.startDiscussion()
+        advanceUntilIdle()
+        assertEquals(2, vm.uiState.value.discussions.size) // 한 책에 토론 여러 개
+        collector.cancel()
+    }
 
     @Test
     fun 완독_처리는_입력을_정리해_저장하고_토론_제안을_띄운다() = runTest(mainDispatcherRule.dispatcher) {

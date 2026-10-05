@@ -11,6 +11,7 @@ import com.logiclinear.reading.appContainer
 import com.logiclinear.reading.data.db.BookStatus
 import com.logiclinear.reading.data.db.Quote
 import com.logiclinear.reading.data.repo.BookRepository
+import com.logiclinear.reading.data.repo.DiscussionRepository
 import com.logiclinear.reading.data.repo.QuoteRepository
 import com.logiclinear.reading.domain.ONE_LINER_MAX
 import com.logiclinear.reading.domain.normalizeReview
@@ -30,6 +31,7 @@ import java.time.LocalDate
 class BookDetailViewModel(
     private val bookRepository: BookRepository,
     private val quoteRepository: QuoteRepository,
+    private val discussionRepository: DiscussionRepository,
     private val bookId: Long,
 ) : ViewModel() {
     private val local = MutableStateFlow(BookDetailLocalState())
@@ -38,8 +40,9 @@ class BookDetailViewModel(
     val uiState: StateFlow<BookDetailUiState> = combine(
         bookRepository.observeById(bookId),
         quoteRepository.observeByBook(bookId),
+        discussionRepository.observeByBook(bookId),
         local,
-    ) { book, quotes, state -> state.toUiState(book, quotes) }
+    ) { book, quotes, discussions, state -> state.toUiState(book, quotes, discussions) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BookDetailUiState())
 
     // ---- 글귀 삭제·되돌리기 (T-404) ----
@@ -117,8 +120,20 @@ class BookDetailViewModel(
         }
     }
 
-    /** "나중에" 또는 바깥 탭. 토론 시작은 T-707에서 연결된다. */
+    /** "나중에" 또는 바깥 탭. */
     fun dismissProposal() = local.update { it.copy(proposalOpen = false) }
+
+    // ---- 토론 (T-707) ----
+
+    /** "이야기 시작"·"새 토론": Discussion 행을 만들고 토론 화면으로 보낸다. 첫 질문은 토론 화면이 요청한다. */
+    fun startDiscussion() {
+        viewModelScope.launch {
+            val id = discussionRepository.start(bookId)
+            local.update { it.copy(proposalOpen = false, startedDiscussionId = id) }
+        }
+    }
+
+    fun consumeStartedDiscussion() = local.update { it.copy(startedDiscussionId = null) }
 
     // ---- 삭제 (T-112) ----
 
@@ -142,7 +157,7 @@ class BookDetailViewModel(
             initializer {
                 val route = createSavedStateHandle().toRoute<BookDetailRoute>()
                 val container = appContainer()
-                BookDetailViewModel(container.bookRepository, container.quoteRepository, route.bookId)
+                BookDetailViewModel(container.bookRepository, container.quoteRepository, container.discussionRepository, route.bookId)
             }
         }
     }

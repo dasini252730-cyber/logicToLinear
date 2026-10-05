@@ -32,12 +32,16 @@ class BackupRepository(private val db: AppDatabase) {
         )
     }
 
+    /** 내보내기 JSON 문자열. 직렬화가 무거우므로 호출자는 메인 스레드 밖에서 부른다. */
+    suspend fun exportJson(now: Instant = nowMillis()): String = backupJson.encodeToString(BackupFile.serializer(), export(now))
+
     /** 덮어쓰기: 기존 데이터를 모두 지우고 백업을 넣는다. id는 새로 받고 bookId는 다시 연결한다. */
     suspend fun overwrite(file: BackupFile): ImportSummary = db.withTransaction {
         bookDao.deleteAll() // Quote·Discussion은 CASCADE
         analysisDao.deleteAll()
         val idMap = HashMap<Long, Long>()
-        file.books.forEach { idMap[it.id] = bookDao.insert(it.toEntity(id = 0)) }
+        // lastQuoteAt은 백업 값을 믿지 않고 글귀를 넣으면서 다시 계산한다(글귀 없는 책은 null).
+        file.books.forEach { idMap[it.id] = bookDao.insert(it.toEntity(id = 0).copy(lastQuoteAt = null)) }
         val quotes = insertQuotes(file, idMap, checkDuplicate = false)
         val discussions = insertDiscussions(file, idMap, checkDuplicate = false)
         val analyses = insertAnalyses(file, checkDuplicate = false)
@@ -57,7 +61,7 @@ class BackupRepository(private val db: AppDatabase) {
             if (same != null) {
                 idMap[backup.id] = same.id
             } else {
-                val entity = backup.toEntity(id = 0)
+                val entity = backup.toEntity(id = 0).copy(lastQuoteAt = null)
                 val newId = bookDao.insert(entity)
                 existing += entity.copy(id = newId) // 백업 안의 중복 책도 같은 책으로 묶인다
                 idMap[backup.id] = newId
