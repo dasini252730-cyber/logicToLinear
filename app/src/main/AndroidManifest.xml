@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 글귀 촬영. 사진은 저장하지 않으므로 저장소 권한은 필요 없다. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <application
         android:name=".ReadingApp"
         android:allowBackup="false"

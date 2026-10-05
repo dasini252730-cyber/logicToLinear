@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 
 @Dao
 interface BookDao {
@@ -40,6 +41,10 @@ interface BookDao {
             "ORDER BY lastQuoteAt IS NULL, lastQuoteAt DESC, createdAt DESC LIMIT 1",
     )
     fun observeLatestByQuote(status: BookStatus): Flow<Book?>
+
+    /** 글귀 저장 직후 호출. 카메라 홈 기본 선택 책의 기준이 된다. */
+    @Query("UPDATE book SET lastQuoteAt = :at WHERE id = :id")
+    suspend fun updateLastQuoteAt(id: Long, at: Instant)
 
     /** 직접 입력 중복 경고용. 제목+저자가 같은 책. author가 null이면 null끼리 비교한다. */
     @Query(

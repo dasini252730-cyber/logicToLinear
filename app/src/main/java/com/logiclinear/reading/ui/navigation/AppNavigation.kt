@@ -1,6 +1,11 @@
 package com.logiclinear.reading.ui.navigation
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -13,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -21,24 +27,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.logiclinear.reading.R
 import com.logiclinear.reading.ui.analysis.AnalysisScreen
-import com.logiclinear.reading.ui.home.HomeScreen
+import com.logiclinear.reading.ui.book.BookDetailEntry
+import com.logiclinear.reading.ui.book.BookFormEntry
+import com.logiclinear.reading.ui.home.HomeEntry
 import com.logiclinear.reading.ui.library.LibraryEntry
+import com.logiclinear.reading.ui.select.SelectEntry
 import com.logiclinear.reading.ui.settings.SettingsScreen
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 
 /**
- * 앱 전체 네비게이션. 시작 화면은 카메라 홈(요구사항 "첫 화면"). 하단 탭은 최상위 라우트에서만 보인다.
- * Scaffold가 상태바·내비바 인셋을 처리한다(T-101 리뷰 인계).
+ * 앱 전체 네비게이션. 시작 화면은 카메라 홈(요구사항 "첫 화면"). 하단 탭(서재·분석·추천·설정)은 홈과 탭 화면에서 보인다.
+ * 바깥 Scaffold가 인셋을 계산하고 `consumeWindowInsets`로 소비해 안쪽 화면의 Scaffold가 인셋을 두 번 넣지 않게 한다.
  */
 @Composable
 fun AppNavigation(navController: NavHostController = rememberNavController()) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val destination = backStackEntry?.destination
-    val showBottomBar = TopLevelRoute.entries.any { destination.isOn(it) }
+    val showBottomBar = destination.hasRouteOf(HomeRoute::class) || TopLevelRoute.entries.any { destination.isOn(it) }
 
     Scaffold(
         bottomBar = { if (showBottomBar) BottomTabs(destination) { navController.navigateTopLevel(it) } },
@@ -46,17 +50,31 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         NavHost(
             navController = navController,
             startDestination = HomeRoute,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
         ) {
-            composable<HomeRoute> { HomeScreen() }
+            composable<HomeRoute> { HomeEntry(onRecognized = { navController.navigate(SelectRoute) }) }
+            composable<SelectRoute> { SelectEntry(onDone = { navController.popBackStack<HomeRoute>(inclusive = false) }) }
             composable<LibraryRoute> {
                 LibraryEntry(
                     onBookClick = { navController.navigate(BookDetailRoute(it)) },
-                    onAddClick = { navController.navigate(BookFormRoute) },
+                    onAddClick = { navController.navigate(BookFormRoute()) },
                 )
             }
             composable<AnalysisRoute> { AnalysisScreen() }
             composable<SettingsRoute> { SettingsScreen() }
+            // 저장·삭제 완료는 "서재까지" 팝한다. 사용자가 그 사이 뒤로를 눌러 이미 서재에 있으면 아무 일도 하지 않는다.
+            composable<BookFormRoute> {
+                BookFormEntry(
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack<LibraryRoute>(inclusive = false) },
+                )
+            }
+            composable<BookDetailRoute> {
+                BookDetailEntry(
+                    onBack = { navController.popBackStack() },
+                    onDeleted = { navController.popBackStack<LibraryRoute>(inclusive = false) },
+                )
+            }
         }
     }
 }
@@ -75,13 +93,12 @@ private fun BottomTabs(destination: NavDestination?, onSelect: (TopLevelRoute) -
     }
 }
 
-private fun NavDestination?.isOn(tab: TopLevelRoute): Boolean =
-    this?.hierarchy?.any { it.hasRoute(tab.route::class) } == true
+private fun NavDestination?.isOn(tab: TopLevelRoute): Boolean = hasRouteOf(tab.route::class)
 
-private val NavDestination.hierarchy: Sequence<NavDestination>
-    get() = generateSequence(this) { it.parent }
+private fun NavDestination?.hasRouteOf(route: kotlin.reflect.KClass<*>): Boolean =
+    this?.hierarchy?.any { it.hasRoute(route) } == true
 
-/** 탭 전환: 백스택을 홈까지 비우고 상태를 보존해 탭마다 하나의 인스턴스만 둔다. */
+/** 탭 전환: 백스택을 시작 화면(카메라)까지 비우고 상태를 보존해 탭마다 하나의 인스턴스만 둔다. */
 private fun NavHostController.navigateTopLevel(tab: TopLevelRoute) {
     navigate(tab.route) {
         popUpTo(graph.findStartDestination().id) { saveState = true }
@@ -91,14 +108,12 @@ private fun NavHostController.navigateTopLevel(tab: TopLevelRoute) {
 }
 
 private fun TopLevelRoute.labelRes(): Int = when (this) {
-    TopLevelRoute.HOME -> R.string.tab_camera
     TopLevelRoute.LIBRARY -> R.string.tab_library
     TopLevelRoute.ANALYSIS -> R.string.tab_analysis
     TopLevelRoute.SETTINGS -> R.string.tab_settings
 }
 
 private fun TopLevelRoute.icon(): ImageVector = when (this) {
-    TopLevelRoute.HOME -> Icons.Filled.Home
     TopLevelRoute.LIBRARY -> Icons.Filled.Menu
     TopLevelRoute.ANALYSIS -> Icons.Filled.Star
     TopLevelRoute.SETTINGS -> Icons.Filled.Settings

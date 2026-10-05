@@ -2,6 +2,7 @@ package com.logiclinear.reading
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.logiclinear.reading.data.db.AppDatabase
 import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.Quote
 import kotlinx.coroutines.flow.first
@@ -22,7 +23,7 @@ class AppContainerTest {
     @After
     fun tearDown() {
         container.database.close()
-        context.deleteDatabase("reading-log.db")
+        context.deleteDatabase(AppDatabase.FILE_NAME)
     }
 
     @Test
@@ -30,7 +31,7 @@ class AppContainerTest {
         val id = container.bookRepository.add(Book(title = "첫 책"))
 
         assertEquals("첫 책", container.bookRepository.getById(id)?.title)
-        assertTrue(context.getDatabasePath("reading-log.db").exists())
+        assertTrue(context.getDatabasePath(AppDatabase.FILE_NAME).exists())
     }
 
     @Test

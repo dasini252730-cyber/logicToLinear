@@ -6,6 +6,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.logiclinear.reading.data.db.AppDatabase
 import com.logiclinear.reading.data.repo.BookRepository
 import com.logiclinear.reading.data.repo.QuoteRepository
+import com.logiclinear.reading.ocr.CaptureStore
+import com.logiclinear.reading.ocr.OcrRecognizer
 
 /**
  * 수동 DI 컨테이너. DI 프레임워크 없이 Application이 하나 들고 있다.
@@ -18,7 +20,13 @@ class AppContainer(context: Context) {
 
     val bookRepository: BookRepository by lazy { BookRepository(database.bookDao()) }
 
-    val quoteRepository: QuoteRepository by lazy { QuoteRepository(database.quoteDao()) }
+    val quoteRepository: QuoteRepository by lazy { QuoteRepository(database.quoteDao(), database.bookDao()) }
+
+    /** ML Kit 인식기. 모델 로딩이 있어 한 번만 만든다. */
+    val ocrRecognizer: OcrRecognizer by lazy { OcrRecognizer() }
+
+    /** 촬영 → 문장 선택 화면 사이의 OCR 결과 보관소. */
+    val captureStore: CaptureStore by lazy { CaptureStore() }
 }
 
 /**

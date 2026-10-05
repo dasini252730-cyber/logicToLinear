@@ -62,6 +62,11 @@ dependencies {
     ksp(libs.androidx.room.compiler) // Room 코드 생성
     implementation(libs.kotlinx.serialization.json) // 백업 JSON, API DTO 직렬화
     implementation(libs.kotlinx.coroutines.android) // Dispatchers.Main 등 Android 코루틴
+    implementation(libs.androidx.camera.core) // 카메라 홈 (T-201). 사진은 메모리에서만 다룬다
+    implementation(libs.androidx.camera.camera2) // Camera2 백엔드
+    implementation(libs.androidx.camera.lifecycle) // ProcessCameraProvider.awaitInstance, bindToLifecycle
+    implementation(libs.androidx.camera.compose) // CameraXViewfinder 컴포저블
+    implementation(libs.mlkit.text.recognition.korean) // 온디바이스 한국어 OCR, 번들 방식(T-004 결정). 오프라인 첫 실행 가능
 
     testImplementation(libs.junit) // 순수 로직 단위 테스트 (T-205부터)
     testImplementation(libs.kotlinx.coroutines.test) // suspend 함수·Flow 테스트
