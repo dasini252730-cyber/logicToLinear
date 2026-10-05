@@ -278,7 +278,7 @@
       "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-05 2026-10-05 실기기 확인: installDebug로 SM-S942N(Android 16)에 설치, 콜드 스타트 후 카메라 홈 화면이 뜸(스크린샷 확인). '빈 Compose 화면이 실기기에서 뜬다' 조건 충족. 남은 것은 사용자 done 확인."
     },
     {
       "id": "T-102",
