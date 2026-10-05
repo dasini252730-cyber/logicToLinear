@@ -286,7 +286,7 @@
       "description": "Room(ksp), Compose Navigation, kotlinx.serialization, ViewModel, Coroutines를 버전 카탈로그에 추가하고 빌드를 확인한다. CameraX·ML Kit·HTTP는 해당 단계에서 추가한다.",
       "doc": "docs/tasks/T-102.md",
       "phase": 1,
-      "status": "todo",
+      "status": "in_progress",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -306,7 +306,7 @@
       ],
       "createdAt": "2026-10-05",
       "updatedAt": "2026-10-05",
-      "startedAt": null,
+      "startedAt": "2026-10-05",
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
