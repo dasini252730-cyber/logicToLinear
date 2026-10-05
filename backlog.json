@@ -220,7 +220,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-05 2026-10-05 실기기 연결 확인: adb devices에 R3KL4058K0P(삼성 SM-S942N, Android 16, API 36) device 상태로 표시됨. 상태 전환은 사용자(assignee human)."
     },
     {
       "id": "T-006",
