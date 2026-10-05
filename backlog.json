@@ -2601,7 +2601,7 @@
       "description": "T-806에서 첫 화면이 서재가 되고 카메라는 책 전용 CaptureRoute뿐이 됐지만 ui/home 패키지·HomeScreen·HomeViewModel·HomeShutter·HomePermission·BookPickerSheet 이름과 홈 전용 로직(chooseBook, observeDefaultReadingBook 기본 책, pickerOpen, noReadingBook 배너)이 남아 있다. 패키지를 ui/capture로, 클래스를 CaptureScreen/CaptureViewModel로 바꾸고, 고정 책만 다루도록 상태를 줄인다. BookPickerSheet와 home_pick_book_* 문자열, lastQuoteAt 기반 observeDefaultReadingBook 사용처를 정리한다. 동작 변경 없음.",
       "doc": "docs/tasks/T-808.md",
       "phase": 8,
-      "status": "in_progress",
+      "status": "review",
       "priority": "P3",
       "assignee": "claude",
       "estimateMinutes": 30,
