@@ -2631,7 +2631,7 @@
       "description": "BookSearchEntry.onOpenSettings가 검색 위에 SettingsRoute를 navigate로 쌓는데 SettingsRoute는 top-level이라 하단 탭이 보인다. 거기서 탭을 누르면 navigateTopLevel의 popUpTo(시작 화면)가 검색 화면까지 걷어 입력하던 검색어가 사라진다(T-806 리뷰 경고 9, 기존 문제). 고치는 방법 후보: 설정으로 갈 때 navigateTopLevel(SETTINGS)로 통일하고 돌아올 길은 서재 → +로 두거나, 설정 화면이 검색 위에 쌓였을 때는 하단 탭을 숨긴다. 사용자 확인 후 결정.",
       "doc": "docs/tasks/T-809.md",
       "phase": 8,
-      "status": "in_progress",
+      "status": "review",
       "priority": "P3",
       "assignee": "claude",
       "estimateMinutes": 30,
