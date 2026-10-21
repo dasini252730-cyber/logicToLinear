@@ -2705,6 +2705,33 @@
       "completedAt": null,
       "blockedReason": null,
       "notes": ""
+    },
+    {
+      "id": "T-812",
+      "title": "토론 위에 쌓인 설정에서 백업을 가져온 뒤 돌아오면 토론 화면이 비어 있음",
+      "description": "T-810으로 설정이 토론 위에 하위 화면으로 쌓이게 되면서 생긴 경로. 토론 위 설정에서 JSON 가져오기(DB 교체)를 하면 뒤로가기로 돌아온 토론은 discussion == null → loaded = false가 되어 입력창·'첫 질문 받기'·마무리 안내가 모두 없는 빈 화면(제목만)이 남는다. 크래시는 없고 상단 뒤로가기로 나갈 수 있다. 후보: loaded=false이고 로딩이 끝났으면 '토론을 찾을 수 없어요' 안내 + 뒤로가기, 또는 자동으로 책 상세로 팝.",
+      "doc": "docs/tasks/T-812.md",
+      "phase": 8,
+      "status": "todo",
+      "priority": "P3",
+      "assignee": "claude",
+      "estimateMinutes": 30,
+      "dependsOn": [
+        "T-810"
+      ],
+      "specRefs": [
+        "예외 처리"
+      ],
+      "acceptanceCriteria": [
+        "토론 → 설정으로 → 백업 가져오기(교체) → 뒤로가기 → 빈 화면 대신 안내가 뜨거나 책 상세로 돌아간다"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-21",
+      "updatedAt": "2026-10-21",
+      "startedAt": null,
+      "completedAt": null,
+      "blockedReason": null,
+      "notes": ""
     }
   ]
 }
