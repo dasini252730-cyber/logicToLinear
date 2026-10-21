@@ -2657,7 +2657,7 @@
       "description": "DiscussionEntry.onOpenSettings가 navigateTopLevel(SETTINGS)를 쓰는데, 서재 위에 쌓인 BookDetail·Discussion이 popUpTo(서재){saveState}로 저장되며 backStackMap[서재 id]에 매달린다(앱 시작 후 탭 전환을 한 번도 안 했을 때). 그 뒤 설정에서 서재 탭을 누르면 navigate(서재){restoreState}가 저장된 스택을 복원해 서재 대신 토론 화면이 뜨고 하단 탭이 사라진다(T-809 적대적 리뷰 경고 5, 바이트코드로 확인). 탭 전환 이력에 따라 동작이 달라진다. 후보: T-809처럼 설정을 토론 위에 쌓고(SettingsRoute(overSearch) 같은 플래그 일반화) 하단 탭을 숨기거나, 설정으로 가기 전에 popBackStack<BookDetailRoute>(inclusive=true, saveState=false)로 비운다.",
       "doc": "docs/tasks/T-810.md",
       "phase": 8,
-      "status": "in_progress",
+      "status": "review",
       "priority": "P3",
       "assignee": "claude",
       "estimateMinutes": 30,
