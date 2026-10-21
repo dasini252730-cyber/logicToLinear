@@ -2676,7 +2676,7 @@
       "startedAt": null,
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-21 T-809 2차 리뷰 경고 7: SettingsRoute(overSearch)는 '검색에서 왔다'를 라우트 인자로 박은 이름이라 토론·책 상세에서도 같은 방식이 필요하면 hideTabs/asSubScreen 류로 일반화해 이름을 바꾼다."
     }
   ]
 }
