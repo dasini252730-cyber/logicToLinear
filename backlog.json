@@ -2677,6 +2677,34 @@
       "completedAt": null,
       "blockedReason": null,
       "notes": "2026-10-21 T-809 2차 리뷰 경고 7: SettingsRoute(overSearch)는 '검색에서 왔다'를 라우트 인자로 박은 이름이라 토론·책 상세에서도 같은 방식이 필요하면 hideTabs/asSubScreen 류로 일반화해 이름을 바꾼다."
+    },
+    {
+      "id": "T-811",
+      "title": "책 검색 화면의 검색어를 SavedStateHandle에 보관해 프로세스 재시작 뒤에도 남기기",
+      "description": "BookSearchViewModel의 query·needsKey·keyInvalid는 MutableStateFlow에만 있어, 검색 위 설정 화면에서 키를 복사하러 브라우저로 갔다가 백그라운드에서 프로세스가 죽으면 백스택은 복원되지만 검색어는 빈 문자열이 된다(T-809 2차 리뷰 경고 6). 검색어(와 선택 상태)를 SavedStateHandle에 두어 재시작 뒤에도 남긴다. 결과 목록은 다시 검색하면 되므로 보관하지 않는다.",
+      "doc": "docs/tasks/T-811.md",
+      "phase": 8,
+      "status": "todo",
+      "priority": "P3",
+      "assignee": "claude",
+      "estimateMinutes": 30,
+      "dependsOn": [
+        "T-809"
+      ],
+      "specRefs": [
+        "화면 흐름"
+      ],
+      "acceptanceCriteria": [
+        "검색어 입력 → 설정으로 → 프로세스 종료 시뮬레이션(개발자 옵션 '액티비티 유지 안함') → 앱 복귀 → 뒤로가기 → 검색어가 남아 있다",
+        "BookSearchViewModelTest에 SavedStateHandle 복원 테스트가 있다"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-21",
+      "updatedAt": "2026-10-21",
+      "startedAt": null,
+      "completedAt": null,
+      "blockedReason": null,
+      "notes": ""
     }
   ]
 }
