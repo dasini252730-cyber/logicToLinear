@@ -2701,11 +2701,11 @@
       ],
       "tags": [],
       "createdAt": "2026-10-21",
-      "updatedAt": "2026-10-21",
+      "updatedAt": "2026-10-23",
       "startedAt": "2026-10-21",
       "completedAt": null,
       "blockedReason": null,
-      "notes": "2026-10-21 [in_progress] 선행 T-809가 review(사람 확인 대기)"
+      "notes": "2026-10-21 [in_progress] 선행 T-809가 review(사람 확인 대기)\n2026-10-23 2026-10-23 사용자 확인: 저장 상한 200자 승인."
     },
     {
       "id": "T-812",
