@@ -2673,11 +2673,11 @@
       ],
       "tags": [],
       "createdAt": "2026-10-21",
-      "updatedAt": "2026-10-21",
+      "updatedAt": "2026-10-23",
       "startedAt": "2026-10-21",
       "completedAt": null,
       "blockedReason": null,
-      "notes": "2026-10-21 T-809 2차 리뷰 경고 7: SettingsRoute(overSearch)는 '검색에서 왔다'를 라우트 인자로 박은 이름이라 토론·책 상세에서도 같은 방식이 필요하면 hideTabs/asSubScreen 류로 일반화해 이름을 바꾼다.\n2026-10-21 [in_progress] 선행 T-809가 review(사람 확인 대기)"
+      "notes": "2026-10-21 T-809 2차 리뷰 경고 7: SettingsRoute(overSearch)는 '검색에서 왔다'를 라우트 인자로 박은 이름이라 토론·책 상세에서도 같은 방식이 필요하면 hideTabs/asSubScreen 류로 일반화해 이름을 바꾼다.\n2026-10-21 [in_progress] 선행 T-809가 review(사람 확인 대기)\n2026-10-23 2026-10-23 사용자 확인: 하위 화면 설계·완료 조건 변경 승인. 요구사항 문서 화면 표·예외 표 갱신 완료."
     },
     {
       "id": "T-811",
