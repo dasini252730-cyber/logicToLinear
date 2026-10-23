@@ -2,7 +2,7 @@
   "project": "독서 기록 앱 (Android)",
   "version": 1,
   "createdAt": "2026-10-05",
-  "updatedAt": "2026-10-21",
+  "updatedAt": "2026-10-23",
   "spec": "docs/요구사항.md",
   "guide": "CLAUDE.md",
   "taskDocDir": "docs/tasks",
@@ -2645,11 +2645,11 @@
       ],
       "tags": [],
       "createdAt": "2026-10-06",
-      "updatedAt": "2026-10-21",
+      "updatedAt": "2026-10-23",
       "startedAt": "2026-10-21",
       "completedAt": null,
       "blockedReason": null,
-      "notes": ""
+      "notes": "2026-10-23 2026-10-23 사용자 확인: 설정을 하위 화면으로 쌓고 하단 탭 숨기는 설계 찬성. 실기기 확인만 남음."
     },
     {
       "id": "T-810",
