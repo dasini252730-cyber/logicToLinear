@@ -988,7 +988,7 @@
       "description": "앱 아이콘 탭에서 카메라 프리뷰까지 시간을 실기기에서 측정한다. 2초를 넘으면 DB 초기화 지연, 스플래시 제거, CameraX 바인딩 선행 등으로 줄인다.",
       "doc": "docs/tasks/T-211.md",
       "phase": 2,
-      "status": "review",
+      "status": "done",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -1006,9 +1006,9 @@
         "performance"
       ],
       "createdAt": "2026-10-05",
-      "updatedAt": "2026-10-05",
+      "updatedAt": "2026-10-24",
       "startedAt": null,
-      "completedAt": null,
+      "completedAt": "2026-10-24",
       "blockedReason": null,
       "notes": "2026-10-05 [needs_human] 콜드 스타트 측정은 실기기(T-005) 연결 후 가능. 코드 점검은 완료, 측정 방법은 docs/tasks/T-211.md\n2026-10-05 [review] 실기기 측정 3회 기록(중앙값 459ms). T-308 작업 트리가 커밋되기 전이라 done은 보류(done hook이 전체 변경을 쓸어 담음)"
     },
