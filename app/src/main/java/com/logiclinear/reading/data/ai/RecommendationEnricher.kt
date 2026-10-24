@@ -10,9 +10,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 /**
- * 추천 후처리(요구사항 "취향 분석·추천 > 후처리"): 각 추천을 카카오 책 검색(제목)로 찾아 isbn13·표지·링크를 붙인다.
+ * 추천 후처리(요구사항 "취향 분석·추천 > 후처리"): 각 추천을 국립중앙도서관 소장자료 검색(제목)으로 찾아 isbn13·분류·링크를 붙인다(표지는 공급자가 주지 않는다).
  * 못 찾거나 검색이 실패하면 그 항목은 그대로 둔다(표지 없이 제목·저자·이유만 표시). 분석 전체는 실패하지 않는다.
- * 5건을 병렬로 조회한다. 카카오 검색 한도 대비 분석 1회의 5건은 문제가 되지 않는다.
+ * 5건을 병렬로 조회한다. 국립중앙도서관 검색 한도 대비 분석 1회의 5건은 문제가 되지 않는다.
  */
 class RecommendationEnricher(private val search: BookSearch) {
     suspend fun enrich(recommendations: List<Recommendation>): List<Recommendation> = coroutineScope {

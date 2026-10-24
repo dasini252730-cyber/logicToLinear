@@ -34,7 +34,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.logiclinear.reading.R
@@ -62,6 +65,13 @@ fun BookSearchEntry(
     viewModel: BookSearchViewModel = viewModel(factory = BookSearchViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    // 설정 등 위에 쌓인 화면이 닫혀 다시 보일 때 키 안내를 지운다(T-809). 한 번 멈췄다(ON_PAUSE) 돌아온 경우만이라
+    // 첫 진입·회전(remember가 초기화됨)에서는 아무 일도 없다.
+    var pausedOnce by remember { mutableStateOf(false) }
+    LifecycleResumeEffect(Unit) {
+        if (pausedOnce) viewModel.clearKeyNotice()
+        onPauseOrDispose { pausedOnce = true }
+    }
     LaunchedEffect(state.registeredBookId) { if (state.registeredBookId != null) onRegistered() }
     LaunchedEffect(state.fallbackQuery) {
         val query = state.fallbackQuery ?: return@LaunchedEffect

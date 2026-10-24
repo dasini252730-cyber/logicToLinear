@@ -80,7 +80,7 @@ class BackupRepository(private val db: AppDatabase) {
             val bookId = idMap[backup.bookId] ?: return@forEach // 책 없는 글귀는 버린다
             val quote = backup.toEntity(bookId = bookId, id = 0)
             if (checkDuplicate && quoteDao.countSame(bookId, quote.text, quote.createdAt) > 0) return@forEach
-            // 카메라 홈 기본 책 선택 기준(lastQuoteAt)이 가져온 글귀를 반영하도록 한 트랜잭션에서 갱신한다.
+            // 책의 lastQuoteAt(마지막 글귀 시각)이 가져온 글귀를 반영하도록 한 트랜잭션에서 갱신한다.
             quoteDao.insertAndTouchBook(quote)
             count++
         }

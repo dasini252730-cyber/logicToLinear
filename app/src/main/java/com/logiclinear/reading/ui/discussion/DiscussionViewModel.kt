@@ -32,9 +32,14 @@ import kotlinx.coroutines.launch
 /**
  * 토론 화면 상태(요구사항 "완독 후 토론"). [ended]면 입력창을 닫는다. [hasFailed]면 전송 대신 재전송을 먼저 하게 한다.
  * [needsFirstQuestion]은 AI 메시지가 하나도 없는 상태(첫 질문 실패) — 버튼으로 다시 요청한다.
+ * [missing]은 DB를 읽었는데 토론 행이 없는 상태(T-812: 위에 쌓인 설정에서 백업을 덮어써 CASCADE로 지워진 경우).
+ * 로딩 중과 구분해 "토론을 찾을 수 없어요"를 보여 준다. CaptureViewModel의 bookLoaded·bookMissing과 같은 꼴.
  */
 data class DiscussionUiState(
+    /** DB를 한 번이라도 읽었다. false면 로딩 중. */
     val loaded: Boolean = false,
+    /** 읽은 결과에 토론 행이 있었다. 화면 요소는 이 값으로 판단한다. */
+    val found: Boolean = false,
     val bookTitle: String = "",
     val messages: List<DiscussionMessage> = emptyList(),
     val ended: Boolean = false,
@@ -44,8 +49,10 @@ data class DiscussionUiState(
     val error: AiResult.Failure? = null,
 ) {
     val hasFailed: Boolean get() = messages.any { it.failed }
-    val needsFirstQuestion: Boolean get() = loaded && messages.none { !it.isUser } && !sending
-    val canSend: Boolean get() = loaded && !ended && !sending && !hasFailed && input.isNotBlank()
+    /** 읽었는데 없다 = 백업 덮어쓰기 등으로 사라졌다(T-812). */
+    val missing: Boolean get() = loaded && !found
+    val needsFirstQuestion: Boolean get() = found && messages.none { !it.isUser } && !sending
+    val canSend: Boolean get() = found && !ended && !sending && !hasFailed && input.isNotBlank()
 }
 
 private data class LocalState(val input: String = "", val sending: Boolean = false, val error: AiResult.Failure? = null)
@@ -68,8 +75,10 @@ class DiscussionViewModel(
 
     val uiState: StateFlow<DiscussionUiState> = combine(discussionWithBook, local) { (discussion, book), local ->
         val messages = discussion?.let { decodeMessages(it.messagesJson) } ?: emptyList()
+        // combine은 DB 흐름이 한 번 방출한 뒤에만 도므로, 여기 오면 읽은 것이다.
         DiscussionUiState(
-            loaded = discussion != null,
+            loaded = true,
+            found = discussion != null,
             bookTitle = book?.title ?: "",
             messages = messages,
             ended = discussion?.endedAt != null,

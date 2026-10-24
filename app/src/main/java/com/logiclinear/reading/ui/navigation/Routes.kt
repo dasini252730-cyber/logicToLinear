@@ -2,13 +2,16 @@ package com.logiclinear.reading.ui.navigation
 
 import kotlinx.serialization.Serializable
 
+// 모든 라우트는 여기에만 선언한다(rules/android.md). Navigation Compose 타입 안전 라우트.
+// 시작 화면은 LibraryRoute(서재). 하단 탭은 서재·분석·설정(TopLevelRoute). 분석 화면 안에 추천 섹션이 있다.
+// 2026-10-05 사용자 결정(T-806): 홈 카메라를 없애고 카메라는 책 안(CaptureRoute)에서만 연다.
+
 /**
- * 모든 라우트는 여기에만 선언한다(rules/android.md). Navigation Compose 타입 안전 라우트.
- * 시작 화면은 [HomeRoute](카메라). 하단 탭은 요구사항 표대로 서재·분석·추천·설정 3개([TopLevelRoute]).
- * 카메라로 돌아가는 길은 시스템 뒤로가기다: 탭 전환이 시작 화면까지 popUpTo하므로 뒤로 한 번이면 카메라다.
+ * 책 상세 "글귀 찍기"(T-806): 그 책 전용 카메라. 책을 바꿀 수 없고 하단 탭이 없으며,
+ * 저장 뒤에는 여기로 돌아오고 뒤로 가면 책 상세다. 앱에서 카메라가 뜨는 유일한 경로다.
  */
 @Serializable
-object HomeRoute
+data class CaptureRoute(val bookId: Long)
 
 @Serializable
 object LibraryRoute
@@ -16,8 +19,13 @@ object LibraryRoute
 @Serializable
 object AnalysisRoute
 
+/**
+ * 설정(T-501). 보통은 하단 탭으로 들어오고, [stacked]가 true면 책 검색(T-809)·토론(T-810)의 "설정으로"에서
+ * 그 화면 위에 하위 화면으로 쌓인 것이다. 그때는 하단 탭을 숨기고 뒤로가기로만 나가게 해, 탭 전환의
+ * popUpTo(서재)가 아래 화면(검색어·토론)을 걷어내거나 saveState로 서재 탭에 매달지 않게 한다.
+ */
 @Serializable
-object SettingsRoute
+data class SettingsRoute(val stacked: Boolean = false)
 
 /** 촬영 직후 문장 선택(T-204). OCR 결과는 CaptureStore에 있어 인자가 없다. */
 @Serializable
@@ -27,7 +35,7 @@ object SelectRoute
 @Serializable
 data class BookDetailRoute(val bookId: Long)
 
-/** 제목 검색(카카오 책 검색)으로 책 등록(T-303). 서재 +에서 들어온다. */
+/** 제목 검색(국립중앙도서관 소장자료 검색)으로 책 등록(T-303). 서재 +에서 들어온다. */
 @Serializable
 object BookSearchRoute
 
@@ -45,9 +53,9 @@ data class BookFormRoute(val initialTitle: String? = null)
 @Serializable
 data class DiscussionRoute(val discussionId: Long, val fresh: Boolean = false)
 
-/** 하단 탭에 노출되는 라우트. 카메라 홈은 탭이 아니지만 하단 탭은 홈에서도 보인다. */
+/** 하단 탭에 노출되는 라우트. 서재가 시작 화면이다. */
 enum class TopLevelRoute(val route: Any) {
     LIBRARY(LibraryRoute),
     ANALYSIS(AnalysisRoute),
-    SETTINGS(SettingsRoute),
+    SETTINGS(SettingsRoute()),
 }

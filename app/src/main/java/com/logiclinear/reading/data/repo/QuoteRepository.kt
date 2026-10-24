@@ -6,7 +6,7 @@ import com.logiclinear.reading.data.db.QuoteDao
 import kotlinx.coroutines.flow.Flow
 
 /**
- * 글귀 데이터 접근. [add]는 책의 lastQuoteAt도 함께 갱신한다(카메라 홈 기본 책 선택 기준).
+ * 글귀 데이터 접근. [add]는 책의 lastQuoteAt(마지막 글귀 시각)도 함께 갱신한다.
  */
 class QuoteRepository(
     private val quoteDao: QuoteDao,

@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -32,7 +36,7 @@ import com.logiclinear.reading.ui.theme.ReadingLogTheme
 
 /** 설정 화면 이벤트. */
 data class SettingsActions(
-    val onKakaoChange: (String) -> Unit = {},
+    val onNlChange: (String) -> Unit = {},
     val onAnthropicChange: (String) -> Unit = {},
     val onSaveKey: (SecretKey) -> Unit = {},
     val onSelectModel: (AiModel) -> Unit = {},
@@ -44,7 +48,11 @@ data class SettingsActions(
 
 /** 네비게이션 진입점. SAF 런처(내보내기 위치 선택, 가져오기 파일 선택)와 스낵바 메시지를 여기서 처리한다. */
 @Composable
-fun SettingsEntry(viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)) {
+fun SettingsEntry(
+    /** 책 검색(T-809)·토론(T-810) 위에 쌓였을 때만 넘어온다. 그때는 하단 탭 대신 상단 뒤로가기로 그 화면에 돌아간다. */
+    onBack: (() -> Unit)? = null,
+    viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(BACKUP_MIME)) {
         viewModel.exportTo(it)
@@ -63,8 +71,9 @@ fun SettingsEntry(viewModel: SettingsViewModel = viewModel(factory = SettingsVie
     SettingsScreen(
         state = state,
         snackbar = snackbar,
+        onBack = onBack,
         actions = SettingsActions(
-            onKakaoChange = viewModel::onKakaoChange,
+            onNlChange = viewModel::onNlChange,
             onAnthropicChange = viewModel::onAnthropicChange,
             onSaveKey = viewModel::saveKey,
             onSelectModel = viewModel::setModel,
@@ -83,11 +92,17 @@ fun SettingsScreen(
     state: SettingsUiState,
     actions: SettingsActions,
     snackbar: SnackbarHostState = remember { SnackbarHostState() },
+    onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_settings)) }) },
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.tab_settings)) },
+                navigationIcon = { if (onBack != null) BackButton(onBack) },
+            )
+        },
         snackbarHost = { SnackbarHost(snackbar) },
     ) { innerPadding ->
         Column(
@@ -100,11 +115,11 @@ fun SettingsScreen(
         ) {
             SectionTitle(stringResource(R.string.settings_section_keys))
             KeyField(
-                label = stringResource(R.string.settings_kakao_label),
-                value = state.kakaoInput,
-                isSet = state.kakaoSet,
-                onChange = actions.onKakaoChange,
-                onSave = { actions.onSaveKey(SecretKey.KAKAO_REST) },
+                label = stringResource(R.string.settings_nl_label),
+                value = state.nlInput,
+                isSet = state.nlSet,
+                onChange = actions.onNlChange,
+                onSave = { actions.onSaveKey(SecretKey.NL_OPENAPI) },
             )
             KeyField(
                 label = stringResource(R.string.settings_anthropic_label),
@@ -131,7 +146,7 @@ fun SettingsScreen(
 @Composable
 private fun messageText(message: SettingsMessage): String = when (message) {
     is SettingsMessage.KeySaved -> stringResource(
-        if (message.key == SecretKey.KAKAO_REST) R.string.settings_key_saved_kakao else R.string.settings_key_saved_anthropic,
+        if (message.key == SecretKey.NL_OPENAPI) R.string.settings_key_saved_nl else R.string.settings_key_saved_anthropic,
     )
     SettingsMessage.ExportDone -> stringResource(R.string.settings_export_done)
     SettingsMessage.ExportFailed -> stringResource(R.string.settings_export_failed)
@@ -141,12 +156,19 @@ private fun messageText(message: SettingsMessage): String = when (message) {
     SettingsMessage.ImportCorrupt -> stringResource(R.string.settings_import_corrupt)
 }
 
+@Composable
+private fun BackButton(onBack: () -> Unit) {
+    IconButton(onClick = onBack) {
+        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+    }
+}
+
 private const val BACKUP_MIME = "application/json"
 
 @Preview(showBackground = true)
 @Composable
 private fun SettingsScreenPreview() {
     ReadingLogTheme {
-        SettingsScreen(state = SettingsUiState(kakaoSet = true, callsThisMonth = 3), actions = SettingsActions())
+        SettingsScreen(state = SettingsUiState(nlSet = true, callsThisMonth = 3), actions = SettingsActions())
     }
 }

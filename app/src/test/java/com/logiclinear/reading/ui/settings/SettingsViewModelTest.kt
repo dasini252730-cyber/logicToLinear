@@ -99,20 +99,20 @@ class SettingsViewModelTest {
         val collector = launch { vm.uiState.collect {} }
         advanceUntilIdle()
 
-        vm.onKakaoChange("   ")
-        vm.saveKey(SecretKey.KAKAO_REST)
+        vm.onNlChange("   ")
+        vm.saveKey(SecretKey.NL_OPENAPI)
         advanceUntilIdle()
-        assertFalse(vm.uiState.value.kakaoSet)
+        assertFalse(vm.uiState.value.nlSet)
 
-        vm.onKakaoChange("  kakao-key  ")
-        vm.saveKey(SecretKey.KAKAO_REST)
+        vm.onNlChange("  nl-key  ")
+        vm.saveKey(SecretKey.NL_OPENAPI)
         advanceUntilIdle()
 
-        assertTrue(vm.uiState.value.kakaoSet)
+        assertTrue(vm.uiState.value.nlSet)
         assertFalse(vm.uiState.value.anthropicSet)
-        assertEquals("", vm.uiState.value.kakaoInput)
-        assertEquals("kakao-key", secretStore.get(SecretKey.KAKAO_REST))
-        assertEquals(SettingsMessage.KeySaved(SecretKey.KAKAO_REST), vm.uiState.value.message)
+        assertEquals("", vm.uiState.value.nlInput)
+        assertEquals("nl-key", secretStore.get(SecretKey.NL_OPENAPI))
+        assertEquals(SettingsMessage.KeySaved(SecretKey.NL_OPENAPI), vm.uiState.value.message)
         collector.cancel()
     }
 
@@ -133,7 +133,7 @@ class SettingsViewModelTest {
 
     @Test
     fun 내보내기는_규칙대로_이름을_짓고_파일에_키가_없으며_실패는_메시지로_알린다() = runTest(mainDispatcherRule.dispatcher) {
-        secretStore.set(SecretKey.KAKAO_REST, "secret-kakao-value")
+        secretStore.set(SecretKey.NL_OPENAPI, "secret-nl-value")
         db.bookDao().insert(Book(title = "책"))
         val vm = vm()
         val collector = launch { vm.uiState.collect {} }
@@ -145,7 +145,7 @@ class SettingsViewModelTest {
 
         val text = io.files.getValue(uri)
         assertTrue(text.contains("\"schemaVersion\": $DB_SCHEMA_VERSION"))
-        assertFalse(text.contains("secret-kakao-value"))
+        assertFalse(text.contains("secret-nl-value"))
         assertEquals(SettingsMessage.ExportDone, vm.uiState.value.message)
 
         io.failWrite = true

@@ -78,7 +78,7 @@ fun DiscussionScreen(state: DiscussionUiState, actions: DiscussionActions, modif
                 title = {
                     Column {
                         Text(state.bookTitle.ifBlank { stringResource(R.string.discussion_title) }, style = MaterialTheme.typography.titleMedium)
-                        if (state.loaded && !state.ended) {
+                        if (state.found && !state.ended) {
                             Text(stringResource(R.string.discussion_turns_left, state.remainingTurns), style = MaterialTheme.typography.bodySmall)
                         }
                     }
@@ -92,13 +92,18 @@ fun DiscussionScreen(state: DiscussionUiState, actions: DiscussionActions, modif
         },
         bottomBar = {
             when {
-                !state.loaded -> Unit
+                !state.found -> Unit
                 state.ended -> EndedBar()
                 state.needsFirstQuestion -> AskFirstBar(onAsk = actions.onAskFirst)
                 else -> InputBar(state, actions)
             }
         },
     ) { innerPadding ->
+        // 토론 행이 사라졌으면(T-812) 빈 목록 대신 안내. 뒤로가기는 그대로 책 상세로 간다.
+        if (state.missing) {
+            Text(stringResource(R.string.discussion_not_found), modifier = Modifier.padding(innerPadding).padding(16.dp))
+            return@Scaffold
+        }
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -130,7 +135,7 @@ private fun DiscussionScreenPreview() {
     ReadingLogTheme {
         DiscussionScreen(
             state = DiscussionUiState(
-                loaded = true, bookTitle = "채식주의자", remainingTurns = 18,
+                loaded = true, found = true, bookTitle = "채식주의자", remainingTurns = 18,
                 messages = listOf(
                     DiscussionMessage(ChatMessage.ASSISTANT, "별점은 4점인데 저장한 글귀는 모두 뒷부분에 몰려 있어요. 앞부분은 어땠나요?", 1),
                     DiscussionMessage(ChatMessage.USER, "앞은 좀 힘들었어요.", 2),

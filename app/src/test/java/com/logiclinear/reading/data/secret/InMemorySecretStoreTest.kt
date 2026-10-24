@@ -13,19 +13,19 @@ class InMemorySecretStoreTest {
     @Test
     fun 공백을_정리해_저장하고_빈_값은_지운다() = runTest {
         val store = InMemorySecretStore()
-        store.set(SecretKey.KAKAO_REST, "  kakao-key  ")
-        assertEquals("kakao-key", store.get(SecretKey.KAKAO_REST))
-        assertTrue(store.observeIsSet(SecretKey.KAKAO_REST).first())
+        store.set(SecretKey.NL_OPENAPI, "  nl-key  ")
+        assertEquals("nl-key", store.get(SecretKey.NL_OPENAPI))
+        assertTrue(store.observeIsSet(SecretKey.NL_OPENAPI).first())
 
-        store.set(SecretKey.KAKAO_REST, "   ")
-        assertNull(store.get(SecretKey.KAKAO_REST))
-        assertFalse(store.isSet(SecretKey.KAKAO_REST))
+        store.set(SecretKey.NL_OPENAPI, "   ")
+        assertNull(store.get(SecretKey.NL_OPENAPI))
+        assertFalse(store.isSet(SecretKey.NL_OPENAPI))
     }
 
     @Test
     fun 키마다_독립이다() {
         val store = InMemorySecretStore(mapOf(SecretKey.ANTHROPIC_API to "sk"))
         assertTrue(store.isSet(SecretKey.ANTHROPIC_API))
-        assertFalse(store.isSet(SecretKey.KAKAO_REST))
+        assertFalse(store.isSet(SecretKey.NL_OPENAPI))
     }
 }

@@ -1,7 +1,9 @@
 package com.logiclinear.reading.ui.search
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -25,7 +27,7 @@ data class BookSearchUiState(
     val status: BookStatus = BookStatus.READING,
     val searching: Boolean = false,
     val results: List<BookSearchItem> = emptyList(),
-    /** 카카오 REST API 키가 설정에 없다. */
+    /** 국립중앙도서관 인증키가 설정에 없다. */
     val needsKey: Boolean = false,
     /** 검색 공급자가 키 오류(401·403)를 돌려줬다. 폴백이 아니라 설정 안내로 보낸다. */
     val keyInvalid: Boolean = false,
@@ -38,15 +40,33 @@ data class BookSearchUiState(
     val registeredBookId: Long? = null,
 )
 
+/**
+ * [savedState]에 검색어와 선택 상태를 두어 프로세스 재시작(설정 위에서 키를 복사하러 브라우저로 갔다가 종료) 뒤에도
+ * 남긴다(T-811). 결과 목록·안내 플래그는 다시 검색하면 되므로 보관하지 않는다.
+ */
 class BookSearchViewModel(
     private val bookRepository: BookRepository,
+    private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(BookSearchUiState())
+    private val _uiState = MutableStateFlow(
+        BookSearchUiState(
+            query = savedState[KEY_QUERY] ?: "",
+            status = savedState.get<String>(KEY_STATUS)?.let { name -> BookStatus.entries.firstOrNull { it.name == name } }
+                ?: BookStatus.READING,
+        ),
+    )
     val uiState: StateFlow<BookSearchUiState> = _uiState
 
-    fun onQueryChange(value: String) = _uiState.update { it.copy(query = value, duplicate = false) }
+    fun onQueryChange(value: String) {
+        // 저장만 자른다(붙여넣은 긴 텍스트가 saved instance state 번들 한도를 넘지 않게). 화면 값은 그대로.
+        savedState[KEY_QUERY] = value.take(MAX_SAVED_QUERY)
+        _uiState.update { it.copy(query = value, duplicate = false) }
+    }
 
-    fun onStatusChange(status: BookStatus) = _uiState.update { it.copy(status = status) }
+    fun onStatusChange(status: BookStatus) {
+        savedState[KEY_STATUS] = status.name
+        _uiState.update { it.copy(status = status) }
+    }
 
     /** 검색. 결과 없음·오류는 직접 입력 폼으로 전환한다. */
     fun search() {
@@ -62,6 +82,14 @@ class BookSearchViewModel(
                     _uiState.update { it.copy(searching = false, results = emptyList(), fallbackQuery = query) }
             }
         }
+    }
+
+    /**
+     * 설정에서 돌아왔을 때(T-809). 키 없음·키 오류 안내를 지워 "키를 넣고 왔는데 안내가 그대로"를 막는다.
+     * 검색어는 남기고 재검색은 하지 않는다(사용자 동작 없는 네트워크 호출·폴백 이동을 피함). 돋보기를 누르면 새 키로 검색한다.
+     */
+    fun clearKeyNotice() = _uiState.update {
+        if (it.needsKey || it.keyInvalid) it.copy(needsKey = false, keyInvalid = false) else it
     }
 
     /** "직접 입력" 버튼. 검색어를 제목에 미리 채운다. */
@@ -84,8 +112,13 @@ class BookSearchViewModel(
     fun dismissDuplicate() = _uiState.update { it.copy(duplicate = false) }
 
     companion object {
+        private const val KEY_QUERY = "searchQuery"
+        private const val KEY_STATUS = "searchStatus"
+        /** 책 제목 검색어로 충분한 길이. 복원 시 이 길이까지만 돌아온다. */
+        const val MAX_SAVED_QUERY = 200
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer { BookSearchViewModel(appContainer().bookRepository) }
+            initializer { BookSearchViewModel(appContainer().bookRepository, createSavedStateHandle()) }
         }
     }
 }

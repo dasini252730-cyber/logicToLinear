@@ -1,8 +1,8 @@
 package com.logiclinear.reading.data.remote.books
 
 /**
- * 도서 검색 결과 한 건. 공급자(카카오 책 검색)와 무관한 모양으로, 요구사항 "책 검색" 저장 필드와 1:1이다.
- * [category]는 분류(장르) 자리다. 카카오는 분류를 주지 않아 비어 있다(2026-10-05 공급자 교체).
+ * 도서 검색 결과 한 건. 공급자(국립중앙도서관 소장자료 Open API)와 무관한 모양으로, 요구사항 "책 검색" 저장 필드와 1:1이다.
+ * [cover]·[description]은 국립중앙도서관이 주지 않아 비어 있다(2026-10-05 사용자가 포기한 기능). [category]는 KDC 대분류 이름.
  */
 data class BookSearchItem(
     val title: String = "",
@@ -29,7 +29,7 @@ sealed interface BookSearchResult {
     /** 키가 틀렸거나 권한이 없다(401·403). 설정 화면으로 안내한다. */
     data object InvalidKey : BookSearchResult
 
-    /** 공급자가 오류를 돌려줬다(한도 초과 429, 잘못된 요청 400 등). [code]는 공급자 코드 문자열(HTTP 코드 또는 본문 errorCode). 직접 입력 폼으로. */
+    /** 공급자가 오류를 돌려줬다(국립중앙도서관 본문 errorCode 012~015, 응답 형식 불일치 "shape"). [code]는 공급자 코드 문자열. 직접 입력 폼으로. */
     data class ApiError(val code: String?, val message: String?) : BookSearchResult
 
     /** 오프라인·타임아웃·서버 오류. 직접 입력 폼으로. */

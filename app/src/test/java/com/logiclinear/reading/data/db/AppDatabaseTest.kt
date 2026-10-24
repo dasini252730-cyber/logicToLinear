@@ -72,22 +72,6 @@ class AppDatabaseTest {
     }
 
     @Test
-    fun 기본_선택_책은_lastQuoteAt이_최근인_READING_책() = runTest {
-        db.bookDao().insert(Book(title = "글귀 없음", createdAt = Instant.ofEpochMilli(9_000)))
-        val recent = db.bookDao().insert(Book(title = "최근", lastQuoteAt = Instant.ofEpochMilli(5_000)))
-        db.bookDao().insert(Book(title = "예전", lastQuoteAt = Instant.ofEpochMilli(1_000)))
-        db.bookDao().insert(Book(title = "다 읽음", status = BookStatus.DONE, lastQuoteAt = Instant.ofEpochMilli(8_000)))
-
-        assertEquals(recent, db.bookDao().observeLatestByQuote(BookStatus.READING).first()?.id)
-    }
-
-    @Test
-    fun 기본_선택_책은_READING이_없으면_null() = runTest {
-        db.bookDao().insert(Book(title = "읽고 싶음", status = BookStatus.WANT))
-        assertNull(db.bookDao().observeLatestByQuote(BookStatus.READING).first())
-    }
-
-    @Test
     fun id로_관찰하면_갱신이_반영되고_없는_id는_null() = runTest {
         val id = db.bookDao().insert(Book(title = "원래"))
         db.bookDao().update(db.bookDao().getById(id)!!.copy(title = "바뀜"))

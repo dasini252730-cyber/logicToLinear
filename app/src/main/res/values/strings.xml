@@ -7,14 +7,12 @@
     <string name="tab_analysis">분석·추천</string>
     <string name="tab_settings">설정</string>
 
-    <!-- 카메라 홈 (흐름 1) -->
+    <!-- 책 전용 카메라 (흐름 1) -->
     <string name="camera_permission_rationale">밑줄 친 문장을 찍으려면 카메라 권한이 필요해요</string>
     <string name="camera_permission_request">카메라 권한 허용</string>
     <string name="camera_open_settings">설정에서 권한 열기</string>
     <string name="shutter">촬영</string>
-    <string name="home_register_book_first">읽는 중인 책을 먼저 등록하세요</string>
-    <string name="home_pick_book_title">어느 책의 글귀인가요?</string>
-    <string name="home_pick_book_selected">선택됨</string>
+    <string name="capture_register_book_first">읽는 중인 책을 먼저 등록하세요</string>
     <string name="ocr_empty_message">글자를 찾지 못했어요. 더 밝은 곳에서 다시 찍어 주세요</string>
     <string name="ocr_retry">다시 찍기</string>
     <string name="capture_error">촬영에 실패했어요. 다시 찍어 주세요</string>
@@ -48,11 +46,11 @@
 
     <!-- 설정 (API 키 입력, 모델 선택, 비용 통제, 백업) -->
     <string name="settings_section_keys">API 키</string>
-    <string name="settings_kakao_label">카카오 REST API 키</string>
+    <string name="settings_nl_label">국립중앙도서관 인증키</string>
     <string name="settings_anthropic_label">Anthropic API 키</string>
     <string name="settings_save">저장</string>
     <string name="settings_key_saved">저장됨</string>
-    <string name="settings_key_saved_kakao">카카오 REST API 키를 저장했어요</string>
+    <string name="settings_key_saved_nl">국립중앙도서관 인증키를 저장했어요</string>
     <string name="settings_key_saved_anthropic">Anthropic API 키를 저장했어요</string>
     <string name="settings_key_not_set">미입력</string>
     <string name="settings_section_ai">AI</string>
@@ -106,8 +104,8 @@
     <string name="search_action">검색</string>
     <string name="search_manual_entry">직접 입력</string>
     <string name="search_duplicate">이미 서재에 있어요</string>
-    <string name="search_needs_key">책 검색을 쓰려면 설정에서 카카오 REST API 키를 입력하세요</string>
-    <string name="search_key_invalid">카카오 REST API 키가 올바르지 않아요. 설정에서 다시 입력하세요</string>
+    <string name="search_needs_key">책 검색을 쓰려면 설정에서 국립중앙도서관 인증키를 입력하세요</string>
+    <string name="search_key_invalid">국립중앙도서관 인증키가 올바르지 않아요. 설정에서 다시 입력하세요</string>
     <string name="search_open_settings">설정으로</string>
 
     <!-- 직접 입력 등록 (흐름 2) -->
@@ -125,6 +123,7 @@
     <string name="book_action_finish">다 읽었어요</string>
     <string name="book_action_restart_reading">다시 읽기</string>
     <string name="book_action_delete">삭제</string>
+    <string name="book_action_capture_quote">글귀 찍기</string>
     <string name="book_delete_title">이 책을 삭제할까요?</string>
     <string name="book_delete_message">글귀와 토론도 함께 삭제됩니다.</string>
 
@@ -142,6 +141,7 @@
 
     <!-- 완독 후 토론 (AI 기능 > 완독 후 토론, 예외 처리) -->
     <string name="discussion_title">토론</string>
+    <string name="discussion_not_found">토론을 찾을 수 없어요</string>
     <string name="discussion_turns_left">남은 턴 %1$d</string>
     <string name="discussion_input_hint">답을 적어 주세요</string>
     <string name="discussion_send">전송</string>

@@ -38,9 +38,6 @@ class BookRepository(
 
     suspend fun getById(id: Long): Book? = bookDao.getById(id)
 
-    /** 카메라 홈 기본 선택 책. READING 책이 없으면 null. */
-    fun observeDefaultReadingBook(): Flow<Book?> = bookDao.observeLatestByQuote(BookStatus.READING)
-
     /** 새 책을 저장하고 id를 돌려준다. */
     suspend fun add(book: Book): Long = bookDao.insert(book)
 
@@ -61,7 +58,7 @@ class BookRepository(
 
     /**
      * 검색 결과 등록(요구사항 "책 검색"). 같은 isbn13이 이미 있으면 등록하지 않고 [AddResult.Duplicate].
-     * 저장 필드 7개: title, author, publisher, isbn13, cover, category(카카오는 비어 있음), description.
+     * 저장 필드 7개: title, author, publisher, isbn13, cover, category(국립중앙도서관 KDC 대분류), description.
      */
     suspend fun addFromSearch(item: BookSearchItem, status: BookStatus): AddResult {
         val isbn = item.isbn13.trim().ifEmpty { null }

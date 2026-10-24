@@ -22,7 +22,7 @@ interface QuoteDao {
 
     /**
      * 글귀 저장과 책의 lastQuoteAt 갱신을 한 트랜잭션으로 묶는다. 둘 중 하나만 반영되는 상태를 막는다
-     * (카메라 홈 기본 책 선택 기준이 lastQuoteAt이다).
+     * (lastQuoteAt은 책의 마지막 글귀 시각 기록. 2026-10-06 카메라 홈 폐기 뒤 읽는 곳은 없지만 백업 필드라 유지한다, T-808).
      */
     @Transaction
     suspend fun insertAndTouchBook(quote: Quote): Long {

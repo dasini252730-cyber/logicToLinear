@@ -70,7 +70,7 @@ class BackupRepositoryTest {
         assertEquals(listOf(1, 1, 1, 1), listOf(file.books.size, file.quotes.size, file.discussions.size, file.analyses.size))
         assertEquals(file.books.single().id, file.quotes.single().bookId)
         val text = backupJson.encodeToString(BackupFile.serializer(), file)
-        assertFalse(text.contains("apiKey") || text.contains("kakao", ignoreCase = true) || text.contains("anthropic", ignoreCase = true))
+        assertFalse(text.contains("apiKey") || text.contains("nl_openapi", ignoreCase = true) || text.contains("anthropic", ignoreCase = true))
     }
 
     @Test

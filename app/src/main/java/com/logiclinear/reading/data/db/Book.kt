@@ -24,7 +24,7 @@ data class Book(
     val isbn13: String? = null,
     /** 표지 URL. 오프라인 표시는 이미지 캐시가 담당한다. */
     val coverUrl: String? = null,
-    /** 검색 공급자의 분류. 카카오 책 검색은 분류를 주지 않아 지금은 null이다(예: 국내도서>소설). */
+    /** 검색 공급자의 분류. 국립중앙도서관 KDC 대분류 이름(예: 문학). 직접 입력이면 null. */
     val category: String? = null,
     /** 검색 공급자 소개글. 분석·토론 프롬프트에 쓴다. */
     val description: String? = null,
@@ -36,6 +36,6 @@ data class Book(
     /** 완독일. DONE일 때만. 읽은 시기는 이 값 하나만 기록한다. */
     val finishedAt: LocalDate? = null,
     val createdAt: Instant = nowMillis(),
-    /** 마지막 글귀 저장 시각. 카메라 홈의 기본 책 선택 기준. */
+    /** 마지막 글귀 저장 시각. 백업 필드로 유지(2026-10-06 카메라 홈 폐기 뒤 읽는 곳 없음, T-808). */
     val lastQuoteAt: Instant? = null,
 )

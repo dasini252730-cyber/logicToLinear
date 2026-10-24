@@ -168,4 +168,32 @@ class DiscussionViewModelTest {
         assertEquals(before, calls)
         collector.cancel()
     }
+
+    @Test
+    fun 백업_덮어쓰기로_토론_행이_지워지면_missing이_되고_AI_호출이_나가지_않는다() = runTest(mainDispatcherRule.dispatcher) {
+        val vm = vm(fresh = false)
+        assertFalse(vm.uiState.value.loaded) // 아직 DB를 읽지 않음: 로딩 중
+        assertFalse(vm.uiState.value.missing)
+        val collector = launch { vm.uiState.collect {} }
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.loaded)
+        assertTrue(vm.uiState.value.found)
+        assertFalse(vm.uiState.value.missing)
+
+        db.bookDao().deleteAll() // 백업 OVERWRITE가 하는 일. Discussion은 CASCADE
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.missing)
+        assertFalse(vm.uiState.value.found)
+        assertFalse(vm.uiState.value.needsFirstQuestion)
+        assertFalse(vm.uiState.value.canSend)
+
+        // 사라진 토론으로는 전송·첫 질문이 실제 호출을 내지 않는다(rules/ai-api.md)
+        val before = calls
+        vm.onInputChange("보낼 말")
+        vm.send()
+        vm.requestFirstQuestion()
+        advanceUntilIdle()
+        assertEquals(before, calls)
+        collector.cancel()
+    }
 }

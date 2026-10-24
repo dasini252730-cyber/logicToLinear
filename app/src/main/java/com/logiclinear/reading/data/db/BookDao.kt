@@ -30,17 +30,6 @@ interface BookDao {
     @Query("SELECT * FROM book WHERE status = :status ORDER BY createdAt DESC")
     fun observeByStatus(status: BookStatus): Flow<List<Book>>
 
-    /**
-     * 카메라 홈 기본 선택: 주어진 상태(READING) 중 lastQuoteAt이 가장 최근인 책.
-     * 글귀가 없는 책만 있으면 최근 등록한 책. 해당 상태 책이 없으면 null.
-     * 상태를 바인딩으로 받아 enum 이름이 바뀌어도 쿼리가 조용히 0건이 되지 않게 한다.
-     */
-    @Query(
-        "SELECT * FROM book WHERE status = :status " +
-            "ORDER BY lastQuoteAt IS NULL, lastQuoteAt DESC, createdAt DESC LIMIT 1",
-    )
-    fun observeLatestByQuote(status: BookStatus): Flow<Book?>
-
     /** 백업 내보내기(T-502). */
     @Query("SELECT * FROM book ORDER BY id")
     suspend fun getAll(): List<Book>

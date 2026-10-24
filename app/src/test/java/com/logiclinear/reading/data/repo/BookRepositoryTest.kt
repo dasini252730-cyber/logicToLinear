@@ -8,7 +8,6 @@ import com.logiclinear.reading.data.db.Book
 import com.logiclinear.reading.data.db.BookStatus
 import com.logiclinear.reading.data.remote.books.BookSearchItem
 import com.logiclinear.reading.domain.Review
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -99,11 +98,5 @@ class BookRepositoryTest {
         val item = BookSearchItem(title = "무ISBN", isbn13 = "")
         assertTrue(repo.addFromSearch(item, BookStatus.READING) is AddResult.Added)
         assertTrue(repo.addFromSearch(item, BookStatus.READING) is AddResult.Added)
-    }
-
-    @Test
-    fun 기본_선택_책은_READING이_없으면_null() = runTest {
-        repo.add(Book(title = "읽고 싶음", status = BookStatus.WANT))
-        assertNull(repo.observeDefaultReadingBook().first())
     }
 }

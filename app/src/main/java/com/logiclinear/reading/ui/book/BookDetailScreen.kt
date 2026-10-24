@@ -58,6 +58,8 @@ data class BookDetailActions(
     val onUndoDismissed: () -> Unit,
     val onStartDiscussion: () -> Unit,
     val onOpenDiscussion: (Long) -> Unit,
+    /** 글귀 영역 "글귀 찍기"(T-806). READING 책에서만 보인다. */
+    val onCaptureQuote: () -> Unit,
     val finish: FinishActions,
 )
 
@@ -66,6 +68,7 @@ fun BookDetailEntry(
     onBack: () -> Unit,
     onDeleted: () -> Unit,
     onOpenDiscussion: (discussionId: Long, fresh: Boolean) -> Unit,
+    onCaptureQuote: (bookId: Long) -> Unit,
     viewModel: BookDetailViewModel = viewModel(factory = BookDetailViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -91,6 +94,7 @@ fun BookDetailEntry(
             onUndoDismissed = viewModel::clearUndo,
             onStartDiscussion = viewModel::startDiscussion,
             onOpenDiscussion = { onOpenDiscussion(it, false) },
+            onCaptureQuote = { state.book?.let { onCaptureQuote(it.id) } },
             finish = FinishActions(
                 onRating = viewModel::setRating,
                 onOneLiner = viewModel::setOneLiner,
@@ -172,7 +176,11 @@ private fun BookBody(book: Book, state: BookDetailUiState, actions: BookDetailAc
             onOpen = actions.onOpenDiscussion,
         )
         if (state.discussions.isNotEmpty() || book.status == BookStatus.DONE) Spacer(Modifier.height(24.dp))
-        QuotesSection(state.quotes, onLongPress = actions.onDeleteQuote)
+        QuotesSection(
+            quotes = state.quotes,
+            onLongPress = actions.onDeleteQuote,
+            onCapture = actions.onCaptureQuote.takeIf { book.status == BookStatus.READING },
+        )
     }
 }
 
@@ -181,7 +189,7 @@ private fun Book.hasReview() = rating != null || oneLiner != null || finishedAt 
 @Preview(showBackground = true)
 @Composable
 private fun BookDetailScreenPreview() {
-    val noop = BookDetailActions({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, FinishActions({}, {}, {}, {}, {}))
+    val noop = BookDetailActions({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, FinishActions({}, {}, {}, {}, {}))
     ReadingLogTheme {
         BookDetailScreen(
             state = BookDetailUiState(
