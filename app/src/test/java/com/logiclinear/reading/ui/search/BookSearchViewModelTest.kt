@@ -11,6 +11,9 @@ import com.logiclinear.reading.data.remote.books.BookSearchItem
 import com.logiclinear.reading.data.remote.books.BookSearchResult
 import com.logiclinear.reading.data.remote.books.BookSearch
 import com.logiclinear.reading.data.repo.BookRepository
+import com.logiclinear.reading.data.secret.InMemorySecretStore
+import com.logiclinear.reading.data.secret.SecretKey
+import com.logiclinear.reading.data.secret.SecretStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -55,8 +58,12 @@ class BookSearchViewModelTest {
     @After
     fun tearDown() = db.close()
 
-    private fun vm(result: BookSearchResult, fake: FakeBookSearch = FakeBookSearch(result), handle: SavedStateHandle = SavedStateHandle()) =
-        BookSearchViewModel(BookRepository(db.bookDao(), fake), handle)
+    private fun vm(
+        result: BookSearchResult,
+        fake: FakeBookSearch = FakeBookSearch(result),
+        handle: SavedStateHandle = SavedStateHandle(),
+        secrets: SecretStore = InMemorySecretStore(),
+    ) = BookSearchViewModel(BookRepository(db.bookDao(), fake), secrets, handle)
 
     private class FakeBookSearch(private val result: BookSearchResult) : BookSearch {
         var calls = 0
@@ -162,15 +169,33 @@ class BookSearchViewModelTest {
     }
 
     @Test
-    fun 설정에서_돌아오면_키_안내만_지우고_검색어는_남기며_재검색하지_않는다() = runTest(mainDispatcherRule.dispatcher) {
+    fun 설정에서_돌아왔는데_키가_여전히_없으면_안내를_남긴다() = runTest(mainDispatcherRule.dispatcher) {
         val fake = FakeBookSearch(BookSearchResult.NoKey)
-        val vm = vm(BookSearchResult.NoKey, fake)
+        val vm = vm(BookSearchResult.NoKey, fake, secrets = InMemorySecretStore())
         vm.onQueryChange("채식")
         vm.search()
         advanceUntilIdle()
         assertTrue(vm.uiState.value.needsKey)
 
-        vm.clearKeyNotice()
+        vm.clearKeyNoticeIfKeySet()
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.needsKey) // 회전·앱 복귀로 안내가 사라지면 빈 화면이 된다
+        assertEquals("채식", vm.uiState.value.query)
+        assertEquals(1, fake.calls) // 재검색은 하지 않는다
+    }
+
+    @Test
+    fun 설정에서_키를_넣고_돌아오면_키_없음_안내를_지운다() = runTest(mainDispatcherRule.dispatcher) {
+        val secrets = InMemorySecretStore()
+        val fake = FakeBookSearch(BookSearchResult.NoKey)
+        val vm = vm(BookSearchResult.NoKey, fake, secrets = secrets)
+        vm.onQueryChange("채식")
+        vm.search()
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.needsKey)
+
+        secrets.set(SecretKey.NL_OPENAPI, "새-인증키")
+        vm.clearKeyNoticeIfKeySet()
         advanceUntilIdle()
         assertFalse(vm.uiState.value.needsKey)
         assertEquals("채식", vm.uiState.value.query)
@@ -178,26 +203,28 @@ class BookSearchViewModelTest {
     }
 
     @Test
-    fun 설정에서_돌아오면_키_오류_안내도_지운다() = runTest(mainDispatcherRule.dispatcher) {
-        val vm = vm(BookSearchResult.InvalidKey)
+    fun 키_오류_안내는_키가_있어도_지우지_않는다() = runTest(mainDispatcherRule.dispatcher) {
+        val secrets = InMemorySecretStore(mapOf(SecretKey.NL_OPENAPI to "틀린-키"))
+        val vm = vm(BookSearchResult.InvalidKey, secrets = secrets)
         vm.onQueryChange("채식")
         vm.search()
         advanceUntilIdle()
         assertTrue(vm.uiState.value.keyInvalid)
 
-        vm.clearKeyNotice()
-        assertFalse(vm.uiState.value.keyInvalid)
+        vm.clearKeyNoticeIfKeySet()
+        assertTrue(vm.uiState.value.keyInvalid) // 키 값이 바뀌었는지 알 수 없다. 돋보기를 누르면 다시 판단한다
     }
 
     @Test
-    fun 키_안내_상태가_아니면_clearKeyNotice는_상태를_바꾸지_않는다() = runTest(mainDispatcherRule.dispatcher) {
-        val vm = vm(BookSearchResult.Found(listOf(item)))
+    fun 키_안내_상태가_아니면_상태를_바꾸지_않는다() = runTest(mainDispatcherRule.dispatcher) {
+        val secrets = InMemorySecretStore(mapOf(SecretKey.NL_OPENAPI to "키"))
+        val vm = vm(BookSearchResult.Found(listOf(item)), secrets = secrets)
         vm.onQueryChange("채식")
         vm.search()
         advanceUntilIdle()
         val before = vm.uiState.value
 
-        vm.clearKeyNotice()
+        vm.clearKeyNoticeIfKeySet()
         assertEquals(before, vm.uiState.value)
         assertEquals(1, vm.uiState.value.results.size)
     }

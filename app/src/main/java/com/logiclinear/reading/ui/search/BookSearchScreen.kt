@@ -34,9 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -65,12 +63,12 @@ fun BookSearchEntry(
     viewModel: BookSearchViewModel = viewModel(factory = BookSearchViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    // 설정 등 위에 쌓인 화면이 닫혀 다시 보일 때 키 안내를 지운다(T-809). 한 번 멈췄다(ON_PAUSE) 돌아온 경우만이라
-    // 첫 진입·회전(remember가 초기화됨)에서는 아무 일도 없다.
-    var pausedOnce by remember { mutableStateOf(false) }
+    // 설정 등 위에 쌓인 화면이 닫혀 다시 보일 때 키가 들어왔는지 다시 확인한다(T-809, CaptureScreen의 권한 재확인과 같은 꼴).
+    // `remember` 플래그로 "돌아온 경우"만 거르려 했더니 설정으로 가면 이 컴포저블이 조합에서 빠져 플래그가 초기화돼
+    // 동작하지 않았다(2026-10-24 실기기 확인). 그래서 플래그 대신 키 존재를 본다.
     LifecycleResumeEffect(Unit) {
-        if (pausedOnce) viewModel.clearKeyNotice()
-        onPauseOrDispose { pausedOnce = true }
+        viewModel.clearKeyNoticeIfKeySet()
+        onPauseOrDispose { }
     }
     LaunchedEffect(state.registeredBookId) { if (state.registeredBookId != null) onRegistered() }
     LaunchedEffect(state.fallbackQuery) {

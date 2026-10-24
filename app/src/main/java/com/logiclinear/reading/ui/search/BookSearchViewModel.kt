@@ -13,6 +13,9 @@ import com.logiclinear.reading.data.remote.books.BookSearchItem
 import com.logiclinear.reading.data.remote.books.BookSearchResult
 import com.logiclinear.reading.data.repo.AddResult
 import com.logiclinear.reading.data.repo.BookRepository
+import com.logiclinear.reading.data.secret.SecretKey
+import com.logiclinear.reading.data.secret.SecretStore
+import com.logiclinear.reading.data.secret.isSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -46,6 +49,7 @@ data class BookSearchUiState(
  */
 class BookSearchViewModel(
     private val bookRepository: BookRepository,
+    private val secretStore: SecretStore,
     private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
@@ -85,11 +89,15 @@ class BookSearchViewModel(
     }
 
     /**
-     * 설정에서 돌아왔을 때(T-809). 키 없음·키 오류 안내를 지워 "키를 넣고 왔는데 안내가 그대로"를 막는다.
-     * 검색어는 남기고 재검색은 하지 않는다(사용자 동작 없는 네트워크 호출·폴백 이동을 피함). 돋보기를 누르면 새 키로 검색한다.
+     * 설정에서 돌아왔을 때(T-809). 키가 이제 설정돼 있으면 "키 없음" 안내를 지워 "키를 넣고 왔는데 안내가 그대로"를 막는다.
+     * 키가 여전히 없으면 안내를 남긴다 — 무조건 지우면 회전·앱 복귀만으로도 안내가 사라져 이유를 알 수 없는 빈 화면이
+     * 된다(2026-10-24 리뷰 차단 1). `keyInvalid`는 키 값이 바뀌었는지 알 수 없으므로 지우지 않고, 돋보기를 누를 때
+     * 새 키로 다시 판단한다. 재검색은 하지 않는다(사용자 동작 없는 네트워크 호출·폴백 이동을 피함).
      */
-    fun clearKeyNotice() = _uiState.update {
-        if (it.needsKey || it.keyInvalid) it.copy(needsKey = false, keyInvalid = false) else it
+    fun clearKeyNoticeIfKeySet() {
+        if (!_uiState.value.needsKey) return
+        if (!secretStore.isSet(SecretKey.NL_OPENAPI)) return
+        _uiState.update { it.copy(needsKey = false) }
     }
 
     /** "직접 입력" 버튼. 검색어를 제목에 미리 채운다. */
@@ -118,7 +126,10 @@ class BookSearchViewModel(
         const val MAX_SAVED_QUERY = 200
 
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer { BookSearchViewModel(appContainer().bookRepository, createSavedStateHandle()) }
+            initializer {
+                val c = appContainer()
+                BookSearchViewModel(c.bookRepository, c.secretStore, createSavedStateHandle())
+            }
         }
     }
 }
