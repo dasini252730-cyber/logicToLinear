@@ -256,7 +256,7 @@
       "description": "Kotlin + Jetpack Compose 단일 모듈 프로젝트를 만든다. minSdk 26, 패키지 구조 초안, Gradle 버전 카탈로그 설정. assembleDebug가 통과해야 한다.",
       "doc": "docs/tasks/T-101.md",
       "phase": 1,
-      "status": "review",
+      "status": "done",
       "priority": "P0",
       "assignee": "claude",
       "estimateMinutes": 30,
@@ -274,9 +274,9 @@
         "gradle"
       ],
       "createdAt": "2026-10-05",
-      "updatedAt": "2026-10-05",
+      "updatedAt": "2026-10-24",
       "startedAt": "2026-10-05",
-      "completedAt": null,
+      "completedAt": "2026-10-24",
       "blockedReason": null,
       "notes": "2026-10-05 2026-10-05 실기기 확인: installDebug로 SM-S942N(Android 16)에 설치, 콜드 스타트 후 카메라 홈 화면이 뜸(스크린샷 확인). '빈 Compose 화면이 실기기에서 뜬다' 조건 충족. 남은 것은 사용자 done 확인."
     },
